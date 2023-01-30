@@ -1,9 +1,10 @@
 package com.omtorney.snapcase.data
 
 import com.omtorney.snapcase.data.local.LocalDataSource
-import com.omtorney.snapcase.data.model.Case
+import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.data.remote.RemoteDataSource
 import com.omtorney.snapcase.domain.Repository
+import org.jsoup.nodes.Document
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor(
@@ -13,6 +14,10 @@ class RepositoryImpl @Inject constructor(
 
     override suspend fun getHtmlData(url: String): String {
         return remoteDataSource.getJsoupDocument(url).toString()
+    }
+
+    override suspend fun getJsoupDocument(url: String): Document? {
+        return remoteDataSource.getJsoupDocument(url)
     }
 
     override suspend fun deleteFavorite(case: Case) {

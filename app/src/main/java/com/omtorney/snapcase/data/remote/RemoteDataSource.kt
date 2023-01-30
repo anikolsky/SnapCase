@@ -4,5 +4,5 @@ import org.jsoup.nodes.Document
 
 interface RemoteDataSource {
 
-    suspend fun getJsoupDocument(url: String): Document
+    suspend fun getJsoupDocument(url: String): Document?
 }

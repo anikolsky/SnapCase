@@ -1,7 +1,7 @@
 package com.omtorney.snapcase.domain.parser
 
-import com.omtorney.snapcase.data.court.Court
-import com.omtorney.snapcase.data.model.Case
+import com.omtorney.snapcase.domain.court.Court
+import com.omtorney.snapcase.domain.model.Case
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 

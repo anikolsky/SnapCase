@@ -1,16 +1,17 @@
 package com.omtorney.snapcase.domain.parser
 
-import com.omtorney.snapcase.data.court.Court
+import com.omtorney.snapcase.domain.court.Court
 import com.omtorney.snapcase.data.remote.RemoteDataSource
+import com.omtorney.snapcase.domain.Repository
 import javax.inject.Inject
 
 class PageParserFactory @Inject constructor(
-    private val remoteDataSource: RemoteDataSource
+    private val repository: Repository
 ) {
 
-    fun createPageParser(court: Court): PageParser {
+    fun create(court: Court): PageParser {
         return when(court.type) {
-            PageType.NoMsk -> NoMskPageParser(remoteDataSource)
+            PageType.NoMsk -> NoMskPageParser(repository)
             PageType.Msk -> MskPageParser()
         }
     }

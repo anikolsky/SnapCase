@@ -1,7 +1,7 @@
 package com.omtorney.snapcase.data.database
 
 import androidx.room.*
-import com.omtorney.snapcase.data.model.Case
+import com.omtorney.snapcase.domain.model.Case
 import kotlinx.coroutines.flow.Flow
 
 @Dao
