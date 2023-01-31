@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -36,38 +37,54 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = Screen.Home.route
                     ) {
+
                         composable(route = Screen.Home.route) {
-                            HomeScreen(navController = navController)
-                        }
-                        composable(route = Screen.Favorites.route) {
-                            FavoritesScreen(navController = navController)
-                        }
-                        composable(
-                            route = Screen.Schedule.route + "/{date}",
-                            arguments = listOf(navArgument("date") { NavType.StringType })
-                        ) {
-                            ScheduleScreen(
-                                date = it.arguments?.getString("date") ?: "",
-                                navController = navController
+                            HomeScreen(
+                                navController = navController,
+                                onSearchClick = { searchInput ->
+                                    navController.navigate(Screen.Search.route + "?searchInput=$searchInput") {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                },
+                                onScheduleClick = { scheduleDate ->
+                                    navController.navigate(Screen.Schedule.route + "/$scheduleDate") {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
                             )
                         }
+
                         composable(
-                            route = Screen.Search.route + "/{input}",
-                            arguments = listOf(navArgument("input") { NavType.StringType })
-                        ) {
-                            SearchScreen(
-                                input = it.arguments?.getString("input") ?: "",
-                                navController = navController
-                            )
-                        }
+                            route = Screen.Schedule.route + "/{scheduleDate}",
+//                            arguments = listOf(navArgument(name = "date") { NavType.StringType })
+                        ) { ScheduleScreen(navController = navController) }
+
+                        composable(
+                            route = Screen.Search.route + "?searchInput={searchInput}",
+                            arguments = listOf(navArgument(name = "searchInput") { NavType.StringType })
+                        ) { SearchScreen(navController = navController) }
+
                         composable(route = Screen.Detail.route) {
                             DetailScreen(caseParam = null)
                         }
+
                         composable(
                             route = Screen.Act.route + "/{url}",
                             arguments = listOf(navArgument("url") { NavType.StringType })
                         ) {
                             ActScreen(url = it.arguments?.getString("url"))
+                        }
+
+                        composable(route = Screen.Favorites.route) {
+                            FavoritesScreen(navController = navController)
                         }
                     }
                 }

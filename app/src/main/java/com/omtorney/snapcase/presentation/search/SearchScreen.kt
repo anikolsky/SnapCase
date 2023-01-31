@@ -20,12 +20,9 @@ import com.omtorney.snapcase.presentation.common.CaseColumn
 
 @Composable
 fun SearchScreen(
-    input: String,
     navController: NavController,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
-    viewModel.searchCase(input)
-
     val state = viewModel.state.value
 
     Scaffold(bottomBar = { BottomBar(navController = navController) }) { paddingValues ->

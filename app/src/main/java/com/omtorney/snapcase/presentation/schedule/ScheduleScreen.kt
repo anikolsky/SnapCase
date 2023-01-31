@@ -20,12 +20,9 @@ import com.omtorney.snapcase.presentation.common.CaseColumn
 
 @Composable
 fun ScheduleScreen(
-    date: String,
     navController: NavController,
     viewModel: ScheduleViewModel = hiltViewModel()
 ) {
-    viewModel.showSchedule(date)
-
     val state = viewModel.state.value
 
     Scaffold(bottomBar = { BottomBar(navController = navController) }) { paddingValues ->

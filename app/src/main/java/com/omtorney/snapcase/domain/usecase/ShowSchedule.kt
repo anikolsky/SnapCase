@@ -1,5 +1,6 @@
 package com.omtorney.snapcase.domain.usecase
 
+import android.util.Log
 import com.omtorney.snapcase.domain.court.Court
 import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.domain.parser.PageParserFactory
@@ -16,12 +17,15 @@ class ShowSchedule @Inject constructor(
     suspend operator fun invoke(court: Court, date: String): Flow<Resource<List<Case>>> = flow {
         try {
             emit(Resource.Loading())
+//            Log.d("TESTLOG", "ShowSchedule: loading... ")
             val html = repository.getHtmlData(court.getScheduleQuery(date))
             val page = PageParserFactory(repository).create(court)
             val cases = page.extractSchedule(html, court)
             emit(Resource.Success(cases))
+//            Log.d("TESTLOG", "ShowSchedule: emitting cases: $cases ")
         } catch (e: Exception) {
             emit(Resource.Error(message = e.localizedMessage ?: "Unexpected error"))
+//            Log.d("TESTLOG", "ShowSchedule: error: ${e.message} ")
         }
     }
 }

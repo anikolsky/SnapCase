@@ -28,7 +28,11 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(
+    navController: NavController,
+    onSearchClick: (String) -> Unit,
+    onScheduleClick: (String) -> Unit
+) {
     val scaffoldState = rememberScaffoldState()
     val dateDialogState = rememberMaterialDialogState()
     var pickedDate by remember { mutableStateOf(LocalDate.now()) }
@@ -53,12 +57,12 @@ fun HomeScreen(navController: NavController) {
                     listOf("Дмитровский городской", "Дорогомиловский районный"),
                     "Дмитровский городской",
                     {})
-                SearchBlock(navController = navController)
+                SearchBlock(onSearchClick = { onSearchClick(it) })
                 Spacer(modifier = Modifier.height(24.dp))
                 ScheduleBlock(
-                    navController = navController,
                     dateDialogState = dateDialogState,
-                    date = formattedDate
+                    date = formattedDate,
+                    onScheduleClick = { onScheduleClick(it) }
                 )
             }
         }
@@ -112,7 +116,9 @@ fun SpinnerBlock(
 }
 
 @Composable
-fun SearchBlock(navController: NavController) {
+fun SearchBlock(
+    onSearchClick: (String) -> Unit
+) {
     var input by remember { mutableStateOf("") }
     val context = LocalContext.current
     OutlinedTextField(
@@ -145,10 +151,7 @@ fun SearchBlock(navController: NavController) {
                 Toast.makeText(context, "Введите имя участника или номер дела", Toast.LENGTH_SHORT)
                     .show()
             } else {
-                navController.navigate(Screen.Search.route + "/${input}") {
-                    popUpTo(Screen.Home.route)
-                    launchSingleTop = true
-                }
+                onSearchClick(input)
             }
         }
     ) { Text(text = "ПОИСК") }
@@ -156,9 +159,9 @@ fun SearchBlock(navController: NavController) {
 
 @Composable
 fun ScheduleBlock(
-    navController: NavController,
     dateDialogState: MaterialDialogState,
-    date: String
+    date: String,
+    onScheduleClick: (String) -> Unit
 ) {
     Row {
         OutlinedButton(
@@ -171,12 +174,7 @@ fun ScheduleBlock(
         Button(
             modifier = Modifier.height(40.dp),
             shape = Shapes.small,
-            onClick = {
-                navController.navigate(Screen.Schedule.route + "/${date}") {
-                    popUpTo(Screen.Home.route)
-                    launchSingleTop = true
-                }
-            }
+            onClick = { onScheduleClick(date) }
         ) { Text("ПОКАЗАТЬ РАСПИСАНИЕ") }
     }
 }
@@ -192,5 +190,5 @@ fun ScheduleBlock(
 @Composable
 fun PreviewMainScreen() {
     val navController = rememberNavController()
-    HomeScreen(navController = navController)
+    HomeScreen(navController = navController, {}, {})
 }
