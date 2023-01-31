@@ -19,6 +19,10 @@ class DetailViewModel @Inject constructor(
     private val _state = mutableStateOf(DetailState())
     val state: State<DetailState> = _state
 
+    init {
+        // caseParam
+    }
+
     fun onEvent(event: DetailEvent) {
         when (event) {
             is DetailEvent.Fill -> {
@@ -29,14 +33,16 @@ class DetailViewModel @Inject constructor(
                                 _state.value = DetailState(isLoading = true)
                             }
                             is Resource.Success -> {
-                                _state.value
+                                _state.value = DetailState(case = result.data)
                             }
                             is Resource.Error -> {
-                                _state.value
+                                _state.value = DetailState(error = result.message ?: "Unexpected error")
                             }
                         }
                     }
-//                    if (caseUseCases.checkCase(event.case.uid)) caseUseCases.updateCase(event.case)
+//                    if (caseUseCases.checkCase(event.case.uid)) {
+//                        caseUseCases.updateCase(event.case)
+//                    }
                 }
             }
             is DetailEvent.Save -> {

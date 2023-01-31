@@ -3,8 +3,6 @@ package com.omtorney.snapcase.presentation.favorites
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -17,8 +15,12 @@ fun FavoritesScreen(
     viewModel: FavoritesViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
-    val favorites by viewModel.allCases.collectAsState(listOf())
-    Scaffold(bottomBar = { BottomBar(navController = navController) }) { padding ->
-        CaseColumn(favorites, Modifier.padding(padding))
+    val state = viewModel.state.value
+
+    Scaffold(bottomBar = { BottomBar(navController = navController) }) { paddingValues ->
+        CaseColumn(
+            items = state.cases,
+            modifier = Modifier.padding(paddingValues)
+        )
     }
 }

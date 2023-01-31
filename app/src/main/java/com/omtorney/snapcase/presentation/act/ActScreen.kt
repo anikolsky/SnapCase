@@ -12,21 +12,20 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun ActScreen(
-    url: String?,
     viewModel: ActViewModel = hiltViewModel()
 ) {
-    viewModel.loadAct(url!!)
-    val actLines by viewModel.actLines.collectAsState()
+    val state = viewModel.state.value
+
     val context = LocalContext.current
 
-    Text(text = actLines.toString())
+    Text(text = state.text.toString())
 
 //    actLines.forEach { binding.actText.append("$it\n\n") }
 
     Button(onClick = {
         val intent = Intent()
         intent.action = Intent.ACTION_SEND
-        intent.putExtra(Intent.EXTRA_TEXT, actLines)
+        intent.putExtra(Intent.EXTRA_TEXT, state.text.toString())
         intent.type = "text/plain"
         startActivity(context, Intent.createChooser(intent, "Send to:"), null)
     }) {

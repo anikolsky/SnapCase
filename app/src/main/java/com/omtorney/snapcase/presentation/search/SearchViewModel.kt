@@ -1,6 +1,5 @@
 package com.omtorney.snapcase.presentation.search
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -10,9 +9,6 @@ import com.omtorney.snapcase.domain.court.Courts
 import com.omtorney.snapcase.domain.usecase.CaseUseCases
 import com.omtorney.snapcase.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -48,6 +44,6 @@ class SearchViewModel @Inject constructor(
 //                    Log.d("TESTLOG", "SearchViewModel: Resource.Error: ${result.message}")
                 }
             }
-        } //.launchIn(viewModelScope)
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.omtorney.snapcase.data.local.LocalDataSource
 import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.data.remote.RemoteDataSource
 import com.omtorney.snapcase.domain.Repository
+import kotlinx.coroutines.flow.Flow
 import org.jsoup.nodes.Document
 import javax.inject.Inject
 
@@ -18,6 +19,10 @@ class RepositoryImpl @Inject constructor(
 
     override suspend fun getJsoupDocument(url: String): Document? {
         return remoteDataSource.getJsoupDocument(url)
+    }
+
+    override fun getFavoriteCases(): Flow<List<Case>> {
+        return localDataSource.getFavoriteCases()
     }
 
     override suspend fun deleteFavorite(case: Case) {

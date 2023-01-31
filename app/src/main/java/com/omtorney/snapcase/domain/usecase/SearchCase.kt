@@ -1,6 +1,5 @@
 package com.omtorney.snapcase.domain.usecase
 
-import android.util.Log
 import com.omtorney.snapcase.domain.Repository
 import com.omtorney.snapcase.domain.court.Court
 import com.omtorney.snapcase.domain.model.Case

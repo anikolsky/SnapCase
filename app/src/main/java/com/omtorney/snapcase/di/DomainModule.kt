@@ -19,6 +19,7 @@ object DomainModule {
             checkCase = CheckCase(repository),
             deleteCase = DeleteCase(repository),
             fillCase = FillCase(repository),
+            getFavoriteCases = GetFavoriteCases(repository),
             loadActText = LoadActText(repository),
             saveCase = SaveCase(repository),
             searchCase = SearchCase(repository),

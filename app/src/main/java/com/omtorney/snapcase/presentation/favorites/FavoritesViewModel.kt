@@ -9,7 +9,10 @@ import com.omtorney.snapcase.domain.court.Courts
 import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.domain.usecase.CaseUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,22 +26,30 @@ class FavoritesViewModel @Inject constructor(
     private val _state = mutableStateOf(FavoritesState())
     val state: State<FavoritesState> = _state
 
+    private var getFavoriteCasesJob: Job? = null
 
-    val allCases = this.caseDao.getAll()
-        .stateIn(
-            scope = viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
-
-    fun deleteCase(case: Case) = viewModelScope.launch {
-        caseUseCases.deleteCase(case)
+    private fun getFavoriteCases() {
+        getFavoriteCasesJob?.cancel()
+        getFavoriteCasesJob = caseUseCases.getFavoriteCases().onEach { cases ->
+            _state.value = state.value.copy(cases = cases)
+        }.launchIn(viewModelScope)
     }
 
-    fun refreshCases(cases: List<Case>) = viewModelScope.launch {
-        cases.forEach { case ->
-            caseUseCases.fillCase(case, Courts.Dmitrov)
-            caseUseCases.updateCase(case)
+    fun onEvent(event: FavoritesEvent) {
+        when (event) {
+            is FavoritesEvent.Delete -> {
+                viewModelScope.launch {
+                    caseUseCases.deleteCase(event.case)
+                }
+            }
+            is FavoritesEvent.Refresh -> {
+                viewModelScope.launch {
+                    event.cases.forEach { case ->
+                        caseUseCases.fillCase(case, Courts.Dmitrov)
+                        caseUseCases.updateCase(case)
+                    }
+                }
+            }
         }
     }
 }

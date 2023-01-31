@@ -1,5 +1,7 @@
 package com.omtorney.snapcase.presentation.act
 
 data class ActState(
-    val text: List<String> = emptyList()
+    val text: ArrayList<String> = arrayListOf(),
+    val isLoading: Boolean = false,
+    val error: String = ""
 )

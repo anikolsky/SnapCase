@@ -4,6 +4,7 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,7 +15,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.omtorney.snapcase.presentation.Screen
 import com.omtorney.snapcase.presentation.common.BottomBar
 import com.omtorney.snapcase.presentation.home.components.Spinner
 import com.omtorney.snapcase.presentation.ui.theme.Shapes
@@ -53,12 +53,7 @@ fun HomeScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                SpinnerBlock(
-                    listOf("Дмитровский городской", "Дорогомиловский районный"),
-                    "Дмитровский городской",
-                    {})
                 SearchBlock(onSearchClick = { onSearchClick(it) })
-                Spacer(modifier = Modifier.height(24.dp))
                 ScheduleBlock(
                     dateDialogState = dateDialogState,
                     date = formattedDate,
@@ -121,40 +116,56 @@ fun SearchBlock(
 ) {
     var input by remember { mutableStateOf("") }
     val context = LocalContext.current
-    OutlinedTextField(
-        value = input,
-        textStyle = Typography.body1,
-        label = { Text("Введите имя или номер дела") },
-        onValueChange = { input = it },
-        singleLine = true,
-        shape = Shapes.small,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp)
-    )
-    Spacer(modifier = Modifier.height(12.dp))
-    SpinnerBlock(
-        listOf(
-            "Гражданское судопроизводство",
-//            "Административное судопроизводство"
-        ),
-        "Гражданское судопроизводство",
-        {})
-    Button(
-        modifier = Modifier
-            .height(40.dp)
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp),
-        shape = Shapes.small,
-        onClick = {
-            if (input.isEmpty()) {
-                Toast.makeText(context, "Введите имя участника или номер дела", Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                onSearchClick(input)
-            }
+
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        backgroundColor = MaterialTheme.colors.surface,
+        border = BorderStroke(1.dp, color = MaterialTheme.colors.primary),
+        modifier = Modifier.padding(16.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            SpinnerBlock(
+                listOf("Дмитровский городской", "Дорогомиловский районный"),
+                "Дмитровский городской"
+            ) {}
+            SpinnerBlock(
+                listOf(
+                    "Гражданское судопроизводство",
+//                      "Административное судопроизводство"
+                ),
+                "Гражданское судопроизводство"
+            ) {}
+            OutlinedTextField(
+                value = input,
+                textStyle = Typography.body1,
+                label = { Text("Введите имя или номер дела") },
+                onValueChange = { input = it },
+                singleLine = true,
+                shape = Shapes.small,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                modifier = Modifier
+                    .height(40.dp)
+                    .fillMaxWidth(),
+                shape = Shapes.small,
+                onClick = {
+                    if (input.isEmpty()) {
+                        Toast.makeText(
+                            context,
+                            "Введите имя участника или номер дела",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                    } else {
+                        onSearchClick(input)
+                    }
+                }
+            ) { Text(text = "ПОИСК") }
         }
-    ) { Text(text = "ПОИСК") }
+    }
 }
 
 @Composable
@@ -163,19 +174,32 @@ fun ScheduleBlock(
     date: String,
     onScheduleClick: (String) -> Unit
 ) {
-    Row {
-        OutlinedButton(
-            modifier = Modifier.height(40.dp),
-            onClick = { dateDialogState.show() },
-            shape = Shapes.small,
-            border = BorderStroke(1.dp, MaterialTheme.colors.onPrimary)
-        ) { Text(text = date) }
-        Spacer(modifier = Modifier.width(12.dp))
-        Button(
-            modifier = Modifier.height(40.dp),
-            shape = Shapes.small,
-            onClick = { onScheduleClick(date) }
-        ) { Text("ПОКАЗАТЬ РАСПИСАНИЕ") }
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        backgroundColor = MaterialTheme.colors.surface,
+        border = BorderStroke(1.dp, color = MaterialTheme.colors.primary),
+        modifier = Modifier.padding(16.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            OutlinedButton(
+                modifier = Modifier
+                    .height(40.dp)
+                    .fillMaxWidth(),
+                onClick = { dateDialogState.show() },
+                shape = Shapes.small,
+                border = BorderStroke(1.dp, MaterialTheme.colors.onPrimary)
+            ) {
+                Text(text = date, style = MaterialTheme.typography.subtitle1)
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                modifier = Modifier
+                    .height(40.dp)
+                    .fillMaxWidth(),
+                shape = Shapes.small,
+                onClick = { onScheduleClick(date) }
+            ) { Text("ПОКАЗАТЬ РАСПИСАНИЕ") }
+        }
     }
 }
 

@@ -78,9 +78,9 @@ class MainActivity : ComponentActivity() {
 
                         composable(
                             route = Screen.Act.route + "/{url}",
-                            arguments = listOf(navArgument("url") { NavType.StringType })
+//                            arguments = listOf(navArgument("url") { NavType.StringType })
                         ) {
-                            ActScreen(url = it.arguments?.getString("url"))
+                            ActScreen()
                         }
 
                         composable(route = Screen.Favorites.route) {

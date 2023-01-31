@@ -28,7 +28,7 @@ fun BottomBar(navController: NavController) {
         backgroundColor = MaterialTheme.colors.primary,
         contentColor = Color.White,
         modifier = Modifier.graphicsLayer {
-            shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)
+            shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
             clip = true
         }
     ) {
