@@ -36,21 +36,39 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = Screen.Home.route
                     ) {
-                        composable(route = Screen.Home.route) { HomeScreen(navController) }
-                        composable(route = Screen.Favorites.route) { FavoritesScreen(navController) }
+                        composable(route = Screen.Home.route) {
+                            HomeScreen(navController = navController)
+                        }
+                        composable(route = Screen.Favorites.route) {
+                            FavoritesScreen(navController = navController)
+                        }
                         composable(
-                            route = "schedule/{date}",
+                            route = Screen.Schedule.route + "/{date}",
                             arguments = listOf(navArgument("date") { NavType.StringType })
-                        ) { ScheduleScreen(date = it.arguments?.getString("date") ?: "", navController) }
+                        ) {
+                            ScheduleScreen(
+                                date = it.arguments?.getString("date") ?: "",
+                                navController = navController
+                            )
+                        }
                         composable(
-                            route = "search/{input}",
+                            route = Screen.Search.route + "/{input}",
                             arguments = listOf(navArgument("input") { NavType.StringType })
-                        ) { SearchScreen(input = it.arguments?.getString("input") ?: "", navController) }
-                        composable(route = "details") { DetailScreen(caseParam = null) }
+                        ) {
+                            SearchScreen(
+                                input = it.arguments?.getString("input") ?: "",
+                                navController = navController
+                            )
+                        }
+                        composable(route = Screen.Detail.route) {
+                            DetailScreen(caseParam = null)
+                        }
                         composable(
-                            route = "act/{url}",
+                            route = Screen.Act.route + "/{url}",
                             arguments = listOf(navArgument("url") { NavType.StringType })
-                        ) { ActScreen(url = it.arguments?.getString("url")) }
+                        ) {
+                            ActScreen(url = it.arguments?.getString("url"))
+                        }
                     }
                 }
             }

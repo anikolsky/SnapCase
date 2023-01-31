@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.omtorney.snapcase.presentation.Screen
 import com.omtorney.snapcase.presentation.common.BottomBar
 import com.omtorney.snapcase.presentation.home.components.Spinner
 import com.omtorney.snapcase.presentation.ui.theme.Shapes
@@ -67,20 +68,11 @@ fun HomeScreen(navController: NavController) {
         buttons = {
             positiveButton(text = "ОК")
             negativeButton(text = "Отмена")
-        },
-//        backgroundColor = MaterialTheme.colors.background
+        }
     ) {
         datepicker(
             initialDate = LocalDate.now(),
-            title = "Выберите дату",
-//            colors = DatePickerDefaults.colors(
-//                headerBackgroundColor = MaterialTheme.colors.primary,
-//                headerTextColor = MaterialTheme.colors.secondary,
-//                calendarHeaderTextColor = MaterialTheme.colors.secondary,
-//                dateActiveBackgroundColor = MaterialTheme.colors.secondary,
-//                dateActiveTextColor = MaterialTheme.colors.background,
-//                dateInactiveTextColor = MaterialTheme.colors.secondary
-//            )
+            title = "Выберите дату"
         ) {
             pickedDate = it
         }
@@ -132,13 +124,7 @@ fun SearchBlock(navController: NavController) {
         shape = Shapes.small,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp),
-//        colors = TextFieldDefaults.outlinedTextFieldColors(
-//            focusedBorderColor = MaterialTheme.colors.secondary,
-//            focusedLabelColor = MaterialTheme.colors.secondary,
-//            unfocusedBorderColor = MaterialTheme.colors.onPrimary,
-//            unfocusedLabelColor = MaterialTheme.colors.primaryVariant
-//        )
+            .padding(horizontal = 12.dp)
     )
     Spacer(modifier = Modifier.height(12.dp))
     SpinnerBlock(
@@ -153,17 +139,14 @@ fun SearchBlock(navController: NavController) {
             .height(40.dp)
             .fillMaxWidth()
             .padding(horizontal = 12.dp),
-//        colors = ButtonDefaults.buttonColors(
-//            backgroundColor = MaterialTheme.colors.primaryVariant
-//        ),
         shape = Shapes.small,
         onClick = {
             if (input.isEmpty()) {
                 Toast.makeText(context, "Введите имя участника или номер дела", Toast.LENGTH_SHORT)
                     .show()
             } else {
-                navController.navigate("search/$input") {
-                    popUpTo("main")
+                navController.navigate(Screen.Search.route + "/${input}") {
+                    popUpTo(Screen.Home.route)
                     launchSingleTop = true
                 }
             }
@@ -182,22 +165,15 @@ fun ScheduleBlock(
             modifier = Modifier.height(40.dp),
             onClick = { dateDialogState.show() },
             shape = Shapes.small,
-//            colors = ButtonDefaults.outlinedButtonColors(
-//                backgroundColor = MaterialTheme.colors.background,
-//                contentColor = MaterialTheme.colors.onPrimary
-//            ),
             border = BorderStroke(1.dp, MaterialTheme.colors.onPrimary)
         ) { Text(text = date) }
         Spacer(modifier = Modifier.width(12.dp))
         Button(
             modifier = Modifier.height(40.dp),
             shape = Shapes.small,
-//            colors = ButtonDefaults.buttonColors(
-//                backgroundColor = MaterialTheme.colors.primaryVariant
-//            ),
             onClick = {
-                navController.navigate("schedule/$date") {
-                    popUpTo("main")
+                navController.navigate(Screen.Schedule.route + "/${date}") {
+                    popUpTo(Screen.Home.route)
                     launchSingleTop = true
                 }
             }

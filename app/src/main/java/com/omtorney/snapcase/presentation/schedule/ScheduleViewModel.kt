@@ -5,13 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.snapcase.domain.court.Courts
-import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.domain.usecase.CaseUseCases
-import com.omtorney.snapcase.domain.usecase.ShowSchedule
 import com.omtorney.snapcase.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject

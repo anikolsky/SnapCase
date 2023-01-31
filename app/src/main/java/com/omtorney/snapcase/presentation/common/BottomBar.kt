@@ -1,5 +1,6 @@
 package com.omtorney.snapcase.presentation.common
 
+import android.content.Context
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -7,8 +8,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.omtorney.snapcase.presentation.Screen
@@ -29,6 +32,7 @@ fun BottomBar(navController: NavController) {
             clip = true
         }
     ) {
+        val context = LocalContext.current
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
         items.forEach { item ->
@@ -36,10 +40,10 @@ fun BottomBar(navController: NavController) {
                 icon = {
                     Icon(
                         painter = painterResource(id = item.icon!!),
-                        contentDescription = item.title.toString()
+                        contentDescription = context.resources.getString(item.title!!)
                     )
                 },
-                label = { Text(text = item.title.toString()) },
+                label = { Text(text = context.resources.getString(item.title!!)) },
                 selectedContentColor = Color.White,
                 unselectedContentColor = Color.White.copy(0.4f),
                 alwaysShowLabel = true,

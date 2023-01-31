@@ -1,10 +1,11 @@
 package com.omtorney.snapcase.presentation.act
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.snapcase.domain.court.Courts
 import com.omtorney.snapcase.domain.usecase.CaseUseCases
-import com.omtorney.snapcase.domain.usecase.LoadActText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,6 +16,10 @@ import javax.inject.Inject
 class ActViewModel @Inject constructor(
     private val caseUseCases: CaseUseCases
 ) : ViewModel() {
+
+    private val _state = mutableStateOf(ActState())
+    val state: State<ActState> = _state
+
 
     private val _actLines = MutableStateFlow(arrayListOf<String>())
     val actLines = _actLines.asStateFlow()
