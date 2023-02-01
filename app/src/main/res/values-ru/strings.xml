@@ -3,4 +3,6 @@
     <string name="app_name">SnapCase</string>
     <string name="search">Поиск</string>
     <string name="favorites">Избранное</string>
+    <string name="recent">Недавнее</string>
+    <string name="clear">Очистить</string>
 </resources>

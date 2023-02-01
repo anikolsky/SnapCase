@@ -18,16 +18,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.presentation.common.CaseCard
-import com.omtorney.snapcase.presentation.ui.theme.Grey4
 
 @Composable
 fun DetailScreen(
-    caseParam: Case?,
+//    caseParam: Case,
+//    navController: NavController,
     viewModel: DetailViewModel = hiltViewModel()
 ) {
-    viewModel.onEvent(event = DetailEvent.Fill(caseParam!!))
+//    viewModel.onEvent(event = DetailEvent.Fill(caseParam))
+
+    // TODO add flag when favorite case
 
     val state = viewModel.state.value
 
@@ -40,7 +41,11 @@ fun DetailScreen(
     ) {
         Column {
             state.case?.let { case ->
-                CaseCard(case)
+                CaseCard(
+                    case = case,
+                    onCardClick = {},
+                    onActTextClick = {}
+                )
                 LazyColumn {
                     case.process.map {
                         item {

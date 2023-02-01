@@ -21,16 +21,12 @@ class RepositoryImpl @Inject constructor(
         return remoteDataSource.getJsoupDocument(url)
     }
 
-    override fun getFavoriteCases(): Flow<List<Case>> {
-        return localDataSource.getFavoriteCases()
+    override suspend fun saveCase(case: Case) {
+        localDataSource.saveCase(case)
     }
 
     override suspend fun deleteFavorite(case: Case) {
         localDataSource.deleteFavorite(case)
-    }
-
-    override suspend fun addFavorite(case: Case) {
-        localDataSource.addFavorite(case)
     }
 
     override suspend fun updateFavorite(case: Case) {
@@ -39,5 +35,21 @@ class RepositoryImpl @Inject constructor(
 
     override suspend fun checkCase(uid: String): Int {
         return localDataSource.checkCase(uid)
+    }
+
+    override suspend fun clearRecentCases() {
+        localDataSource.clearRecentCases()
+    }
+
+    override suspend fun getCaseByNumber(number: String): Case? {
+        return localDataSource.getCaseByNumber(number)
+    }
+
+    override fun getFavoriteCases(): Flow<List<Case>> {
+        return localDataSource.getFavoriteCases()
+    }
+
+    override fun getRecentCases(): Flow<List<Case>> {
+        return localDataSource.getRecentCases()
     }
 }

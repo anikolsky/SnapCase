@@ -100,7 +100,7 @@ fun SpinnerBlock(
 
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_arrow_drop_down_24),
-                    contentDescription = "drop down arrow"
+                    contentDescription = ""
                 )
             }
         },
@@ -125,22 +125,26 @@ fun SearchBlock(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             SpinnerBlock(
-                listOf("Дмитровский городской", "Дорогомиловский районный"),
+                listOf(
+                    "Дмитровский городской",
+//                    "Дорогомиловский районный"
+                ),
                 "Дмитровский городской"
             ) {}
-            SpinnerBlock(
-                listOf(
-                    "Гражданское судопроизводство",
+//            SpinnerBlock(
+//                listOf(
+//                    "Гражданское судопроизводство",
 //                      "Административное судопроизводство"
-                ),
-                "Гражданское судопроизводство"
-            ) {}
+//                ),
+//                "Гражданское судопроизводство"
+//            ) {}
             OutlinedTextField(
                 value = input,
                 textStyle = Typography.body1,
                 label = { Text("Введите имя или номер дела") },
                 onValueChange = { input = it },
                 singleLine = true,
+                maxLines = 1,
                 shape = Shapes.small,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -187,7 +191,10 @@ fun ScheduleBlock(
                     .fillMaxWidth(),
                 onClick = { dateDialogState.show() },
                 shape = Shapes.small,
-                border = BorderStroke(1.dp, MaterialTheme.colors.onPrimary)
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f)
+                )
             ) {
                 Text(text = date, style = MaterialTheme.typography.subtitle1)
             }

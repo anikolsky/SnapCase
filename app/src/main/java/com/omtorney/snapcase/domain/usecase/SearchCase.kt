@@ -38,7 +38,7 @@ class SearchCase @Inject constructor(
             emit(Resource.Success(result))
 //            Log.d("TESTLOG", "SearchCase: emitting result: $result ")
         } catch (e: Exception) {
-            emit(Resource.Error(message = e.localizedMessage ?: "Unexpected error"))
+            emit(Resource.Error(message = e.localizedMessage ?: "Unexpected error while searching for cases"))
 //            Log.d("TESTLOG", "SearchCase: error: ${e.message} ")
         }
     }

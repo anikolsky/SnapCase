@@ -23,7 +23,7 @@ class ShowSchedule @Inject constructor(
             emit(Resource.Success(cases))
 //            Log.d("TESTLOG", "ShowSchedule: emitting cases: $cases ")
         } catch (e: Exception) {
-            emit(Resource.Error(message = e.localizedMessage ?: "Unexpected error"))
+            emit(Resource.Error(message = e.localizedMessage ?: "Unexpected error while fetching schedule"))
 //            Log.d("TESTLOG", "ShowSchedule: error: ${e.message} ")
         }
     }

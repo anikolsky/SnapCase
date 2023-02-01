@@ -20,7 +20,7 @@ class LoadActText @Inject constructor(
                 val text = page.extractActText(url)
                 emit(Resource.Success(text))
             } catch (e: Exception) {
-                emit(Resource.Error(message = e.localizedMessage ?: "Unexpected error"))
+                emit(Resource.Error(message = e.localizedMessage ?: "Unexpected error while fetching act text"))
             }
         }
 }

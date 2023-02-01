@@ -1,4 +1,4 @@
-package com.omtorney.snapcase.presentation.favorites
+package com.omtorney.snapcase.presentation.recent
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -18,41 +18,34 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FavoritesViewModel @Inject constructor(
+class RecentViewModel @Inject constructor(
     private val caseUseCases: CaseUseCases
 ) : ViewModel() {
 
-    private val _state = mutableStateOf(FavoritesState())
-    val state: State<FavoritesState> = _state
+    private val _state = mutableStateOf(RecentState())
+    val state: State<RecentState> = _state
 
-    private var getFavoriteCasesJob: Job? = null
+    private var getRecentCasesJob: Job? = null
 
     init {
-        getFavoriteCases()
+        getRecentCases()
     }
 
-    private fun getFavoriteCases() {
-        getFavoriteCasesJob?.cancel()
-        getFavoriteCasesJob = caseUseCases.getFavoriteCases().onEach { cases ->
+    private fun getRecentCases() {
+        getRecentCasesJob?.cancel()
+        getRecentCasesJob = caseUseCases.getRecentCases().onEach { cases ->
             _state.value = state.value.copy(cases = cases)
         }.launchIn(viewModelScope)
     }
 
-    fun onEvent(event: FavoritesEvent) {
+    fun onEvent(event: RecentEvent) {
         when (event) {
-            is FavoritesEvent.Delete -> {
+            is RecentEvent.Clear -> {
                 viewModelScope.launch {
-                    caseUseCases.deleteCase(event.case)
+                    caseUseCases.clearRecentCases()
                 }
             }
-            is FavoritesEvent.Refresh -> {
-                viewModelScope.launch {
-                    event.cases.forEach { case ->
-                        caseUseCases.fillCase(case, Courts.Dmitrov)
-                        caseUseCases.updateCase(case)
-                    }
-                }
-            }
+            is RecentEvent.Refresh -> { }
         }
     }
 }

@@ -1,7 +1,9 @@
 package com.omtorney.snapcase.presentation.detail
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.snapcase.domain.court.Courts
@@ -13,14 +15,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
-    private val caseUseCases: CaseUseCases
+    private val caseUseCases: CaseUseCases,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _state = mutableStateOf(DetailState())
     val state: State<DetailState> = _state
 
     init {
-        // caseParam
+        savedStateHandle.get<String>("caseNumber")?.let { caseNumber ->
+            Log.d("TESTLOG", "DetailViewModel: caseNumber: $caseNumber")
+            viewModelScope.launch {
+                _state.value = DetailState(case = caseUseCases.getCaseByNumber(caseNumber))
+            }
+        }
     }
 
     fun onEvent(event: DetailEvent) {
@@ -36,7 +44,8 @@ class DetailViewModel @Inject constructor(
                                 _state.value = DetailState(case = result.data)
                             }
                             is Resource.Error -> {
-                                _state.value = DetailState(error = result.message ?: "Unexpected error")
+                                _state.value =
+                                    DetailState(error = result.message ?: "Unexpected error")
                             }
                         }
                     }

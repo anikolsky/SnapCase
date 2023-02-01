@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.omtorney.snapcase.presentation.Screen
 import com.omtorney.snapcase.presentation.common.BottomBar
 import com.omtorney.snapcase.presentation.common.CaseColumn
 
@@ -31,7 +32,19 @@ fun SearchScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            CaseColumn(items = state.cases)
+            CaseColumn(
+                items = state.cases,
+                onCardClick = { case ->
+                    navController.navigate(Screen.Detail.route + "/$case") {
+                        popUpTo(Screen.Search.route) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                onActTextClick = {}
+            )
             if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }

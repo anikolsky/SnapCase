@@ -17,9 +17,12 @@ object DomainModule {
     fun provideCaseUseCases(repository: Repository): CaseUseCases {
         return CaseUseCases(
             checkCase = CheckCase(repository),
+            clearRecentCases = ClearRecentCases(repository),
             deleteCase = DeleteCase(repository),
             fillCase = FillCase(repository),
+            getCaseByNumber = GetCaseByNumber(repository),
             getFavoriteCases = GetFavoriteCases(repository),
+            getRecentCases = GetRecentCases(repository),
             loadActText = LoadActText(repository),
             saveCase = SaveCase(repository),
             searchCase = SearchCase(repository),

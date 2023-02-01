@@ -2,4 +2,8 @@
     <string name="app_name">SnapCase</string>
     <string name="search">Search</string>
     <string name="favorites">Favorites</string>
+    <string name="recent">Recent</string>
+    <string name="clear">Clear</string>
+    <string name="recent_list_empty">List of recent cases is empty</string>
+    <string name="favorite_list_empty">Favorite list is empty</string>
 </resources>

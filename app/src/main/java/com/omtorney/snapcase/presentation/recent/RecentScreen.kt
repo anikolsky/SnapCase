@@ -1,61 +1,67 @@
-package com.omtorney.snapcase.presentation.schedule
+package com.omtorney.snapcase.presentation.recent
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.omtorney.snapcase.domain.model.Case
+import com.omtorney.snapcase.R
 import com.omtorney.snapcase.presentation.common.BottomBar
 import com.omtorney.snapcase.presentation.common.CaseColumn
 
 @Composable
-fun ScheduleScreen(
+fun RecentScreen(
     navController: NavController,
-    onCardClick: (String) -> Unit,
-    viewModel: ScheduleViewModel = hiltViewModel()
+    viewModel: RecentViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier
 ) {
     val state = viewModel.state.value
 
     Scaffold(bottomBar = { BottomBar(navController = navController) }) { paddingValues ->
         Box(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(paddingValues)
+                .fillMaxWidth()
         ) {
             CaseColumn(
                 items = state.cases,
-                onCardClick = { case ->
-                    viewModel.cacheCase(case)
-                    onCardClick(case.number)
-                    Log.d("TESTLOG", "ScheduleScreen: case.number: ${case.number}")
-                },
+                onCardClick = {},
                 onActTextClick = {}
             )
-            if (state.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-            if (state.error.isNotBlank()) {
+            if (state.cases.isEmpty()) {
                 Text(
-                    text = state.error,
-                    color = MaterialTheme.colors.error,
+                    text = stringResource(R.string.recent_list_empty),
+                    color = Color.Gray,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp)
                         .align(Alignment.Center)
                 )
+            }
+            if (state.cases.isNotEmpty()) {
+                // TODO remove column overlay
+                Button(
+                    onClick = { viewModel.onEvent(RecentEvent.Clear) },
+                    shape = RectangleShape,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter)
+                ) {
+                    Text(text = stringResource(R.string.clear))
+                }
             }
         }
     }

@@ -8,37 +8,39 @@ import androidx.room.PrimaryKey
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
-@Parcelize
+//@Parcelize
 @Entity(tableName = "cases")
 data class Case(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int? = null,
-    var uid: String,
-    var url: String,
-    var number: String,
+    @PrimaryKey
+    var number: String = "",
+    var uid: String = "",
+    var url: String = "",
     @ColumnInfo(name = "hearing_date_time")
-    var hearingDateTime: String,
-    var category: String,
-    var participants: String,
-    var judge: String,
+    var hearingDateTime: String = "",
+    var category: String = "",
+    var participants: String = "",
+    var judge: String = "",
     @ColumnInfo(name = "act_date_time")
-    var actDateTime: String,
+    var actDateTime: String = "",
     @ColumnInfo(name = "receipt_date")
-    var receiptDate: String,
-    var result: String,
+    var receiptDate: String = "",
+    var result: String = "",
     @ColumnInfo(name = "act_date_force")
-    var actDateForce: String,
+    var actDateForce: String = "",
     @ColumnInfo(name = "act_text_url")
-    var actTextUrl: String,
+    var actTextUrl: String = "",
     @ColumnInfo(name = "last_event")
-    var lastEvent: String,
-    var notes: String
-) : Parcelable {
+    var lastEvent: String = "",
+    var notes: String = "",
+    @ColumnInfo(name = "is_favorite")
+    val isFavorite: Boolean = false
+//) : Parcelable {
+) {
 
-    @IgnoredOnParcel
+//    @IgnoredOnParcel
     @Ignore
     var process = mutableListOf<CaseProcess>()
-    @IgnoredOnParcel
+//    @IgnoredOnParcel
     @Ignore
     var appeal = mutableMapOf<String, String>()
 
@@ -72,7 +74,7 @@ data class CaseProcess(
     var time: String,
     var result: String,
     var cause: String,
-    var dateOfPublishing: String,
+    var dateOfPublishing: String
 ) {
     override fun toString(): String {
         var output = "$date в $time\n$event"

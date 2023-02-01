@@ -21,7 +21,7 @@ class FillCase @Inject constructor(
             val resultCase = page.fillCase(case, court)
             emit(Resource.Success(resultCase))
         } catch (e: Exception) {
-            emit(Resource.Error(message = e.localizedMessage ?: "Unexpected error"))
+            emit(Resource.Error(message = e.localizedMessage ?: "Unexpected error while filling case"))
         }
     }
 }
