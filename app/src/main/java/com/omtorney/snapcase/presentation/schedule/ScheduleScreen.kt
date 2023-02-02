@@ -39,7 +39,6 @@ fun ScheduleScreen(
                 onCardClick = { case ->
                     viewModel.cacheCase(case)
                     onCardClick(case.number)
-                    Log.d("TESTLOG", "ScheduleScreen: case.number: ${case.number}")
                 },
                 onActTextClick = {}
             )

@@ -1,6 +1,7 @@
 package com.omtorney.snapcase.presentation.recent
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
@@ -35,11 +36,23 @@ fun RecentScreen(
                 .padding(paddingValues)
                 .fillMaxWidth()
         ) {
-            CaseColumn(
-                items = state.cases,
-                onCardClick = {},
-                onActTextClick = {}
-            )
+            Column {
+                CaseColumn(
+                    items = state.cases,
+                    onCardClick = {},
+                    onActTextClick = {},
+                    modifier = Modifier.weight(1f)
+                )
+                if (state.cases.isNotEmpty()) {
+                    Button(
+                        onClick = { viewModel.onEvent(RecentEvent.Clear) },
+                        shape = RectangleShape,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = stringResource(R.string.clear))
+                    }
+                }
+            }
             if (state.cases.isEmpty()) {
                 Text(
                     text = stringResource(R.string.recent_list_empty),
@@ -51,18 +64,7 @@ fun RecentScreen(
                         .align(Alignment.Center)
                 )
             }
-            if (state.cases.isNotEmpty()) {
-                // TODO remove column overlay
-                Button(
-                    onClick = { viewModel.onEvent(RecentEvent.Clear) },
-                    shape = RectangleShape,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                ) {
-                    Text(text = stringResource(R.string.clear))
-                }
-            }
+
         }
     }
 }

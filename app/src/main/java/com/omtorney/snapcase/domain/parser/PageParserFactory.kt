@@ -1,7 +1,6 @@
 package com.omtorney.snapcase.domain.parser
 
 import com.omtorney.snapcase.domain.court.Court
-import com.omtorney.snapcase.data.remote.RemoteDataSource
 import com.omtorney.snapcase.domain.Repository
 import javax.inject.Inject
 
@@ -11,8 +10,8 @@ class PageParserFactory @Inject constructor(
 
     fun create(court: Court): PageParser {
         return when(court.type) {
-            PageType.NoMsk -> NoMskPageParser(repository)
-            PageType.Msk -> MskPageParser()
+            PageType.NoMsk -> PageParserNoMsk(repository)
+            PageType.Msk -> PageParserMsk()
         }
     }
 }

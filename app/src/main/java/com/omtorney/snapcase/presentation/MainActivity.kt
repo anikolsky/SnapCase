@@ -1,8 +1,6 @@
 package com.omtorney.snapcase.presentation
 
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,9 +12,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.findNavController
 import androidx.navigation.navArgument
-import com.omtorney.snapcase.R
 import com.omtorney.snapcase.presentation.act.ActScreen
 import com.omtorney.snapcase.presentation.detail.DetailScreen
 import com.omtorney.snapcase.presentation.favorites.FavoritesScreen
@@ -74,9 +70,9 @@ class MainActivity : ComponentActivity() {
                             ScheduleScreen(
                                 navController = navController,
                                 onCardClick = { caseNumber ->
-                                    Log.d("TESTLOG", "MainActivity: case.number: $caseNumber")
-                                    navController.navigate(Screen.Detail.route + "/$caseNumber") {
-                                        popUpTo(navController.graph.findStartDestination().id) {
+                                    val caseNumberParam = caseNumber.replace("/", "+")
+                                    navController.navigate(Screen.Detail.route + "/$caseNumberParam") {
+                                        popUpTo(Screen.Schedule.route) {
                                             saveState = true
                                         }
                                         launchSingleTop = true

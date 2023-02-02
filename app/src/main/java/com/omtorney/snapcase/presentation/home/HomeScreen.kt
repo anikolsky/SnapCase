@@ -120,7 +120,7 @@ fun SearchBlock(
     Card(
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
-        border = BorderStroke(1.dp, color = MaterialTheme.colors.primary),
+        border = BorderStroke(1.dp, color = MaterialTheme.colors.primary.copy(alpha = 0.4f)),
         modifier = Modifier.padding(16.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -181,7 +181,7 @@ fun ScheduleBlock(
     Card(
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
-        border = BorderStroke(1.dp, color = MaterialTheme.colors.primary),
+        border = BorderStroke(1.dp, color = MaterialTheme.colors.primary.copy(alpha = 0.4f)),
         modifier = Modifier.padding(16.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -193,7 +193,7 @@ fun ScheduleBlock(
                 shape = Shapes.small,
                 border = BorderStroke(
                     width = 1.dp,
-                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f)
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f)
                 )
             ) {
                 Text(text = date, style = MaterialTheme.typography.subtitle1)

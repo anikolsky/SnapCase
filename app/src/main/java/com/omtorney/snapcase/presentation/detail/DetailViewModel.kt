@@ -1,6 +1,5 @@
 package com.omtorney.snapcase.presentation.detail
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -24,9 +23,10 @@ class DetailViewModel @Inject constructor(
 
     init {
         savedStateHandle.get<String>("caseNumber")?.let { caseNumber ->
-            Log.d("TESTLOG", "DetailViewModel: caseNumber: $caseNumber")
+            val caseNumberParam = caseNumber.replace("+", "/")
             viewModelScope.launch {
-                _state.value = DetailState(case = caseUseCases.getCaseByNumber(caseNumber))
+                _state.value = DetailState(case = caseUseCases.getCaseByNumber(caseNumberParam))
+                onEvent(DetailEvent.Fill)
             }
         }
     }
@@ -35,17 +35,21 @@ class DetailViewModel @Inject constructor(
         when (event) {
             is DetailEvent.Fill -> {
                 viewModelScope.launch {
-                    caseUseCases.fillCase(event.case, Courts.Dmitrov).collect { result ->
+                    caseUseCases.fillCase(state.value.case!!, Courts.Dmitrov).collect { result ->
                         when (result) {
                             is Resource.Loading -> {
-                                _state.value = DetailState(isLoading = true)
+                                _state.value = state.value.copy(isLoading = true)
                             }
                             is Resource.Success -> {
-                                _state.value = DetailState(case = result.data)
+                                _state.value =
+                                    state.value.copy(case = result.data, isLoading = false)
                             }
                             is Resource.Error -> {
                                 _state.value =
-                                    DetailState(error = result.message ?: "Unexpected error")
+                                    state.value.copy(
+                                        error = result.message ?: "Unexpected error",
+                                        isLoading = false
+                                    )
                             }
                         }
                     }
@@ -56,7 +60,8 @@ class DetailViewModel @Inject constructor(
             }
             is DetailEvent.Save -> {
                 viewModelScope.launch {
-                    caseUseCases.saveCase(event.case)
+                    val case = event.case.copy(isFavorite = true)
+                    caseUseCases.saveCase(case)
                 }
             }
         }

@@ -33,6 +33,7 @@ fun CaseColumn(
                 item {
                     CaseCard(
                         case = case,
+                        isExpanded = false,
                         onCardClick = { onCardClick(it) },
                         onActTextClick = { onActTextClick(it) }
                     )

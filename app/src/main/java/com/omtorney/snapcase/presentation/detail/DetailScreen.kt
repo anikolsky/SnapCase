@@ -1,63 +1,66 @@
 package com.omtorney.snapcase.presentation.detail
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.omtorney.snapcase.R
 import com.omtorney.snapcase.presentation.common.CaseCard
+import com.omtorney.snapcase.presentation.ui.theme.Shapes
 
 @Composable
 fun DetailScreen(
-//    caseParam: Case,
-//    navController: NavController,
     viewModel: DetailViewModel = hiltViewModel()
 ) {
-//    viewModel.onEvent(event = DetailEvent.Fill(caseParam))
-
-    // TODO add flag when favorite case
-
     val state = viewModel.state.value
 
-    Box(
-        modifier = Modifier
-            .clip(shape = RoundedCornerShape(10.dp))
-            .background(color = MaterialTheme.colors.surface)
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 0.dp)
-    ) {
+    Box {
         Column {
             state.case?.let { case ->
                 CaseCard(
                     case = case,
+                    isExpanded = true,
                     onCardClick = {},
                     onActTextClick = {}
                 )
-                LazyColumn {
-                    case.process.map {
+                LazyColumn(modifier = Modifier.weight(1f)) {
+                    case.process.map { process ->
                         item {
-                            Card {
-                                Text(text = it.toString())
+                            Card(
+                                shape = Shapes.small,
+                                elevation = 6.dp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(2.dp)
+                            ) {
+                                Text(
+                                    text = process.toString(),
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                                )
                             }
                         }
                     }
+                    item {
+                        case.appealToString()
+                    }
                 }
-                LazyColumn {
-                    case.appealToString()
-                }
+            }
+            Button(
+                onClick = { viewModel.onEvent(DetailEvent.Save(state.case!!)) },
+                shape = RectangleShape,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = stringResource(R.string.save_favorites))
             }
         }
         if (state.isLoading) {

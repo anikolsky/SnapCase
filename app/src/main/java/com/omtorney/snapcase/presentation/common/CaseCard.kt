@@ -22,10 +22,11 @@ import com.omtorney.snapcase.presentation.ui.theme.SnapCaseTheme
 @Composable
 fun CaseCard(
     case: Case,
+    isExpanded: Boolean,
     onCardClick: (Case) -> Unit,
     onActTextClick: (String) -> Unit
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(isExpanded) }
 
     Card(
         shape = Shapes.small,
@@ -113,7 +114,7 @@ fun TextBlock(title: String, text: String) {
 @Composable
 private fun CaseCardPreview() {
     SnapCaseTheme {
-        CaseCard(testCase, {}, {})
+        CaseCard(testCase, true, {}, {})
     }
 }
 

@@ -27,7 +27,7 @@ fun BottomBar(navController: NavController) {
     BottomNavigation(
         elevation = 12.dp,
         backgroundColor = MaterialTheme.colors.primary,
-        contentColor = contentColorFor(backgroundColor = MaterialTheme.colors.primary),
+//        contentColor = contentColorFor(backgroundColor = MaterialTheme.colors.primary),
         modifier = Modifier.graphicsLayer {
             shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
             clip = true
@@ -45,8 +45,8 @@ fun BottomBar(navController: NavController) {
                     )
                 },
                 label = { Text(text = context.resources.getString(item.title!!)) },
-                selectedContentColor = Color.White,
-                unselectedContentColor = Color.White.copy(0.6f),
+//                selectedContentColor = Color.White,
+//                unselectedContentColor = Color.White.copy(0.6f),
                 alwaysShowLabel = true,
                 selected = currentRoute == item.route,
                 onClick = {

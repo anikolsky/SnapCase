@@ -1,20 +1,16 @@
 package com.omtorney.snapcase.domain.parser
 
 import android.util.Log
-import android.widget.Toast
 import com.omtorney.snapcase.domain.court.Court
 import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.domain.model.CaseProcess
-import com.omtorney.snapcase.data.remote.RemoteDataSource
 import com.omtorney.snapcase.domain.Repository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import javax.inject.Inject
 
-class NoMskPageParser @Inject constructor(
+class PageParserNoMsk @Inject constructor(
     private val repository: Repository
 ) : PageParser {
 
@@ -24,7 +20,7 @@ class NoMskPageParser @Inject constructor(
         try {
             document = Jsoup.parse(html)
         } catch (e: Exception) {
-            Log.d("TESTLOG", "NoMskPageParser (extractSchedule): ${e.message}")
+            Log.d("TESTLOG", "PageParserNoMsk (extractSchedule): ${e.message}")
         }
         val mainCard = document.select("div[id=content]")
         val searchResult = mainCard.select("table[id=tablcont]").first()
@@ -61,7 +57,7 @@ class NoMskPageParser @Inject constructor(
         try {
             document = Jsoup.parse(html)
         } catch (e: Exception) {
-            Log.d("TESTLOG", "NoMskPageParser (extractSearchResult): ${e.message}")
+            Log.d("TESTLOG", "PageParserNoMsk (extractSearchResult): ${e.message}")
         }
         val mainCard = document.select("div[id=content]")
         val searchResult = mainCard.select("table[id=tablcont]").first()

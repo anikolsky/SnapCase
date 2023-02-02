@@ -5,7 +5,7 @@ import com.omtorney.snapcase.domain.model.Case
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
-class MskPageParser : PageParser {
+class PageParserMsk : PageParser {
 
     override fun extractSchedule(html: String, court: Court): List<Case> {
         TODO("Not yet implemented")
