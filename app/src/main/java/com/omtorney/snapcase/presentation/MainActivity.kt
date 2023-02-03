@@ -20,6 +20,7 @@ import com.omtorney.snapcase.presentation.home.HomeScreen
 import com.omtorney.snapcase.presentation.recent.RecentScreen
 import com.omtorney.snapcase.presentation.schedule.ScheduleScreen
 import com.omtorney.snapcase.presentation.search.SearchScreen
+import com.omtorney.snapcase.presentation.settings.SettingsScreen
 import com.omtorney.snapcase.presentation.ui.theme.SnapCaseTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -53,6 +54,15 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onScheduleClick = { scheduleDate ->
                                     navController.navigate(Screen.Schedule.route + "/$scheduleDate") {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                },
+                                onSettingsClick = {
+                                    navController.navigate(Screen.Settings.route) {
                                         popUpTo(navController.graph.findStartDestination().id) {
                                             saveState = true
                                         }
@@ -104,11 +114,41 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(route = Screen.Favorites.route) {
-                            FavoritesScreen(navController = navController)
+                            FavoritesScreen(
+                                navController = navController,
+                                onSettingsClick = {
+                                    navController.navigate(Screen.Settings.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                },
+                                onBackClick = { navController.popBackStack() }
+                            )
                         }
 
                         composable(route = Screen.Recent.route) {
-                            RecentScreen(navController = navController)
+                            RecentScreen(
+                                navController = navController,
+                                onSettingsClick = {
+                                    navController.navigate(Screen.Settings.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                },
+                                onBackClick = { navController.popBackStack() }
+                            )
+                        }
+
+                        composable(route = Screen.Settings.route) {
+                            SettingsScreen(
+                                onBackClick = { navController.popBackStack() }
+                            )
                         }
                     }
                 }

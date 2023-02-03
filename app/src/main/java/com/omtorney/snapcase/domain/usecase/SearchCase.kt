@@ -19,7 +19,6 @@ class SearchCase @Inject constructor(
     suspend operator fun invoke(court: Court, query: String): Flow<Resource<List<Case>>> = flow {
         try {
             emit(Resource.Loading())
-//            Log.d("TESTLOG", "SearchCase: loading... ")
             var sideName = ""
             var caseNumber = ""
             if (query.contains("[а-яА-Яa-zA-Z]".toRegex()))
@@ -36,10 +35,8 @@ class SearchCase @Inject constructor(
             val page = PageParserFactory(repository).create(court)
             val result = page.extractSearchResult(html, court)
             emit(Resource.Success(result))
-//            Log.d("TESTLOG", "SearchCase: emitting result: $result ")
         } catch (e: Exception) {
             emit(Resource.Error(message = e.localizedMessage ?: "Unexpected error while searching for cases"))
-//            Log.d("TESTLOG", "SearchCase: error: ${e.message} ")
         }
     }
 }

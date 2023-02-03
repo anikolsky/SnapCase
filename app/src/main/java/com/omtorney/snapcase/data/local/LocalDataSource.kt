@@ -20,4 +20,10 @@ interface LocalDataSource {
     fun getFavoriteCases(): Flow<List<Case>>
 
     fun getRecentCases(): Flow<List<Case>>
+
+    val getAccentColor: Flow<Long>
+
+    suspend fun setAccentColor(color: Long)
+
+    val getInitialColor: Long
 }

@@ -1,9 +1,6 @@
 package com.omtorney.snapcase.presentation.favorites
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -16,28 +13,35 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omtorney.snapcase.R
-import com.omtorney.snapcase.presentation.common.BottomBar
-import com.omtorney.snapcase.presentation.common.CaseColumn
+import com.omtorney.snapcase.presentation.common.*
 
 @Composable
 fun FavoritesScreen(
     navController: NavController,
+    onSettingsClick: () -> Unit,
+    onBackClick: () -> Unit,
     viewModel: FavoritesViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
     val state = viewModel.state.value
 
-    Scaffold(bottomBar = { BottomBar(navController = navController) }) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ) {
-            CaseColumn(
-                items = state.cases,
-                onCardClick = {},
-                onActTextClick = {}
-            )
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        bottomBar = { BottomBar(navController = navController) }
+    ) { paddingValues ->
+        Box(modifier = Modifier.padding(paddingValues)) {
+            Column {
+                TopBar {
+                    BackButton { onBackClick() }
+                    AppName(modifier = Modifier.weight(1f))
+                    SettingsButton { onSettingsClick() }
+                }
+                CaseColumn(
+                    items = state.cases,
+                    onCardClick = {},
+                    onActTextClick = {}
+                )
+            }
             if (state.cases.isEmpty()) {
                 Text(
                     text = stringResource(R.string.favorite_list_empty),

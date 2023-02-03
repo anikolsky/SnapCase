@@ -15,7 +15,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.omtorney.snapcase.presentation.common.AppName
 import com.omtorney.snapcase.presentation.common.BottomBar
+import com.omtorney.snapcase.presentation.common.SettingsButton
+import com.omtorney.snapcase.presentation.common.TopBar
 import com.omtorney.snapcase.presentation.home.components.Spinner
 import com.omtorney.snapcase.presentation.ui.theme.Shapes
 import com.omtorney.snapcase.presentation.ui.theme.Typography
@@ -31,7 +34,8 @@ import java.time.format.DateTimeFormatter
 fun HomeScreen(
     navController: NavController,
     onSearchClick: (String) -> Unit,
-    onScheduleClick: (String) -> Unit
+    onScheduleClick: (String) -> Unit,
+    onSettingsClick: () -> Unit,
 ) {
     val scaffoldState = rememberScaffoldState()
     val dateDialogState = rememberMaterialDialogState()
@@ -41,27 +45,33 @@ fun HomeScreen(
             DateTimeFormatter.ofPattern("dd.MM.yyyy").format(pickedDate)
         }
     }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         scaffoldState = scaffoldState,
-        bottomBar = { BottomBar(navController = navController) },
-        content = { padding ->
-            Column(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                SearchBlock(onSearchClick = { onSearchClick(it) })
-                ScheduleBlock(
-                    dateDialogState = dateDialogState,
-                    date = formattedDate,
-                    onScheduleClick = { onScheduleClick(it) }
-                )
-            }
+        bottomBar = { BottomBar(navController = navController) }
+    ) { paddingValues ->
+        TopBar {
+            AppName(modifier = Modifier.weight(1f))
+            SettingsButton { onSettingsClick() }
         }
-    )
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+
+            SearchBlock(onSearchClick = { onSearchClick(it) })
+            ScheduleBlock(
+                dateDialogState = dateDialogState,
+                date = formattedDate,
+                onScheduleClick = { onScheduleClick(it) }
+            )
+        }
+    }
+
     MaterialDialog(
         dialogState = dateDialogState,
         buttons = {
@@ -221,5 +231,5 @@ fun ScheduleBlock(
 @Composable
 fun PreviewMainScreen() {
     val navController = rememberNavController()
-    HomeScreen(navController = navController, {}, {})
+    HomeScreen(navController = navController, {}, {}, {})
 }

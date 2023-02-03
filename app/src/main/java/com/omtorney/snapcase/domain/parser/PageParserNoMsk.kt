@@ -232,4 +232,8 @@ class PageParserNoMsk @Inject constructor(
         } else pagesUrls = arrayListOf(searchUrl)
         return pagesUrls
     }
+
+    private fun parseHtml() {
+
+    }
 }

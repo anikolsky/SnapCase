@@ -1,9 +1,6 @@
 package com.omtorney.snapcase.presentation.recent
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -19,24 +16,29 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omtorney.snapcase.R
-import com.omtorney.snapcase.presentation.common.BottomBar
-import com.omtorney.snapcase.presentation.common.CaseColumn
+import com.omtorney.snapcase.presentation.common.*
 
 @Composable
 fun RecentScreen(
     navController: NavController,
+    onSettingsClick: () -> Unit,
+    onBackClick: () -> Unit,
     viewModel: RecentViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
     val state = viewModel.state.value
 
-    Scaffold(bottomBar = { BottomBar(navController = navController) }) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxWidth()
-        ) {
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        bottomBar = { BottomBar(navController = navController) }
+    ) { paddingValues ->
+        Box(modifier = Modifier.padding(paddingValues)) {
             Column {
+                TopBar {
+                    BackButton { onBackClick() }
+                    AppName(modifier = Modifier.weight(1f))
+                    SettingsButton { onSettingsClick() }
+                }
                 CaseColumn(
                     items = state.cases,
                     onCardClick = {},

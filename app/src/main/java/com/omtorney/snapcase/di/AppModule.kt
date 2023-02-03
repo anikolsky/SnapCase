@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.omtorney.snapcase.data.database.AppDatabase
 import com.omtorney.snapcase.data.database.CaseDao
+import com.omtorney.snapcase.data.local.SettingsStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,5 +29,11 @@ class AppModule {
             AppDatabase::class.java,
             "SnapCase_DB"
         ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSettingsStore(@ApplicationContext appContext: Context): SettingsStore {
+        return SettingsStore(appContext)
     }
 }

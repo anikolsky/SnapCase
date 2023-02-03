@@ -1,9 +1,9 @@
 package com.omtorney.snapcase.presentation.common
 
-import android.content.Context
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -11,7 +11,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.omtorney.snapcase.presentation.Screen
@@ -26,8 +25,8 @@ fun BottomBar(navController: NavController) {
 
     BottomNavigation(
         elevation = 12.dp,
-        backgroundColor = MaterialTheme.colors.primary,
-//        contentColor = contentColorFor(backgroundColor = MaterialTheme.colors.primary),
+//        backgroundColor = Color(accentColor),
+//        contentColor = contentColorFor(backgroundColor = Color(accentColor)),
         modifier = Modifier.graphicsLayer {
             shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
             clip = true

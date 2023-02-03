@@ -2,6 +2,9 @@ package com.omtorney.snapcase.di
 
 import com.omtorney.snapcase.domain.Repository
 import com.omtorney.snapcase.domain.usecase.*
+import com.omtorney.snapcase.domain.usecase.settings.GetAccentColor
+import com.omtorney.snapcase.domain.usecase.settings.SetAccentColor
+import com.omtorney.snapcase.domain.usecase.settings.SettingsUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,6 +31,15 @@ object DomainModule {
             searchCase = SearchCase(repository),
             showSchedule = ShowSchedule(repository),
             updateCase = UpdateCase(repository)
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideSettingsUseCases(repository: Repository): SettingsUseCases {
+        return SettingsUseCases(
+            getAccentColor = GetAccentColor(repository),
+            setAccentColor = SetAccentColor(repository)
         )
     }
 }
