@@ -15,16 +15,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.omtorney.snapcase.presentation.common.AppName
-import com.omtorney.snapcase.presentation.common.BottomBar
-import com.omtorney.snapcase.presentation.common.SettingsButton
-import com.omtorney.snapcase.presentation.common.TopBar
+import com.omtorney.snapcase.presentation.common.*
 import com.omtorney.snapcase.presentation.home.components.Spinner
 import com.omtorney.snapcase.presentation.ui.theme.Shapes
 import com.omtorney.snapcase.presentation.ui.theme.Typography
+import com.omtorney.snapcase.R
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.MaterialDialogState
-import com.vanpra.composematerialdialogs.datetime.R
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalDate
@@ -52,7 +49,10 @@ fun HomeScreen(
         bottomBar = { BottomBar(navController = navController) }
     ) { paddingValues ->
         TopBar {
-            AppName(modifier = Modifier.weight(1f))
+            TopBarTitle(
+                title = R.string.app_title,
+                modifier = Modifier.weight(1f)
+            )
             SettingsButton { onSettingsClick() }
         }
         Column(
@@ -109,7 +109,7 @@ fun SpinnerBlock(
                 Text(item)
 
                 Icon(
-                    painter = painterResource(id = R.drawable.baseline_arrow_drop_down_24),
+                    painter = painterResource(id = R.drawable.ic_round_arrow_drop_down),
                     contentDescription = ""
                 )
             }
@@ -203,7 +203,7 @@ fun ScheduleBlock(
                 shape = Shapes.small,
                 border = BorderStroke(
                     width = 1.dp,
-                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f)
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f)
                 )
             ) {
                 Text(text = date, style = MaterialTheme.typography.subtitle1)

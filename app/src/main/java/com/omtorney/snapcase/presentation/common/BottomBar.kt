@@ -40,10 +40,10 @@ fun BottomBar(navController: NavController) {
                 icon = {
                     Icon(
                         painter = painterResource(id = item.icon!!),
-                        contentDescription = context.resources.getString(item.title!!)
+                        contentDescription = context.resources.getString(item.title)
                     )
                 },
-                label = { Text(text = context.resources.getString(item.title!!)) },
+                label = { Text(text = context.resources.getString(item.title)) },
 //                selectedContentColor = Color.White,
 //                unselectedContentColor = Color.White.copy(0.6f),
                 alwaysShowLabel = true,

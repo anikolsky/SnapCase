@@ -16,12 +16,7 @@ class PageParserNoMsk @Inject constructor(
 
     override fun extractSchedule(html: String, court: Court): List<Case> {
         val caseList = mutableListOf<Case>()
-        var document = Document("")
-        try {
-            document = Jsoup.parse(html)
-        } catch (e: Exception) {
-            Log.d("TESTLOG", "PageParserNoMsk (extractSchedule): ${e.message}")
-        }
+        val document = parseHtmlToDocument(html)
         val mainCard = document.select("div[id=content]")
         val searchResult = mainCard.select("table[id=tablcont]").first()
         val resultLines = searchResult?.getElementsByAttributeValue("valign", "top")
@@ -33,7 +28,7 @@ class PageParserNoMsk @Inject constructor(
                 number = getCaseNumber(lineElements[1].text()),
                 hearingDateTime = lineElements[2].text(),
                 category = getCaseCategory(info),
-                participants = "${getCasePlaintiff(info)}\n${getCaseDefendant(info)}",
+                participants = "${getPlaintiff(info)}\n${getDefendant(info)}",
                 judge = lineElements[5].text(),
                 result = lineElements[6].text(),
                 actTextUrl = getCaseActUrl(lineElements[7], court),
@@ -53,12 +48,7 @@ class PageParserNoMsk @Inject constructor(
         val caseList = mutableListOf<Case>()
         // TODO: загружается только первый лист результатов, обернуть в цикл, вызвать createPagesUrlsList()
         // TODO: загружать следующие страницы только по запросу
-        var document = Document("")
-        try {
-            document = Jsoup.parse(html)
-        } catch (e: Exception) {
-            Log.d("TESTLOG", "PageParserNoMsk (extractSearchResult): ${e.message}")
-        }
+        val document = parseHtmlToDocument(html)
         val mainCard = document.select("div[id=content]")
         val searchResult = mainCard.select("table[id=tablcont]").first()
         val resultLines = searchResult!!.getElementsByAttributeValue("valign", "top")
@@ -70,7 +60,7 @@ class PageParserNoMsk @Inject constructor(
                 number = getCaseNumber(resultElement[0].text()),
                 receiptDate = resultElement[1].text(),
                 category = getCaseCategory(info),
-                participants = "${getCasePlaintiff(info)} ${getCaseDefendant(info)}",
+                participants = "${getPlaintiff(info)} ${getDefendant(info)}",
                 judge = resultElement[3].text(),
                 actDateTime = resultElement[4].text(),
                 result = resultElement[5].text(),
@@ -159,21 +149,30 @@ class PageParserNoMsk @Inject constructor(
         return act
     }
 
-    override fun getCasePlaintiff(info: String): String {
-        return if (info.contains("ИСТЕЦ") && !info.contains("ОТВЕТЧИК"))
+    override fun getPlaintiff(info: String): String {
+        return if (info.contains("АДМ. ИСТЕЦ") && !info.contains("ОТВЕТЧИК"))
+            info.substring(info.indexOf("АДМ. ИСТЕЦ"))
+        else if (info.contains("АДМ. ИСТЕЦ"))
+            info.substring(info.indexOf("АДМ. ИСТЕЦ"), info.indexOf("АДМ. ОТВЕТЧИК") - 1)
+        else if (info.contains("ИСТЕЦ") && !info.contains("ОТВЕТЧИК"))
             info.substring(info.indexOf("ИСТЕЦ"))
         else if (info.contains("ИСТЕЦ"))
             info.substring(info.indexOf("ИСТЕЦ"), info.indexOf("ОТВЕТЧИК") - 1)
         else ""
     }
 
-    override fun getCaseDefendant(info: String): String {
-        return if (info.contains("ОТВЕТЧИК")) info.substring(info.indexOf("ОТВЕТЧИК"))
+    override fun getDefendant(info: String): String {
+        return if (info.contains("АДМ. ОТВЕТЧИК")) {
+            info.substring(info.indexOf("АДМ. ОТВЕТЧИК"))
+        }
+        else if (info.contains("ОТВЕТЧИК")) {
+            info.substring(info.indexOf("ОТВЕТЧИК"))
+        }
         else if (info.contains("ПРАВОНАРУШЕНИЕ")) {
             if (info.contains("-")) {
                 info.substring(info.indexOf(":") + 1, info.indexOfLast { it == '-' } - 1)
             } else info.substring(info.indexOf(":") + 1)
-        } else ""
+        } else info
     }
 
     override fun getCaseCategory(info: String): String {
@@ -190,50 +189,49 @@ class PageParserNoMsk @Inject constructor(
     override fun getCaseNumber(numberString: String): String {
         return if (numberString.contains("~"))
             numberString.substring(0, numberString.indexOf("~") - 1)
-        else numberString
+        else
+            numberString
     }
 
     override fun getCaseActUrl(element: Element, court: Court): String {
         val linkToAct = element.select("a").attr("href")
-        return if (linkToAct.isNotEmpty()) court.basicUrl + linkToAct else ""
+        return if (linkToAct.isNotEmpty())
+            court.basicUrl + linkToAct
+        else ""
     }
 
-    override fun createPagesUrlsList(
-        page: Document,
-        searchUrl: String,
-        court: Court
-    ): List<String> {
+    override fun createPagesUrlsList(page: Document, searchUrl: String, court: Court)
+            : List<String> {
         val pagesUrls: List<String>
-
         /** Получить предыдущий элемент того же уровня (из-за особенностей верстки сайта) */
         val pageList = page.select("table[id=tablcont]").first()!!.previousElementSibling()
         val ahrefs = pageList!!.getElementsByTag("a")
-
         /** Если страниц несколько */
         if (ahrefs.size > 0) {
-
             /** Получить ссылку на последнюю страницу */
             val lastPageUrl = ahrefs[ahrefs.size - 1]?.attr("href")
             val pageVarIndex = lastPageUrl!!.indexOf("page")
-
             /** Получить общее число страниц */
             val pagesTotal = lastPageUrl
                 .substring(pageVarIndex + 5, lastPageUrl.indexOf('&', pageVarIndex))
                 .toInt()
-
             /** Добавить все ссылки в массив */
             pagesUrls = List(pagesTotal) { index ->
                 court.basicUrl + lastPageUrl
                     .removeRange(0, 1)
                     .replace("page=$pagesTotal", "page=${index + 1}")
             }
-
             /** Если страница одна */
         } else pagesUrls = arrayListOf(searchUrl)
         return pagesUrls
     }
 
-    private fun parseHtml() {
-
+    private fun parseHtmlToDocument(html: String): Document {
+        return try {
+            Jsoup.parse(html)
+        } catch (e: Exception) {
+            Log.d("TESTLOG", "PageParserNoMsk (parseHtmlToDocument) error: ${e.message}")
+            Document("")
+        }
     }
 }

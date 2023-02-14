@@ -1,12 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SnapCase</string>
-    <string name="search">Search</string>
-    <string name="favorites">Favorites</string>
-    <string name="recent">Recent</string>
-    <string name="clear">Clear</string>
-    <string name="recent_list_empty">List of recent cases is empty</string>
-    <string name="favorite_list_empty">Favorite list is empty</string>
-    <string name="save_favorites">Save to favorites</string>
-    <string name="dismiss">Dismiss</string>
-    <string name="select">Select</string>
+    <string name="app_name" translatable="false">SnapCase</string>
+    <string name="app_title">Картотека судебных дел</string>
+    <string name="schedule">Расписание</string>
+    <string name="search">Поиск</string>
+    <string name="detail">Детали</string>
+    <string name="favorites">Избранное</string>
+    <string name="recent">Недавнее</string>
+    <string name="act">Судебный акт</string>
+    <string name="settings">Настройки</string>
+    <string name="clear">Очистить</string>
+    <string name="dismiss">Закрыть</string>
+    <string name="select">Выбрать</string>
+    <string name="save_favorites">Сохранить в избранное</string>
+    <string name="recent_list_empty">Список недавних дел пуст</string>
+    <string name="favorite_list_empty">Список избранных дел пуст</string>
 </resources>

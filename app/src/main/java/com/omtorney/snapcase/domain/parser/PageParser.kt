@@ -16,9 +16,9 @@ interface PageParser {
     suspend fun extractActText(url: String): ArrayList<String>
 
 
-    fun getCasePlaintiff(info: String): String
+    fun getPlaintiff(info: String): String
 
-    fun getCaseDefendant(info: String): String
+    fun getDefendant(info: String): String
 
     fun getCaseCategory(info: String): String
 

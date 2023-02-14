@@ -19,9 +19,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.skydoves.colorpicker.compose.*
 import com.omtorney.snapcase.R
-import com.omtorney.snapcase.presentation.common.AppName
+import com.omtorney.snapcase.presentation.Screen
 import com.omtorney.snapcase.presentation.common.BackButton
 import com.omtorney.snapcase.presentation.common.TopBar
+import com.omtorney.snapcase.presentation.common.TopBarTitle
 import com.omtorney.snapcase.presentation.ui.theme.SnapCaseTheme
 
 @Composable
@@ -35,12 +36,15 @@ fun SettingsScreen(
     Column {
         TopBar {
             BackButton { onBackClick() }
-            AppName(modifier = Modifier.weight(1f))
+            TopBarTitle(
+                title = Screen.Settings.title,
+                modifier = Modifier.weight(1f)
+            )
         }
         SettingsMenuButton(
             icon = R.drawable.round_color,
-            title = "Accent color",
-            subtitle = "Select general color for application",
+            title = "Акцентный цвет",
+            subtitle = "Выберите дополнительный цвет приложения",
             onClick = { colorPickerOpened = true }
         )
     }
@@ -79,7 +83,7 @@ fun SettingsMenuButton(
             Text(text = subtitle, style = MaterialTheme.typography.caption)
         }
         Button(onClick = onClick) {
-            Text(text = "Select")
+            Text(text = "Выбрать")
         }
     }
 }

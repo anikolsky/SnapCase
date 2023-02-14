@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omtorney.snapcase.R
+import com.omtorney.snapcase.presentation.Screen
 import com.omtorney.snapcase.presentation.common.*
 
 @Composable
@@ -36,7 +37,10 @@ fun RecentScreen(
             Column {
                 TopBar {
                     BackButton { onBackClick() }
-                    AppName(modifier = Modifier.weight(1f))
+                    TopBarTitle(
+                        title = Screen.Recent.title,
+                        modifier = Modifier.weight(1f)
+                    )
                     SettingsButton { onSettingsClick() }
                 }
                 CaseColumn(
