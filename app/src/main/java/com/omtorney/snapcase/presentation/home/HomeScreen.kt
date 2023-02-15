@@ -3,11 +3,14 @@ package com.omtorney.snapcase.presentation.home
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -15,11 +18,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.omtorney.snapcase.presentation.common.*
+import com.omtorney.snapcase.R
+import com.omtorney.snapcase.presentation.common.BottomBar
+import com.omtorney.snapcase.presentation.common.SettingsButton
+import com.omtorney.snapcase.presentation.common.TopBar
+import com.omtorney.snapcase.presentation.common.TopBarTitle
 import com.omtorney.snapcase.presentation.home.components.Spinner
 import com.omtorney.snapcase.presentation.ui.theme.Shapes
-import com.omtorney.snapcase.presentation.ui.theme.Typography
-import com.omtorney.snapcase.R
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.MaterialDialogState
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
@@ -36,33 +41,41 @@ fun HomeScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
     val dateDialogState = rememberMaterialDialogState()
+    val scrollState = rememberScrollState()
     var pickedDate by remember { mutableStateOf(LocalDate.now()) }
     val formattedDate by remember {
         derivedStateOf {
             DateTimeFormatter.ofPattern("dd.MM.yyyy").format(pickedDate)
         }
     }
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopBar {
+                TopBarTitle(
+                    title = R.string.app_title,
+                    modifier = Modifier.weight(1f)
+                )
+                SettingsButton { onSettingsClick() }
+            }
+        },
         scaffoldState = scaffoldState,
         bottomBar = { BottomBar(navController = navController) }
     ) { paddingValues ->
-        TopBar {
-            TopBarTitle(
-                title = R.string.app_title,
-                modifier = Modifier.weight(1f)
-            )
-            SettingsButton { onSettingsClick() }
-        }
         Column(
             modifier = Modifier
                 .padding(paddingValues)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .fillMaxSize()
+                .verticalScroll(scrollState),
             verticalArrangement = Arrangement.Center
         ) {
-
+            SpinnerBlock(
+                availableQuantities = listOf(
+                    "Дмитровский городской"
+                ),
+                selectedItem = "Дмитровский городской",
+                onItemSelected = {}
+            )
             SearchBlock(onSearchClick = { onSearchClick(it) })
             ScheduleBlock(
                 dateDialogState = dateDialogState,
@@ -71,7 +84,6 @@ fun HomeScreen(
             )
         }
     }
-
     MaterialDialog(
         dialogState = dateDialogState,
         buttons = {
@@ -94,30 +106,62 @@ fun SpinnerBlock(
     selectedItem: String,
     onItemSelected: (String) -> Unit
 ) {
-    Spinner(
-        modifier = Modifier.wrapContentSize(),
-        dropDownModifier = Modifier.wrapContentSize(),
-        items = availableQuantities,
-        selectedItem = selectedItem,
-        onItemSelected = onItemSelected,
-        selectedItemFactory = { modifier, item ->
-            Row(
-                modifier = modifier
-                    .padding(8.dp)
-                    .wrapContentSize()
-            ) {
-                Text(item)
-
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_round_arrow_drop_down),
-                    contentDescription = ""
-                )
-            }
-        },
-        dropdownItemFactory = { item, _ ->
-            Text(text = item)
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        backgroundColor = MaterialTheme.colors.surface,
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colors.primary.copy(alpha = 0.4f)
+        ),
+        modifier = Modifier
+            .padding(horizontal = 14.dp, vertical = 8.dp)
+            .fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Выберите суд",
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.align(CenterHorizontally)
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Spinner(
+                dropDownModifier = Modifier.wrapContentSize(),
+                items = availableQuantities,
+                selectedItem = selectedItem,
+                onItemSelected = onItemSelected,
+                selectedItemFactory = { modifier, item ->
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = modifier
+                            .padding(12.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = item,
+                            style = MaterialTheme.typography.body1
+                        )
+                        Icon(
+                            painter = painterResource(R.drawable.ic_round_arrow_drop_down),
+                            contentDescription = "Drop down"
+                        )
+                    }
+                },
+                dropdownItemFactory = { item, _ ->
+                    Text(
+                        text = item,
+                        style = MaterialTheme.typography.body1
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colors.primary,
+                        shape = MaterialTheme.shapes.small
+                    )
+            )
         }
-    )
+    }
 }
 
 @Composable
@@ -130,36 +174,31 @@ fun SearchBlock(
     Card(
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
-        border = BorderStroke(1.dp, color = MaterialTheme.colors.primary.copy(alpha = 0.4f)),
-        modifier = Modifier.padding(16.dp)
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colors.primary.copy(alpha = 0.4f)
+        ),
+        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            SpinnerBlock(
-                listOf(
-                    "Дмитровский городской",
-//                    "Дорогомиловский районный"
-                ),
-                "Дмитровский городской"
-            ) {}
-//            SpinnerBlock(
-//                listOf(
-//                    "Гражданское судопроизводство",
-//                      "Административное судопроизводство"
-//                ),
-//                "Гражданское судопроизводство"
-//            ) {}
+        Column(modifier = Modifier.padding(12.dp)) {
             OutlinedTextField(
                 value = input,
-                textStyle = Typography.body1,
-                label = { Text("Введите имя или номер дела") },
+                placeholder = {
+                    Text(
+                        text = "Введите имя или номер дела",
+                        style = MaterialTheme.typography.body2,
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f)
+                    )
+                },
                 onValueChange = { input = it },
                 singleLine = true,
                 maxLines = 1,
                 shape = Shapes.small,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(55.dp)
             )
             Spacer(modifier = Modifier.height(12.dp))
-
             Button(
                 modifier = Modifier
                     .height(40.dp)
@@ -171,13 +210,17 @@ fun SearchBlock(
                             context,
                             "Введите имя участника или номер дела",
                             Toast.LENGTH_SHORT
-                        )
-                            .show()
+                        ).show()
                     } else {
                         onSearchClick(input)
                     }
                 }
-            ) { Text(text = "ПОИСК") }
+            ) {
+                Text(
+                    text = "Поиск дел",
+                    style = MaterialTheme.typography.button
+                )
+            }
         }
     }
 }
@@ -191,31 +234,46 @@ fun ScheduleBlock(
     Card(
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
-        border = BorderStroke(1.dp, color = MaterialTheme.colors.primary.copy(alpha = 0.4f)),
-        modifier = Modifier.padding(16.dp)
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colors.primary.copy(alpha = 0.4f)
+        ),
+        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth()
+        ) {
             OutlinedButton(
-                modifier = Modifier
-                    .height(40.dp)
-                    .fillMaxWidth(),
                 onClick = { dateDialogState.show() },
                 shape = Shapes.small,
                 border = BorderStroke(
                     width = 1.dp,
-                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f)
-                )
+                    color = MaterialTheme.colors.primary
+                ),
+                modifier = Modifier
+                    .height(40.dp)
+                    .fillMaxWidth()
             ) {
-                Text(text = date, style = MaterialTheme.typography.subtitle1)
+                Text(
+                    text = date,
+                    style = MaterialTheme.typography.body1
+                )
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Button(
                 modifier = Modifier
                     .height(40.dp)
                     .fillMaxWidth(),
                 shape = Shapes.small,
                 onClick = { onScheduleClick(date) }
-            ) { Text("ПОКАЗАТЬ РАСПИСАНИЕ") }
+            ) {
+                Text(
+                    text = "Показать расписание",
+                    style = MaterialTheme.typography.button
+                )
+            }
         }
     }
 }

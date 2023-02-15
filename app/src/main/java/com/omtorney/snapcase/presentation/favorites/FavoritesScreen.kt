@@ -18,34 +18,34 @@ import com.omtorney.snapcase.presentation.common.*
 
 @Composable
 fun FavoritesScreen(
+    modifier: Modifier = Modifier,
     navController: NavController,
     onSettingsClick: () -> Unit,
     onBackClick: () -> Unit,
-    viewModel: FavoritesViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    viewModel: FavoritesViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
 
     Scaffold(
-        modifier = modifier.fillMaxSize(),
-        bottomBar = { BottomBar(navController = navController) }
+        topBar = {
+            TopBar {
+                BackButton { onBackClick() }
+                TopBarTitle(
+                    title = Screen.Favorites.title,
+                    modifier = Modifier.weight(1f)
+                )
+                SettingsButton { onSettingsClick() }
+            }
+        },
+        bottomBar = { BottomBar(navController = navController) },
+        modifier = modifier.fillMaxSize()
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
-            Column {
-                TopBar {
-                    BackButton { onBackClick() }
-                    TopBarTitle(
-                        title = Screen.Favorites.title,
-                        modifier = Modifier.weight(1f)
-                    )
-                    SettingsButton { onSettingsClick() }
-                }
-                CaseColumn(
-                    items = state.cases,
-                    onCardClick = {},
-                    onActTextClick = {}
-                )
-            }
+            CaseColumn(
+                items = state.cases,
+                onCardClick = {},
+                onActTextClick = {}
+            )
             if (state.cases.isEmpty()) {
                 Text(
                     text = stringResource(R.string.favorite_list_empty),

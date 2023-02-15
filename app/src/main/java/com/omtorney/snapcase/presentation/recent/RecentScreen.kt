@@ -21,28 +21,30 @@ import com.omtorney.snapcase.presentation.common.*
 
 @Composable
 fun RecentScreen(
+    modifier: Modifier = Modifier,
     navController: NavController,
     onSettingsClick: () -> Unit,
     onBackClick: () -> Unit,
-    viewModel: RecentViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    viewModel: RecentViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
 
     Scaffold(
-        modifier = modifier.fillMaxSize(),
-        bottomBar = { BottomBar(navController = navController) }
+        topBar = {
+            TopBar {
+                BackButton { onBackClick() }
+                TopBarTitle(
+                    title = Screen.Recent.title,
+                    modifier = Modifier.weight(1f)
+                )
+                SettingsButton { onSettingsClick() }
+            }
+        },
+        bottomBar = { BottomBar(navController = navController) },
+        modifier = modifier.fillMaxSize()
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             Column {
-                TopBar {
-                    BackButton { onBackClick() }
-                    TopBarTitle(
-                        title = Screen.Recent.title,
-                        modifier = Modifier.weight(1f)
-                    )
-                    SettingsButton { onSettingsClick() }
-                }
                 CaseColumn(
                     items = state.cases,
                     onCardClick = {},
