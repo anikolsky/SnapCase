@@ -95,7 +95,7 @@ fun DetailScreen(
                     shape = RectangleShape,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = stringResource(R.string.save_favorites))
+                    Text(text = stringResource(R.string.save_favorites).uppercase())
                 }
             }
             if (state.isLoading) {

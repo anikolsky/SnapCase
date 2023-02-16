@@ -10,10 +10,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -109,10 +111,10 @@ fun SpinnerBlock(
     Card(
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
-        border = BorderStroke(
-            width = 1.dp,
-            color = MaterialTheme.colors.primary.copy(alpha = 0.4f)
-        ),
+//        border = BorderStroke(
+//            width = 1.dp,
+//            color = MaterialTheme.colors.primary.copy(alpha = 0.4f)
+//        ),
         modifier = Modifier
             .padding(horizontal = 14.dp, vertical = 8.dp)
             .fillMaxWidth()
@@ -132,6 +134,7 @@ fun SpinnerBlock(
                 selectedItemFactory = { modifier, item ->
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = modifier
                             .padding(12.dp)
                             .fillMaxWidth()
@@ -174,10 +177,10 @@ fun SearchBlock(
     Card(
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
-        border = BorderStroke(
-            width = 1.dp,
-            color = MaterialTheme.colors.primary.copy(alpha = 0.4f)
-        ),
+//        border = BorderStroke(
+//            width = 1.dp,
+//            color = MaterialTheme.colors.primary.copy(alpha = 0.4f)
+//        ),
         modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
@@ -185,9 +188,9 @@ fun SearchBlock(
                 value = input,
                 placeholder = {
                     Text(
-                        text = "Введите имя или номер дела",
-                        style = MaterialTheme.typography.body2,
-                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f)
+                        text = stringResource(R.string.enter_participant_or_number),
+                        style = MaterialTheme.typography.body1,
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f)
                     )
                 },
                 onValueChange = { input = it },
@@ -208,7 +211,7 @@ fun SearchBlock(
                     if (input.isEmpty()) {
                         Toast.makeText(
                             context,
-                            "Введите имя участника или номер дела",
+                            R.string.enter_participant_or_number,
                             Toast.LENGTH_SHORT
                         ).show()
                     } else {
@@ -217,7 +220,7 @@ fun SearchBlock(
                 }
             ) {
                 Text(
-                    text = "Поиск дел",
+                    text = stringResource(R.string.search_cases).uppercase(),
                     style = MaterialTheme.typography.button
                 )
             }
@@ -234,10 +237,10 @@ fun ScheduleBlock(
     Card(
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
-        border = BorderStroke(
-            width = 1.dp,
-            color = MaterialTheme.colors.primary.copy(alpha = 0.4f)
-        ),
+//        border = BorderStroke(
+//            width = 1.dp,
+//            color = MaterialTheme.colors.primary.copy(alpha = 0.4f)
+//        ),
         modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
     ) {
         Column(
@@ -270,7 +273,7 @@ fun ScheduleBlock(
                 onClick = { onScheduleClick(date) }
             ) {
                 Text(
-                    text = "Показать расписание",
+                    text = stringResource(R.string.show_schedule).uppercase(),
                     style = MaterialTheme.typography.button
                 )
             }

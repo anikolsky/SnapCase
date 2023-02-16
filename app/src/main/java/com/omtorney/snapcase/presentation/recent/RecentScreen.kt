@@ -57,7 +57,7 @@ fun RecentScreen(
                         shape = RectangleShape,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(text = stringResource(R.string.clear))
+                        Text(text = stringResource(R.string.clear).uppercase())
                     }
                 }
             }
