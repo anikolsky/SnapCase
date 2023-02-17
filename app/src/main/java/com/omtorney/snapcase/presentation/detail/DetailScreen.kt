@@ -91,11 +91,23 @@ fun DetailScreen(
                     }
                 }
                 Button(
-                    onClick = { viewModel.onEvent(DetailEvent.Save(state.case!!)) },
+                    onClick = {
+                        if (state.case!!.isFavorite) {
+                            viewModel.onEvent(DetailEvent.Delete(state.case))
+                        } else {
+                            viewModel.onEvent(DetailEvent.Save(state.case))
+                        }
+                    },
                     shape = RectangleShape,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = stringResource(R.string.save_favorites).uppercase())
+                    Text(
+                        text = if (state.case?.isFavorite == true) {
+                            stringResource(R.string.delete_favorite).uppercase()
+                        } else {
+                            stringResource(R.string.save_favorites).uppercase()
+                        }
+                    )
                 }
             }
             if (state.isLoading) {

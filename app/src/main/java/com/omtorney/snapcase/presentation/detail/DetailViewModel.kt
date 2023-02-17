@@ -39,6 +39,18 @@ class DetailViewModel @Inject constructor(
 
     fun onEvent(event: DetailEvent) {
         when (event) {
+            is DetailEvent.Save -> {
+                viewModelScope.launch {
+                    val case = event.case.copy(isFavorite = true)
+                    caseUseCases.saveCase(case)
+                    _eventFlow.emit(UiEvent.Save)
+                }
+            }
+            is DetailEvent.Delete -> {
+                viewModelScope.launch {
+                    caseUseCases.deleteCase(event.case)
+                }
+            }
             is DetailEvent.Fill -> {
                 viewModelScope.launch {
                     caseUseCases.fillCase(state.value.case!!, Courts.Dmitrov).collect { result ->
@@ -62,13 +74,6 @@ class DetailViewModel @Inject constructor(
 //                    if (caseUseCases.checkCase(event.case.uid)) {
 //                        caseUseCases.updateCase(event.case)
 //                    }
-                }
-            }
-            is DetailEvent.Save -> {
-                viewModelScope.launch {
-                    val case = event.case.copy(isFavorite = true)
-                    caseUseCases.saveCase(case)
-                    _eventFlow.emit(UiEvent.Save)
                 }
             }
         }

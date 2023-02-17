@@ -13,9 +13,11 @@
     <string name="dismiss">Закрыть</string>
     <string name="select">Выбрать</string>
     <string name="save_favorites">Сохранить в избранное</string>
+    <string name="delete_favorite">Удалить из избранного</string>
     <string name="recent_list_empty">Список недавних дел пуст</string>
     <string name="favorite_list_empty">Список избранных дел пуст</string>
     <string name="enter_participant_or_number">Введите сторону или номер дела</string>
     <string name="search_cases">Поиск дел</string>
     <string name="show_schedule">Показать расписание</string>
+    <string name="show_act">Открыть решение</string>
 </resources>

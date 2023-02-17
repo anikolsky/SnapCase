@@ -1,16 +1,19 @@
 package com.omtorney.snapcase.presentation.common
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,7 +39,7 @@ fun CaseCard(
             .padding(2.dp)
             .clickable { onCardClick(case) }
     ) {
-        Row(
+        Column(
             modifier = Modifier.animateContentSize(
                 animationSpec = spring(
                     dampingRatio = Spring.DampingRatioMediumBouncy,
@@ -44,49 +47,51 @@ fun CaseCard(
                 )
             )
         ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
+            Column(modifier = Modifier.padding(16.dp)) {
                 if (case.hearingDateTime.isNotEmpty())
                     Row { TextBlock(title = "Время заседания: ", text = case.hearingDateTime) }
-                Row { TextBlock(title = "Номер дела: ", text = case.number) }
-                Column { TextBlock(title = "Участники: ", text = case.participants) }
-
-                if (expanded) {
-                    Row { TextBlock(title = "Судья: ", text = case.judge) }
-                    Row { TextBlock(title = "Категория: ", text = case.category) }
-                    if (case.result.isNotEmpty())
-                        Column { TextBlock(title = "Решение: ", text = case.result) }
-                    if (case.actDateTime.isNotEmpty())
-                        Row { TextBlock(title = "Дата решения: ", text = case.actDateTime) }
-                    if (case.actTextUrl.isNotEmpty()) {
-                        Spacer(modifier = Modifier.padding(top = 8.dp))
-                        Button(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = { onActTextClick(case.actTextUrl) }
-                        ) {
-                            Icon(
-                                painterResource(id = R.drawable.ic_outline_text),
-                                contentDescription = "Открыть решение"
-                            )
-                            Text(text = "Решение")
-                        }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row { TextBlock(title = "Номер дела: ", text = case.number) }
+                    IconButton(onClick = { expanded = !expanded }) {
+                        Icon(
+                            painter = if (expanded)
+                                painterResource(R.drawable.ic_round_expand_less)
+                            else
+                                painterResource(R.drawable.ic_round_expand_more),
+                            contentDescription = if (expanded) "Показать" else "Скрыть"
+                        )
                     }
                 }
-
-                // TODO delete from fav - button (or slide?)
+                Column { TextBlock(title = "Участники: ", text = case.participants) }
             }
-            IconButton(onClick = { expanded = !expanded }) {
-                Icon(
-                    painter = if (expanded)
-                        painterResource(R.drawable.ic_round_expand_less)
-                    else
-                        painterResource(R.drawable.ic_round_expand_more),
-                    contentDescription = if (expanded) "Показать" else "Скрыть"
-                )
+            if (expanded) {
+                Row { TextBlock(title = "Судья: ", text = case.judge) }
+                Row { TextBlock(title = "Категория: ", text = case.category) }
+                if (case.result.isNotEmpty())
+                    Column { TextBlock(title = "Решение: ", text = case.result) }
+                if (case.actDateTime.isNotEmpty())
+                    Row { TextBlock(title = "Дата решения: ", text = case.actDateTime) }
+                if (case.actTextUrl.isNotEmpty()) {
+                    Spacer(modifier = Modifier.padding(top = 8.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(color = MaterialTheme.colors.primary)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.show_act).uppercase(),
+                            color = MaterialTheme.colors.background,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .clickable { onActTextClick(case.actTextUrl) }
+                        )
+                    }
+                }
             }
         }
     }

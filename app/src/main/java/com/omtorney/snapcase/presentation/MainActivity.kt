@@ -96,7 +96,19 @@ class MainActivity : ComponentActivity() {
                             route = Screen.Search.route + "/{searchInput}",
                             arguments = listOf(navArgument(name = "searchInput") { NavType.StringType })
                         ) {
-                            SearchScreen(navController = navController)
+                            SearchScreen(
+                                navController = navController,
+                                onCardClick = { caseNumber ->
+                                    val caseNumberParam = caseNumber.replace("/", "+")
+                                    navController.navigate(Screen.Detail.route + "/$caseNumberParam") {
+                                        popUpTo(Screen.Schedule.route) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
+                            )
                         }
 
                         composable(

@@ -22,6 +22,7 @@ import com.omtorney.snapcase.presentation.common.CaseColumn
 @Composable
 fun SearchScreen(
     navController: NavController,
+    onCardClick: (String) -> Unit,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
@@ -35,13 +36,8 @@ fun SearchScreen(
             CaseColumn(
                 items = state.cases,
                 onCardClick = { case ->
-                    navController.navigate(Screen.Detail.route + "/$case") {
-                        popUpTo(Screen.Search.route) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    viewModel.cacheCase(case)
+                    onCardClick(case.number)
                 },
                 onActTextClick = {}
             )
