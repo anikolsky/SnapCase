@@ -22,7 +22,7 @@ fun CaseColumn(
 ) {
     Row(modifier = modifier) {
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colors.background)

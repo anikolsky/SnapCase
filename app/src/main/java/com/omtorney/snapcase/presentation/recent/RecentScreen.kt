@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omtorney.snapcase.R
+import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.presentation.Screen
 import com.omtorney.snapcase.presentation.common.*
 
@@ -25,6 +26,8 @@ fun RecentScreen(
     navController: NavController,
     onSettingsClick: () -> Unit,
     onBackClick: () -> Unit,
+    onCardClick: (Case) -> Unit,
+    onActTextClick: (String) -> Unit,
     viewModel: RecentViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
@@ -47,8 +50,8 @@ fun RecentScreen(
             Column {
                 CaseColumn(
                     items = state.cases,
-                    onCardClick = {},
-                    onActTextClick = {},
+                    onCardClick = { onCardClick(it) },
+                    onActTextClick = { onActTextClick(it) },
                     modifier = Modifier.weight(1f)
                 )
                 if (state.cases.isNotEmpty()) {

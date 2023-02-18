@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.presentation.Screen
 import com.omtorney.snapcase.presentation.common.BottomBar
 import com.omtorney.snapcase.presentation.common.CaseColumn
@@ -22,7 +23,8 @@ import com.omtorney.snapcase.presentation.common.CaseColumn
 @Composable
 fun SearchScreen(
     navController: NavController,
-    onCardClick: (String) -> Unit,
+    onCardClick: (Case) -> Unit,
+    onActTextClick: (String) -> Unit,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
@@ -37,9 +39,9 @@ fun SearchScreen(
                 items = state.cases,
                 onCardClick = { case ->
                     viewModel.cacheCase(case)
-                    onCardClick(case.number)
+                    onCardClick(case)
                 },
-                onActTextClick = {}
+                onActTextClick = { onActTextClick(it) }
             )
             if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))

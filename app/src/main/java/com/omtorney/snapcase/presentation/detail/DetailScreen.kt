@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.snapcase.R
+import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.presentation.common.CaseCard
 import com.omtorney.snapcase.presentation.common.UiEvent
 import com.omtorney.snapcase.presentation.ui.theme.Shapes
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun DetailScreen(
+    onActTextClick: (String) -> Unit,
     viewModel: DetailViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
@@ -49,14 +51,14 @@ fun DetailScreen(
                     style = MaterialTheme.typography.h6,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
-                        .padding(vertical = 8.dp)
+                        .padding(top = 8.dp, bottom = 0.dp)
                 )
                 state.case?.let { case ->
                     CaseCard(
                         case = case,
                         isExpanded = true,
                         onCardClick = {},
-                        onActTextClick = {}
+                        onActTextClick = { onActTextClick(it) }
                     )
                     Text(
                         text = "Движение дела",

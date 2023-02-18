@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.presentation.act.ActScreen
 import com.omtorney.snapcase.presentation.detail.DetailScreen
 import com.omtorney.snapcase.presentation.favorites.FavoritesScreen
@@ -61,34 +63,7 @@ class MainActivity : ComponentActivity() {
                                         restoreState = true
                                     }
                                 },
-                                onSettingsClick = {
-                                    navController.navigate(Screen.Settings.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                }
-                            )
-                        }
-
-                        composable(
-                            route = Screen.Schedule.route + "/{scheduleDate}",
-                            arguments = listOf(navArgument(name = "scheduleDate") { NavType.StringType })
-                        ) {
-                            ScheduleScreen(
-                                navController = navController,
-                                onCardClick = { caseNumber ->
-                                    val caseNumberParam = caseNumber.replace("/", "+")
-                                    navController.navigate(Screen.Detail.route + "/$caseNumberParam") {
-                                        popUpTo(Screen.Schedule.route) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                }
+                                onSettingsClick = { goToSettings(navController) }
                             )
                         }
 
@@ -98,16 +73,19 @@ class MainActivity : ComponentActivity() {
                         ) {
                             SearchScreen(
                                 navController = navController,
-                                onCardClick = { caseNumber ->
-                                    val caseNumberParam = caseNumber.replace("/", "+")
-                                    navController.navigate(Screen.Detail.route + "/$caseNumberParam") {
-                                        popUpTo(Screen.Schedule.route) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                }
+                                onCardClick = { goToCaseDetail(it.number, Screen.Search, navController) },
+                                onActTextClick = { goToActText(it, navController) }
+                            )
+                        }
+
+                        composable(
+                            route = Screen.Schedule.route + "/{scheduleDate}",
+                            arguments = listOf(navArgument(name = "scheduleDate") { NavType.StringType })
+                        ) {
+                            ScheduleScreen(
+                                navController = navController,
+                                onCardClick = { goToCaseDetail(it.number, Screen.Schedule, navController) },
+                                onActTextClick = { goToActText(it, navController) }
                             )
                         }
 
@@ -115,12 +93,14 @@ class MainActivity : ComponentActivity() {
                             route = Screen.Detail.route + "/{caseNumber}",
                             arguments = listOf(navArgument(name = "caseNumber") { NavType.StringType })
                         ) {
-                            DetailScreen()
+                            DetailScreen(
+                                onActTextClick = { goToActText(it, navController) }
+                            )
                         }
 
                         composable(
-                            route = Screen.Act.route + "/{url}",
-                            arguments = listOf(navArgument(name = "url") { NavType.StringType })
+                            route = Screen.Act.route + "/{caseActUrl}",
+                            arguments = listOf(navArgument(name = "caseActUrl") { NavType.StringType })
                         ) {
                             ActScreen()
                         }
@@ -128,32 +108,20 @@ class MainActivity : ComponentActivity() {
                         composable(route = Screen.Favorites.route) {
                             FavoritesScreen(
                                 navController = navController,
-                                onSettingsClick = {
-                                    navController.navigate(Screen.Settings.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                },
-                                onBackClick = { navController.popBackStack() }
+                                onSettingsClick = { goToSettings(navController) },
+                                onBackClick = { navController.popBackStack() },
+                                onCardClick = { goToCaseDetail(it.number, Screen.Favorites, navController) },
+                                onActTextClick = { goToActText(it, navController) }
                             )
                         }
 
                         composable(route = Screen.Recent.route) {
                             RecentScreen(
                                 navController = navController,
-                                onSettingsClick = {
-                                    navController.navigate(Screen.Settings.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                },
-                                onBackClick = { navController.popBackStack() }
+                                onSettingsClick = { goToSettings(navController) },
+                                onBackClick = { navController.popBackStack() },
+                                onCardClick = { goToCaseDetail(it.number, Screen.Recent, navController) },
+                                onActTextClick = { goToActText(it, navController) }
                             )
                         }
 
@@ -165,6 +133,46 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun goToCaseDetail(number: String, screen: Screen, navController: NavController) {
+        val caseNumberParam = number.replace("/", "+")
+        navController.navigate(Screen.Detail.route + "/$caseNumberParam") {
+            popUpTo(
+                when (screen) {
+                    Screen.Search -> Screen.Search.route
+                    Screen.Schedule -> Screen.Schedule.route
+                    Screen.Favorites -> Screen.Favorites.route
+                    Screen.Recent -> Screen.Recent.route
+                    else -> ""
+                }
+            ) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
+    private fun goToActText(url: String, navController: NavController) {
+        val caseActUrlParam = url.replace("/", "+")
+        navController.navigate(Screen.Act.route + "/$caseActUrlParam") {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
+    private fun goToSettings(navController: NavController) {
+        navController.navigate(Screen.Settings.route) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
         }
     }
 }

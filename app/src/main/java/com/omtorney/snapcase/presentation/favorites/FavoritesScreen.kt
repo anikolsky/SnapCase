@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omtorney.snapcase.R
+import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.presentation.Screen
 import com.omtorney.snapcase.presentation.common.*
 
@@ -22,6 +23,8 @@ fun FavoritesScreen(
     navController: NavController,
     onSettingsClick: () -> Unit,
     onBackClick: () -> Unit,
+    onCardClick: (Case) -> Unit,
+    onActTextClick: (String) -> Unit,
     viewModel: FavoritesViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
@@ -43,8 +46,8 @@ fun FavoritesScreen(
         Box(modifier = Modifier.padding(paddingValues)) {
             CaseColumn(
                 items = state.cases,
-                onCardClick = {},
-                onActTextClick = {}
+                onCardClick = { onCardClick(it) },
+                onActTextClick = { onActTextClick(it) }
             )
             if (state.cases.isEmpty()) {
                 Text(

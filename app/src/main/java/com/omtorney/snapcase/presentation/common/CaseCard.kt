@@ -11,8 +11,10 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,10 +35,10 @@ fun CaseCard(
 
     Card(
         shape = Shapes.small,
-        elevation = 6.dp,
+        elevation = 8.dp,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(2.dp)
+            .padding(horizontal = 4.dp, vertical = 2.dp)
             .clickable { onCardClick(case) }
     ) {
         Column(
@@ -47,12 +49,13 @@ fun CaseCard(
                 )
             )
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                if (case.hearingDateTime.isNotEmpty())
-                    Row { TextBlock(title = "Время заседания: ", text = case.hearingDateTime) }
+            Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 12.dp)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
                 ) {
                     Row { TextBlock(title = "Номер дела: ", text = case.number) }
                     IconButton(onClick = { expanded = !expanded }) {
@@ -65,32 +68,43 @@ fun CaseCard(
                         )
                     }
                 }
+                if (case.hearingDateTime.isNotEmpty())
+                    Row { TextBlock(
+                        title = "Время заседания: ",
+                        text = case.hearingDateTime,
+                        color = MaterialTheme.colors.primary,
+                        style = MaterialTheme.typography.subtitle1
+                    ) }
                 Column { TextBlock(title = "Участники: ", text = case.participants) }
             }
+            if (!expanded) {
+                Spacer(modifier = Modifier.padding(top = 8.dp))
+            }
             if (expanded) {
-                Row { TextBlock(title = "Судья: ", text = case.judge) }
-                Row { TextBlock(title = "Категория: ", text = case.category) }
-                if (case.result.isNotEmpty())
-                    Column { TextBlock(title = "Решение: ", text = case.result) }
-                if (case.actDateTime.isNotEmpty())
-                    Row { TextBlock(title = "Дата решения: ", text = case.actDateTime) }
-                if (case.actTextUrl.isNotEmpty()) {
-                    Spacer(modifier = Modifier.padding(top = 8.dp))
-                    Box(
+                Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 12.dp)){
+                    Row { TextBlock(title = "Судья: ", text = case.judge) }
+                    Row { TextBlock(title = "Категория: ", text = case.category) }
+                    if (case.result.isNotEmpty())
+                        Column { TextBlock(title = "Решение: ", text = case.result) }
+                    if (case.actDateTime.isNotEmpty())
+                        Row { TextBlock(title = "Дата решения: ", text = case.actDateTime) }
+                }
+            }
+            if (case.actTextUrl.isNotEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = MaterialTheme.colors.primary)
+                ) {
+                    Text(
+                        text = stringResource(R.string.show_act).uppercase(),
+                        color = MaterialTheme.colors.background,
+                        textAlign = TextAlign.Center,
                         modifier = Modifier
-                            .fillMaxSize()
-                            .background(color = MaterialTheme.colors.primary)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.show_act).uppercase(),
-                            color = MaterialTheme.colors.background,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                                .clickable { onActTextClick(case.actTextUrl) }
-                        )
-                    }
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .clickable { onActTextClick(case.actTextUrl) }
+                    )
                 }
             }
         }
@@ -98,17 +112,21 @@ fun CaseCard(
 }
 
 @Composable
-fun TextBlock(title: String, text: String) {
+fun TextBlock(
+    title: String,
+    text: String,
+    color: Color = LocalContentColor.current,
+    style: TextStyle = MaterialTheme.typography.body1
+) {
     Text(
         text = title,
-        style = MaterialTheme.typography.subtitle2
+        color = color,
+        style = style,
     )
     Text(
         text = text,
-        style = if (title == "Время заседания: ")
-            MaterialTheme.typography.subtitle1
-        else
-            MaterialTheme.typography.body1,
+        color = color,
+        style = style,
         maxLines = if (title == "Судья: " || title == "Категория: ") 1 else 5,
         overflow = TextOverflow.Ellipsis
     )

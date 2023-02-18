@@ -22,8 +22,9 @@ class ActViewModel @Inject constructor(
     val state: State<ActState> = _state
 
     init {
-        savedStateHandle.get<String>("actTextUrl")?.let { url ->
-            loadAct(url)
+        savedStateHandle.get<String>("caseActUrl")?.let { url ->
+            val caseActUrlParam = url.replace("+", "/")
+            loadAct(caseActUrlParam)
         }
     }
 
