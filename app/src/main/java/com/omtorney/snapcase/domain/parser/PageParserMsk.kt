@@ -19,7 +19,7 @@ class PageParserMsk : PageParser {
         TODO("Not yet implemented")
     }
 
-    override suspend fun extractActText(url: String): ArrayList<String> {
+    override suspend fun extractActText(url: String): String {
         TODO("Not yet implemented")
     }
 

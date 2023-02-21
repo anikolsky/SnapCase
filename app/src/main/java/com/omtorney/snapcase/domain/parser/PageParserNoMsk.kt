@@ -138,15 +138,13 @@ class PageParserNoMsk @Inject constructor(
         return case
     }
 
-    override suspend fun extractActText(url: String): ArrayList<String> {
+    override suspend fun extractActText(url: String): String {
         val act = arrayListOf<String>()
         val page = repository.getJsoupDocument(url)
         val mainSection = page?.getElementById("modSdpContent")
         val paragraph = mainSection?.getElementsByTag("p")
-        paragraph?.forEach {
-            act.add(it.text())
-        }
-        return act
+        paragraph?.forEach { act.add(it.text()) }
+        return act.joinToString("\n\n")
     }
 
     override fun getPlaintiff(info: String): String {

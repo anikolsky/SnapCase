@@ -12,7 +12,7 @@ class LoadActText @Inject constructor(
     private val repository: Repository
 ) {
 
-    suspend operator fun invoke(court: Court, url: String): Flow<Resource<ArrayList<String>>> =
+    suspend operator fun invoke(court: Court, url: String): Flow<Resource<String>> =
         flow {
             try {
                 emit(Resource.Loading())

@@ -13,7 +13,7 @@ interface PageParser {
 
     suspend fun fillCase(case: Case, court: Court): Case
 
-    suspend fun extractActText(url: String): ArrayList<String>
+    suspend fun extractActText(url: String): String
 
 
     fun getPlaintiff(info: String): String

@@ -45,7 +45,7 @@ fun SettingsScreen(
             icon = R.drawable.round_color,
             title = "Акцентный цвет",
             subtitle = "Выберите дополнительный цвет приложения",
-            onClick = { colorPickerOpened = true }
+            onClick = { /* colorPickerOpened = true */ } // TODO accent color fetching
         )
     }
 

@@ -12,6 +12,7 @@
     <string name="clear">Очистить</string>
     <string name="dismiss">Закрыть</string>
     <string name="select">Выбрать</string>
+    <string name="send">Отправить</string>
     <string name="save_favorites">Сохранить в избранное</string>
     <string name="delete_favorite">Удалить из избранного</string>
     <string name="recent_list_empty">Список недавних дел пуст</string>

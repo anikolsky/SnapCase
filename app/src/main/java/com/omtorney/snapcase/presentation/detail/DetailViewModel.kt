@@ -49,6 +49,7 @@ class DetailViewModel @Inject constructor(
             is DetailEvent.Delete -> {
                 viewModelScope.launch {
                     caseUseCases.deleteCase(event.case)
+                    _eventFlow.emit(UiEvent.Delete)
                 }
             }
             is DetailEvent.Fill -> {
@@ -59,8 +60,7 @@ class DetailViewModel @Inject constructor(
                                 _state.value = state.value.copy(isLoading = true)
                             }
                             is Resource.Success -> {
-                                _state.value =
-                                    state.value.copy(case = result.data, isLoading = false)
+                                _state.value = state.value.copy(case = result.data, isLoading = false)
                             }
                             is Resource.Error -> {
                                 _state.value =

@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun DetailScreen(
     onActTextClick: (String) -> Unit,
+    onDismiss: () -> Unit,
     viewModel: DetailViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
@@ -35,6 +36,9 @@ fun DetailScreen(
             when (event) {
                 UiEvent.Save -> {
                     scaffoldState.snackbarHostState.showSnackbar(message = "Сохранено в избранное")
+                }
+                UiEvent.Delete -> {
+                    scaffoldState.snackbarHostState.showSnackbar(message = "Удалено из избранного")
                 }
                 is UiEvent.ShowSnackbar -> {
                     scaffoldState.snackbarHostState.showSnackbar(message = event.message)
@@ -51,7 +55,7 @@ fun DetailScreen(
                     style = MaterialTheme.typography.h6,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
-                        .padding(top = 8.dp, bottom = 0.dp)
+                        .padding(vertical = 2.dp)
                 )
                 state.case?.let { case ->
                     CaseCard(
@@ -60,14 +64,19 @@ fun DetailScreen(
                         onCardClick = {},
                         onActTextClick = { onActTextClick(it) }
                     )
-                    Text(
-                        text = "Движение дела",
-                        style = MaterialTheme.typography.h6,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(vertical = 8.dp)
-                    )
                     LazyColumn(modifier = Modifier.weight(1f)) {
+                        item {
+                            Box(modifier = Modifier.fillMaxWidth()) {
+                                Text(
+                                    text = "Движение дела",
+                                    style = MaterialTheme.typography.h6,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 6.dp)
+                                )
+                            }
+                        }
                         case.process.map { process ->
                             item {
                                 Card(
@@ -88,7 +97,33 @@ fun DetailScreen(
                             }
                         }
                         item {
-                            case.appealToString()
+                            Box(modifier = Modifier.fillMaxWidth()) {
+                                Text(
+                                    text = "Последнее обжалование",
+                                    style = MaterialTheme.typography.h6,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 6.dp)
+                                )
+                            }
+                        }
+                        item {
+                            Card(
+                                shape = Shapes.small,
+                                elevation = 6.dp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(2.dp)
+                            ) {
+                                Text(
+                                    text = case.appealToString(),
+                                    modifier = Modifier.padding(
+                                        horizontal = 12.dp,
+                                        vertical = 8.dp
+                                    )
+                                )
+                            }
                         }
                     }
                 }
@@ -96,6 +131,7 @@ fun DetailScreen(
                     onClick = {
                         if (state.case!!.isFavorite) {
                             viewModel.onEvent(DetailEvent.Delete(state.case))
+                            onDismiss()
                         } else {
                             viewModel.onEvent(DetailEvent.Save(state.case))
                         }

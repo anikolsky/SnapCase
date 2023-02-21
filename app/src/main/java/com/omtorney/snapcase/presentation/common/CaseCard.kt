@@ -85,7 +85,12 @@ fun CaseCard(
                     Row { TextBlock(title = "Судья: ", text = case.judge) }
                     Row { TextBlock(title = "Категория: ", text = case.category) }
                     if (case.result.isNotEmpty())
-                        Column { TextBlock(title = "Решение: ", text = case.result) }
+                        Column { TextBlock(
+                            title = "Решение: ",
+                            text = case.result,
+                            color = MaterialTheme.colors.primary,
+                            style = MaterialTheme.typography.subtitle1
+                        ) }
                     if (case.actDateTime.isNotEmpty())
                         Row { TextBlock(title = "Дата решения: ", text = case.actDateTime) }
                 }

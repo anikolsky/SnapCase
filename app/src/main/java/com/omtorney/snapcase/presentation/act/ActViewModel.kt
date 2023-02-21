@@ -23,7 +23,7 @@ class ActViewModel @Inject constructor(
 
     init {
         savedStateHandle.get<String>("caseActUrl")?.let { url ->
-            val caseActUrlParam = url.replace("+", "/")
+            val caseActUrlParam = url.replace("+", "/").replace("!", "?")
             loadAct(caseActUrlParam)
         }
     }
@@ -35,7 +35,7 @@ class ActViewModel @Inject constructor(
                     _state.value = ActState(isLoading = true)
                 }
                 is Resource.Success -> {
-                    _state.value = ActState(text = result.data ?: arrayListOf())
+                    _state.value = ActState(text = result.data ?: "")
                 }
                 is Resource.Error -> {
                     _state.value= ActState(error = result.message ?: "Unexpected error")

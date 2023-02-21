@@ -14,7 +14,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.presentation.act.ActScreen
 import com.omtorney.snapcase.presentation.detail.DetailScreen
 import com.omtorney.snapcase.presentation.favorites.FavoritesScreen
@@ -94,7 +93,8 @@ class MainActivity : ComponentActivity() {
                             arguments = listOf(navArgument(name = "caseNumber") { NavType.StringType })
                         ) {
                             DetailScreen(
-                                onActTextClick = { goToActText(it, navController) }
+                                onActTextClick = { goToActText(it, navController) },
+                                onDismiss = { navController.popBackStack() }
                             )
                         }
 
@@ -156,7 +156,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun goToActText(url: String, navController: NavController) {
-        val caseActUrlParam = url.replace("/", "+")
+        val caseActUrlParam = url.replace("/", "+").replace("?", "!")
         navController.navigate(Screen.Act.route + "/$caseActUrlParam") {
             popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true

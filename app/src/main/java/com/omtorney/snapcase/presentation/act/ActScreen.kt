@@ -1,15 +1,24 @@
 package com.omtorney.snapcase.presentation.act
 
 import android.content.Intent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.omtorney.snapcase.R
 
 @Composable
 fun ActScreen(
@@ -17,17 +26,41 @@ fun ActScreen(
 ) {
     val state = viewModel.state.value
     val context = LocalContext.current
+    val scrollState = rememberScrollState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text(text = state.text.toString())
-        Button(onClick = {
-            val intent = Intent()
-            intent.action = Intent.ACTION_SEND
-            intent.putExtra(Intent.EXTRA_TEXT, state.text.toString())
-            intent.type = "text/plain"
-            startActivity(context, Intent.createChooser(intent, "Send to:"), null)
-        }) {
-            Text(text = "Отправить")
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .verticalScroll(scrollState)
+        ) {
+            Text(text = state.text)
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RectangleShape,
+                onClick = {
+                    val intent = Intent()
+                    intent.action = Intent.ACTION_SEND
+                    intent.putExtra(Intent.EXTRA_TEXT, state.text)
+                    intent.type = "text/plain"
+                    startActivity(context, Intent.createChooser(intent, "${R.string.send}:"), null)
+                }) {
+                Text(text = stringResource(R.string.send).uppercase())
+            }
+        }
+        if (state.isLoading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        }
+        if (state.error.isNotBlank()) {
+            Text(
+                text = state.error,
+                color = MaterialTheme.colors.error,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .align(Alignment.Center)
+            )
         }
     }
 
