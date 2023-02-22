@@ -5,7 +5,10 @@ import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.data.remote.RemoteDataSource
 import com.omtorney.snapcase.domain.Repository
 import com.omtorney.snapcase.domain.parser.PageParserFactory
+import com.omtorney.snapcase.util.NoResultFound
 import com.omtorney.snapcase.util.Resource
+import com.omtorney.snapcase.util.SiteDataUnavailable
+import com.omtorney.snapcase.util.handleException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -21,7 +24,7 @@ class FillCase @Inject constructor(
             val resultCase = page.fillCase(case, court)
             emit(Resource.Success(resultCase))
         } catch (e: Exception) {
-            emit(Resource.Error(message = e.localizedMessage ?: "Unexpected error while filling case"))
+            emit(Resource.Error(message = handleException(e)))
         }
     }
 }

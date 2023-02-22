@@ -14,10 +14,6 @@ class RepositoryImpl @Inject constructor(
     private val localDataSource: LocalDataSource
 ) : Repository {
 
-    override suspend fun getHtmlData(url: String): String {
-        return remoteDataSource.getJsoupDocument(url).toString()
-    }
-
     override suspend fun getJsoupDocument(url: String): Document? {
         return remoteDataSource.getJsoupDocument(url)
     }

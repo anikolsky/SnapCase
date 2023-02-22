@@ -6,8 +6,6 @@ import org.jsoup.nodes.Document
 
 interface Repository {
 
-    suspend fun getHtmlData(url: String): String
-
     suspend fun getJsoupDocument(url: String): Document?
 
     suspend fun saveCase(case: Case)
