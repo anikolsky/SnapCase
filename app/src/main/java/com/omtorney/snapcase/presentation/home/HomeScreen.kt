@@ -1,6 +1,5 @@
 package com.omtorney.snapcase.presentation.home
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -16,11 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.omtorney.snapcase.R
+import com.omtorney.snapcase.domain.court.CaseType
+import com.omtorney.snapcase.domain.court.Courts
 import com.omtorney.snapcase.presentation.common.BottomBar
 import com.omtorney.snapcase.presentation.common.SettingsButton
 import com.omtorney.snapcase.presentation.common.TopBar
@@ -37,13 +36,14 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun HomeScreen(
     navController: NavController,
-    onSearchClick: (String) -> Unit,
+    onSearchClick: (String, String) -> Unit,
     onScheduleClick: (String) -> Unit,
     onSettingsClick: () -> Unit,
 ) {
     val scaffoldState = rememberScaffoldState()
     val dateDialogState = rememberMaterialDialogState()
     val scrollState = rememberScrollState()
+    var caseType by remember { mutableStateOf(CaseType.GPK.title) }
     var pickedDate by remember { mutableStateOf(LocalDate.now()) }
     val formattedDate by remember {
         derivedStateOf {
@@ -72,13 +72,23 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Center
         ) {
             SpinnerBlock(
+                title = "Выберите суд",
                 availableQuantities = listOf(
-                    "Дмитровский городской"
+                    Courts.Dmitrov.title
                 ),
-                selectedItem = "Дмитровский городской",
+                selectedItem = Courts.Dmitrov.title,
                 onItemSelected = {}
             )
-            SearchBlock(onSearchClick = { onSearchClick(it) })
+            SpinnerBlock(
+                title = "Выберите вид производства",
+                availableQuantities = listOf(
+                    CaseType.GPK.title,
+                    CaseType.KAS.title
+                ),
+                selectedItem = caseType,
+                onItemSelected = { caseType = it }
+            )
+            SearchBlock(onSearchClick = { onSearchClick(caseType, it) })
             ScheduleBlock(
                 dateDialogState = dateDialogState,
                 date = formattedDate,
@@ -104,6 +114,7 @@ fun HomeScreen(
 
 @Composable
 fun SpinnerBlock(
+    title: String,
     availableQuantities: List<String>,
     selectedItem: String,
     onItemSelected: (String) -> Unit
@@ -121,7 +132,7 @@ fun SpinnerBlock(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Выберите суд",
+                text = title,
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier.align(CenterHorizontally)
             )
@@ -209,11 +220,7 @@ fun SearchBlock(
                 shape = Shapes.small,
                 onClick = {
                     if (input.isEmpty()) {
-                        Toast.makeText(
-                            context,
-                            R.string.enter_participant_or_number,
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(context, R.string.enter_participant_or_number, Toast.LENGTH_SHORT).show()
                     } else {
                         onSearchClick(input)
                     }
@@ -287,10 +294,10 @@ fun ScheduleBlock(
 //    CircularProgressIndicator(color = MaterialTheme.colors.secondary, strokeWidth = 5.dp)
 //}
 
-@Preview(showBackground = true, showSystemUi = true)
-@Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES, showSystemUi = true)
-@Composable
-fun PreviewMainScreen() {
-    val navController = rememberNavController()
-    HomeScreen(navController = navController, {}, {}, {})
-}
+//@Preview(showBackground = true, showSystemUi = true)
+//@Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES, showSystemUi = true)
+//@Composable
+//fun PreviewMainScreen() {
+//    val navController = rememberNavController()
+//    HomeScreen(navController = navController, {}, {}, {})
+//}

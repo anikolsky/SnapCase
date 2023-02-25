@@ -3,13 +3,18 @@ package com.omtorney.snapcase.domain.court
 import com.omtorney.snapcase.domain.parser.PageType
 
 interface Court {
-
     val type: PageType
-    val basicUrl: String
-
-    fun getScheduleQuery(date: String): String
-
-    fun getGPKSearchQuery(sideName: String, caseNumber: String): String
-
-    fun getKASSearchQuery(sideName: String, caseNumber: String): String
+    val baseUrl: String
+    fun getScheduleQuery(date: String): String {
+        return when (this.type) {
+            PageType.NoMsk -> getScheduleQueryNoMsk(this.baseUrl, date)
+            PageType.Msk -> TODO()
+        }
+    }
+    fun getSearchQuery(caseType: CaseType, sideName: String, caseNumber: String): String {
+        return when (this.type) {
+            PageType.NoMsk -> getSearchQueryNoMsk(this.baseUrl, caseType, sideName, caseNumber)
+            PageType.Msk -> TODO()
+        }
+    }
 }

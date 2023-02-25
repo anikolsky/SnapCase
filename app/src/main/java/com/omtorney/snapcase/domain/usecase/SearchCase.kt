@@ -1,12 +1,11 @@
 package com.omtorney.snapcase.domain.usecase
 
 import com.omtorney.snapcase.domain.Repository
+import com.omtorney.snapcase.domain.court.CaseType
 import com.omtorney.snapcase.domain.court.Court
 import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.domain.parser.PageParserFactory
-import com.omtorney.snapcase.util.NoResultFound
 import com.omtorney.snapcase.util.Resource
-import com.omtorney.snapcase.util.SiteDataUnavailable
 import com.omtorney.snapcase.util.handleException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +18,11 @@ class SearchCase @Inject constructor(
     private val repository: Repository
 ) {
 
-    suspend operator fun invoke(court: Court, query: String): Flow<Resource<List<Case>>> = flow {
+    suspend operator fun invoke(
+        court: Court,
+        caseType: CaseType,
+        query: String
+    ): Flow<Resource<List<Case>>> = flow {
         try {
             emit(Resource.Loading())
             var sideName = ""
@@ -29,7 +32,8 @@ class SearchCase @Inject constructor(
             else
                 caseNumber = query
             val searchUrl = withContext(Dispatchers.IO) {
-                court.getGPKSearchQuery(
+                court.getSearchQuery(
+                    caseType,
                     URLEncoder.encode(sideName, "cp1251"),
                     URLEncoder.encode(caseNumber, "cp1251")
                 )

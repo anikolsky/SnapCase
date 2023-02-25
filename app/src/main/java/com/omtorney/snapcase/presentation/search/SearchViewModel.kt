@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.omtorney.snapcase.domain.court.CaseType
 import com.omtorney.snapcase.domain.court.Courts
 import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.domain.usecase.CaseUseCases
@@ -23,9 +24,13 @@ class SearchViewModel @Inject constructor(
     val state: State<SearchState> = _state
 
     init {
-        savedStateHandle.get<String>("searchInput")?.let { input ->
-            searchCase(input)
+        val caseTypeInput = savedStateHandle.get<String>("caseType")
+        val searchInput = savedStateHandle.get<String>("searchInput")
+        val caseType = when (caseTypeInput) {
+            CaseType.GPK.title -> CaseType.GPK
+            else -> CaseType.KAS
         }
+        searchCase(caseType, searchInput!!)
     }
 
     fun cacheCase(case: Case) {
@@ -34,8 +39,8 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun searchCase(input: String) = viewModelScope.launch {
-        caseUseCases.searchCase(Courts.Dmitrov, input).collect { result ->
+    private fun searchCase(caseType: CaseType, input: String) = viewModelScope.launch {
+        caseUseCases.searchCase(Courts.Dmitrov, caseType, input).collect { result ->
             when (result) {
                 is Resource.Loading -> {
                     _state.value = SearchState(isLoading = true)

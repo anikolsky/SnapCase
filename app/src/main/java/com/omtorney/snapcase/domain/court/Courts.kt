@@ -2,64 +2,39 @@ package com.omtorney.snapcase.domain.court
 
 import com.omtorney.snapcase.domain.parser.PageType
 
-sealed class Courts {
+enum class CaseType(val title: String) {
+    GPK("Гражданское"),
+    KAS("Административное")
+}
+
+sealed class Courts(val title: String) {
 
     // NoMSK courts
-    object Dmitrov : Court, Courts() {
-
+    object Dmitrov : Court, Courts("Дмитровский городской") {
         override val type = PageType.NoMsk
-        override val basicUrl = "https://dmitrov--mo.sudrf.ru"
+        override val baseUrl = "https://dmitrov--mo.sudrf.ru"
+    }
 
-        override fun getScheduleQuery(date: String): String {
-            return if (date.isEmpty()) "$basicUrl/modules.php?name=sud_delo"
-            else "$basicUrl/modules.php?name=sud_delo&srv_num=1&H_date=$date"
-        }
+    // MSK courts
+    object Dorogomilovskij : Court, Courts("Дорогомиловский районный") {
+        override val type = PageType.Msk
+        override val baseUrl = "https://mos-gorsud.ru/rs/dorogomilovskij"
+    }
+}
 
-        /*
-        fun createSearchQuery(sideName: String, caseNumber: String) = mutableMapOf(
-            "srv_num" to "1",
-            "name_op" to "r",
-            "delo_id" to "1540005",
-            "case_type" to "0",
-            "new" to "0",
-            "G1_PARTS__NAMESS=" to sideName,
-            "g1_case__CASE_NUMBERSS=" to caseNumber,
-            "g1_case__JUDICIAL_UIDSS=" to "",
-            "delo_table" to "g1_case",
-            "g1_case__ENTRY_DATE1D=" to "",
-            "g1_case__ENTRY_DATE2D=" to "",
-            "G1_CASE__JUDGE=" to "",
-            "g1_case__RESULT_DATE1D=" to "",
-            "g1_case__RESULT_DATE2D=" to "",
-            "G1_CASE__RESULT=" to "",
-            "G1_CASE__BUILDING_ID=" to "",
-            "G1_CASE__COURT_STRUCT=" to "",
-            "G1_EVENT__EVENT_NAME=" to "",
-            "G1_EVENT__EVENT_DATEDD=" to "",
-            "G1_PARTS__PARTS_TYPE=" to "",
-            "G1_PARTS__INN_STRSS=" to "",
-            "G1_PARTS__KPP_STRSS=" to "",
-            "G1_PARTS__OGRN_STRSS=" to "",
-            "G1_PARTS__OGRNIP_STRSS=" to "",
-            "g1_requirement__ACCESSION_DATE1D=" to "",
-            "g1_requirement__ACCESSION_DATE2D=" to "",
-            "G1_REQUIREMENT__CATEGORY=" to "",
-            "g1_requirement__ESSENCESS=" to "",
-            "g1_requirement__JOIN_END_DATE1D=" to "",
-            "g1_requirement__JOIN_END_DATE2D=" to "",
-            "G1_REQUIREMENT__PUBLICATION_ID=" to "",
-            "G1_DOCUMENT__PUBL_DATE1D=" to "",
-            "G1_DOCUMENT__PUBL_DATE2D=" to "",
-            "G1_CASE__VALIDITY_DATE1D=" to "",
-            "G1_CASE__VALIDITY_DATE2D=" to "",
-            "G1_ORDER_INFO__ORDER_DATE1D=" to "",
-            "G1_ORDER_INFO__ORDER_DATE2D=" to "",
-            "G1_ORDER_INFO__ORDER_NUMSS=" to "",
-            "G1_ORDER_INFO__STATE_ID=" to "",
-            "G1_ORDER_INFO__RECIP_ID=" to ""
-        )*/
+fun getScheduleQueryNoMsk(baseUrl: String, date: String): String {
+    return if (date.isEmpty()) "$baseUrl/modules.php?name=sud_delo"
+    else "$baseUrl/modules.php?name=sud_delo&srv_num=1&H_date=$date"
+}
 
-        override fun getGPKSearchQuery(sideName: String, caseNumber: String) = basicUrl +
+fun getSearchQueryNoMsk(
+    baseUrl: String,
+    caseType: CaseType,
+    sideName: String,
+    caseNumber: String
+): String {
+    return when (caseType) {
+        CaseType.GPK -> baseUrl +
                 "/modules.php?name=sud_delo" +
                 "&srv_num=1" +
                 "&name_op=r" +
@@ -71,38 +46,8 @@ sealed class Courts {
                 "&g1_case__JUDICIAL_UIDSS=" +
                 "&delo_table=g1_case" +
                 "&g1_case__ENTRY_DATE1D=" +
-                "&g1_case__ENTRY_DATE2D=" +
-                "&G1_CASE__JUDGE=" +
-                "&g1_case__RESULT_DATE1D=" +
-                "&g1_case__RESULT_DATE2D=" +
-                "&G1_CASE__RESULT=" +
-                "&G1_CASE__BUILDING_ID=" +
-                "&G1_CASE__COURT_STRUCT=" +
-                "&G1_EVENT__EVENT_NAME=" +
-                "&G1_EVENT__EVENT_DATEDD=" +
-                "&G1_PARTS__PARTS_TYPE=" +
-                "&G1_PARTS__INN_STRSS=" +
-                "&G1_PARTS__KPP_STRSS=" +
-                "&G1_PARTS__OGRN_STRSS=" +
-                "&G1_PARTS__OGRNIP_STRSS=" +
-                "&g1_requirement__ACCESSION_DATE1D=" +
-                "&g1_requirement__ACCESSION_DATE2D=" +
-                "&G1_REQUIREMENT__CATEGORY=" +
-                "&g1_requirement__ESSENCESS=" +
-                "&g1_requirement__JOIN_END_DATE1D=" +
-                "&g1_requirement__JOIN_END_DATE2D=" +
-                "&G1_REQUIREMENT__PUBLICATION_ID=" +
-                "&G1_DOCUMENT__PUBL_DATE1D=" +
-                "&G1_DOCUMENT__PUBL_DATE2D=" +
-                "&G1_CASE__VALIDITY_DATE1D=" +
-                "&G1_CASE__VALIDITY_DATE2D=" +
-                "&G1_ORDER_INFO__ORDER_DATE1D=" +
-                "&G1_ORDER_INFO__ORDER_DATE2D=" +
-                "&G1_ORDER_INFO__ORDER_NUMSS=" +
-                "&G1_ORDER_INFO__STATE_ID=" +
-                "&G1_ORDER_INFO__RECIP_ID="
-
-        override fun getKASSearchQuery(sideName: String, caseNumber: String) = basicUrl +
+                "&g1_case__ENTRY_DATE2D=" + getSearchQueryCommonUrlPartNoMsk(caseType)
+        CaseType.KAS -> baseUrl +
                 "/modules.php?name=sud_delo" +
                 "&srv_num=1" +
                 "&name_op=r" +
@@ -117,57 +62,49 @@ sealed class Courts {
                 "&p1_case__ENTRY_DATE2D=" +
                 "&P1_CASE__PREV_CASE_NUMBERSS=" +
                 "&P1_CASE__MASTER_CASE_NUMBERSS=" +
-                "&P1_CASE__ESSENCE=" +
-                "&P1_CASE__JUDGE=" +
-                "&p1_case__RESULT_DATE1D=" +
-                "&p1_case__RESULT_DATE2D=" +
-                "&P1_CASE__RESULT=" +
-                "&P1_CASE__BUILDING_ID=" +
-                "&P1_CASE__COURT_STRUCT=" +
-                "&P1_EVENT__EVENT_NAME=" +
-                "&P1_EVENT__EVENT_DATEDD=" +
-                "&P1_PARTS__PARTS_TYPE=" +
-                "&P1_PARTS__INN_STRSS=" +
-                "&P1_PARTS__KPP_STRSS=" +
-                "&P1_PARTS__OGRN_STRSS=" +
-                "&P1_PARTS__OGRNIP_STRSS=" +
-                "&P1_RKN_ACCESS_RESTRICTION__RKN_REASON=" +
-                "&p1_rkn_access_restriction__RKN_RESTRICT_URLSS=" +
-                "&p1_requirement__ACCESSION_DATE1D=" +
-                "&p1_requirement__ACCESSION_DATE2D=" +
-                "&P1_REQUIREMENT__CATEGORY=" +
-                "&p1_requirement__ESSENCESS=" +
-                "&p1_requirement__JOIN_END_DATE1D=" +
-                "&p1_requirement__JOIN_END_DATE2D=" +
-                "&P1_REQUIREMENT__PUBLICATION_ID=" +
-                "&P1_DOCUMENT__PUBL_DATE1D=" +
-                "&P1_DOCUMENT__PUBL_DATE2D=" +
-                "&P1_DOCUMENT__VALIDITY_DATE1D=" +
-                "&P1_DOCUMENT__VALIDITY_DATE2D=" +
-                "&P1_ORDER_INFO__ORDER_DATE1D=" +
-                "&P1_ORDER_INFO__ORDER_DATE2D=" +
-                "&P1_ORDER_INFO__ORDER_NUMSS=" +
-                "&P1_ORDER_INFO__EXTERNALKEYSS=" +
-                "&P1_ORDER_INFO__STATE_ID=" +
-                "&P1_ORDER_INFO__RECIP_ID="
+                "&P1_CASE__ESSENCE=" + getSearchQueryCommonUrlPartNoMsk(caseType)
     }
+}
 
-    // MSK courts
-    object Dorogomilovskij : Court, Courts() {
-
-        override val type = PageType.Msk
-        override val basicUrl = "https://mos-gorsud.ru/rs/dorogomilovskij"
-
-        override fun getScheduleQuery(date: String): String {
-            TODO("Not yet implemented")
-        }
-
-        override fun getGPKSearchQuery(sideName: String, caseNumber: String): String {
-            TODO("Not yet implemented")
-        }
-
-        override fun getKASSearchQuery(sideName: String, caseNumber: String): String {
-            TODO("Not yet implemented")
-        }
+private fun getSearchQueryCommonUrlPartNoMsk(caseType: CaseType): String {
+    val key1 = when (caseType) {
+        CaseType.GPK -> "G1"
+        CaseType.KAS -> "P1"
     }
+    val key2 = when (caseType) {
+        CaseType.GPK -> "g1"
+        CaseType.KAS -> "p1"
+    }
+    return "&${key1}_CASE__JUDGE=" +
+            "&${key2}_case__RESULT_DATE1D=" +
+            "&${key2}_case__RESULT_DATE2D=" +
+            "&${key1}_CASE__RESULT=" +
+            "&${key1}_CASE__BUILDING_ID=" +
+            "&${key1}_CASE__COURT_STRUCT=" +
+            "&${key1}_EVENT__EVENT_NAME=" +
+            "&${key1}_EVENT__EVENT_DATEDD=" +
+            "&${key1}_PARTS__PARTS_TYPE=" +
+            "&${key1}_PARTS__INN_STRSS=" +
+            "&${key1}_PARTS__KPP_STRSS=" +
+            "&${key1}_PARTS__OGRN_STRSS=" +
+            "&${key1}_PARTS__OGRNIP_STRSS=" +
+            "&${key1}_RKN_ACCESS_RESTRICTION__RKN_REASON=" +
+            "&${key2}_rkn_access_restriction__RKN_RESTRICT_URLSS=" +
+            "&${key2}_requirement__ACCESSION_DATE1D=" +
+            "&${key2}_requirement__ACCESSION_DATE2D=" +
+            "&${key1}_REQUIREMENT__CATEGORY=" +
+            "&${key2}_requirement__ESSENCESS=" +
+            "&${key2}_requirement__JOIN_END_DATE1D=" +
+            "&${key2}_requirement__JOIN_END_DATE2D=" +
+            "&${key1}_REQUIREMENT__PUBLICATION_ID=" +
+            "&${key1}_DOCUMENT__PUBL_DATE1D=" +
+            "&${key1}_DOCUMENT__PUBL_DATE2D=" +
+            "&${key1}_CASE__VALIDITY_DATE1D=" +
+            "&${key1}_CASE__VALIDITY_DATE2D=" +
+            "&${key1}_ORDER_INFO__ORDER_DATE1D=" +
+            "&${key1}_ORDER_INFO__ORDER_DATE2D=" +
+            "&${key1}_ORDER_INFO__ORDER_NUMSS=" +
+            "&${key1}_ORDER_INFO__EXTERNALKEYSS=" +
+            "&${key1}_ORDER_INFO__STATE_ID=" +
+            "&${key1}_ORDER_INFO__RECIP_ID="
 }

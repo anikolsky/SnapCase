@@ -44,8 +44,8 @@ class MainActivity : ComponentActivity() {
                         composable(route = Screen.Home.route) {
                             HomeScreen(
                                 navController = navController,
-                                onSearchClick = { searchInput ->
-                                    navController.navigate(Screen.Search.route + "/$searchInput") {
+                                onSearchClick = { caseType, searchInput ->
+                                    navController.navigate(Screen.Search.route + "?caseType=$caseType&searchInput=$searchInput") {
                                         popUpTo(navController.graph.findStartDestination().id) {
                                             saveState = true
                                         }
@@ -67,8 +67,11 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(
-                            route = Screen.Search.route + "/{searchInput}",
-                            arguments = listOf(navArgument(name = "searchInput") { NavType.StringType })
+                            route = Screen.Search.route + "?caseType={caseType}&searchInput={searchInput}",
+                            arguments = listOf(
+                                navArgument(name = "caseType") { NavType.StringType },
+                                navArgument(name = "searchInput") { NavType.StringType }
+                            )
                         ) {
                             SearchScreen(
                                 navController = navController,

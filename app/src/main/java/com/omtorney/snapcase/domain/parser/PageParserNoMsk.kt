@@ -24,7 +24,7 @@ class PageParserNoMsk @Inject constructor(
             val lineElements = resultLine.select("td")
             val info = lineElements[4].text()
             val case = Case(
-                url = court.basicUrl + lineElements[1].child(0).attr("href"),
+                url = court.baseUrl + lineElements[1].child(0).attr("href"),
                 number = getCaseNumber(lineElements[1].text()),
                 hearingDateTime = lineElements[2].text(),
                 category = getCaseCategory(info),
@@ -56,7 +56,7 @@ class PageParserNoMsk @Inject constructor(
             val resultElement = resultLine.select("td")
             val info = resultElement[2].text()
             val case = Case(
-                url = court.basicUrl + resultElement.first()!!.child(0).attr("href"),
+                url = court.baseUrl + resultElement.first()!!.child(0).attr("href"),
                 number = getCaseNumber(resultElement[0].text()),
                 receiptDate = resultElement[1].text(),
                 category = getCaseCategory(info),
@@ -194,7 +194,7 @@ class PageParserNoMsk @Inject constructor(
     override fun getCaseActUrl(element: Element, court: Court): String {
         val linkToAct = element.select("a").attr("href")
         return if (linkToAct.isNotEmpty())
-            court.basicUrl + linkToAct
+            court.baseUrl + linkToAct
         else ""
     }
 
@@ -215,7 +215,7 @@ class PageParserNoMsk @Inject constructor(
                 .toInt()
             /** Добавить все ссылки в массив */
             pagesUrls = List(pagesTotal) { index ->
-                court.basicUrl + lastPageUrl
+                court.baseUrl + lastPageUrl
                     .removeRange(0, 1)
                     .replace("page=$pagesTotal", "page=${index + 1}")
             }
