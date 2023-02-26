@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# For AppUpdate
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Service
