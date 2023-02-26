@@ -126,6 +126,7 @@ fun SpinnerBlock(
 //            width = 1.dp,
 //            color = MaterialTheme.colors.primary.copy(alpha = 0.4f)
 //        ),
+        elevation = 10.dp,
         modifier = Modifier
             .padding(horizontal = 14.dp, vertical = 8.dp)
             .fillMaxWidth()
@@ -192,6 +193,7 @@ fun SearchBlock(
 //            width = 1.dp,
 //            color = MaterialTheme.colors.primary.copy(alpha = 0.4f)
 //        ),
+        elevation = 10.dp,
         modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
@@ -208,6 +210,9 @@ fun SearchBlock(
                 singleLine = true,
                 maxLines = 1,
                 shape = Shapes.small,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    unfocusedBorderColor = MaterialTheme.colors.primary
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(55.dp)
@@ -248,6 +253,7 @@ fun ScheduleBlock(
 //            width = 1.dp,
 //            color = MaterialTheme.colors.primary.copy(alpha = 0.4f)
 //        ),
+        elevation = 10.dp,
         modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
     ) {
         Column(
@@ -263,7 +269,7 @@ fun ScheduleBlock(
                     color = MaterialTheme.colors.primary
                 ),
                 modifier = Modifier
-                    .height(40.dp)
+                    .height(50.dp)
                     .fillMaxWidth()
             ) {
                 Text(

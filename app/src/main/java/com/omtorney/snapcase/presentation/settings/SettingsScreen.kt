@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.skydoves.colorpicker.compose.*
+import com.omtorney.snapcase.BuildConfig
 import com.omtorney.snapcase.R
 import com.omtorney.snapcase.presentation.Screen
 import com.omtorney.snapcase.presentation.common.BackButton
@@ -39,6 +40,11 @@ fun SettingsScreen(
             TopBarTitle(
                 title = Screen.Settings.title,
                 modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = "Версия сборки: ${BuildConfig.VERSION_CODE}",
+                color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
+                modifier = Modifier.padding(8.dp)
             )
         }
         SettingsMenuButton(
@@ -172,6 +178,6 @@ fun SettingsMenuButtonPreview() {
             icon = R.drawable.round_color,
             title = "Title",
             subtitle = "subtitle",
-        {})
+            {})
     }
 }

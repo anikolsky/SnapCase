@@ -2,12 +2,12 @@ package com.omtorney.snapcase.presentation
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Toast
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
@@ -17,8 +17,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
-import androidx.core.content.ContextCompat
 import com.azhon.appupdate.manager.DownloadManager
+import com.omtorney.snapcase.BuildConfig
+import com.omtorney.snapcase.R
 import com.omtorney.snapcase.presentation.common.PermissionDialog
 import com.omtorney.snapcase.presentation.common.WriteStoragePermissionTextProvider
 import com.omtorney.snapcase.presentation.ui.theme.SnapCaseTheme
@@ -32,22 +33,18 @@ import java.net.URL
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    private lateinit var multiplePermissionResultLauncher: ActivityResultLauncher<Array<String>>
+    private lateinit var versionResult: Resource<String>
     private val baseUrl = "http://188.225.60.116/"
-    private val versionFile = "version.txt"
-    private val apkUpdateFile = "app3.apk"
-    private val apkDownloadFile = "appUpdate.apk"
+    private val versionFile = "SnapCaseVersion.txt"
+    private val apkUpdateFile = "SnapCaseApp.apk"
+    private val apkDownloadFile = "SnapCaseUpdate.apk"
     private var downloadManager: DownloadManager? = null
     private val viewModel by viewModels<MainViewModel>()
     private val permissionsToRequest = arrayOf(
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE
     )
-
-    private lateinit var multiplePermissionResultLauncher: ActivityResultLauncher<Array<String>>
-
-
-
-    private lateinit var versionResult: Resource<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,19 +68,13 @@ class MainActivity : ComponentActivity() {
 
         when (versionResult) {
             is Resource.Success -> {
-                Toast.makeText(this, "Remote version is: ${versionResult.data}", Toast.LENGTH_SHORT).show()
-//                if (versionResult.data!!.toInt() >= 2) {
-//                    downloadManager = DownloadManager.Builder(this).run {
-//                        apkUrl(baseUrl + apkUpdateFile)
-//                        apkName(apkDownloadFile)
-//                        smallIcon(R.drawable.ic_round_case)
-//                        build()
-//                    }
-//                    downloadManager!!.download()
-//                }
+                if (versionResult.data!!.toInt() > BuildConfig.VERSION_CODE) {
+                    Log.d("TESTLOG", "Версия приложения на сервере: ${versionResult.data}")
+                    showDialog()
+                }
             }
             is Resource.Error -> {
-                Toast.makeText(this, "Error: ${versionResult.message}", Toast.LENGTH_SHORT).show()
+                Log.d("TESTLOG", "Ошибка при проверке наличия обновления: ${versionResult.message}")
             }
             is Resource.Loading -> {}
         }
@@ -133,6 +124,29 @@ class MainActivity : ComponentActivity() {
         } catch (e: Exception) {
             Resource.Error(message = e.message.toString())
         }
+    }
+
+    private fun showDialog() {
+        AlertDialog.Builder(this@MainActivity)
+            .setTitle("Доступно обновление")
+            .setMessage("Пожалуйста, установите актуальную версию приложения")
+            .setNegativeButton("Отмена") { dialog, _ -> dialog.cancel() }
+            .setPositiveButton("Обновить") { dialog, _ -> updateMute() }
+            .show()
+    }
+
+    private fun updateMute() {
+        downloadManager = DownloadManager.Builder(this)
+            .apkUrl(baseUrl + apkUpdateFile)
+            .apkName(apkDownloadFile)
+            .smallIcon(R.drawable.ic_round_case)
+//            .onDownloadListener(object : OnDownloadListenerAdapter() {
+//                override fun downloading(max: Int, progress: Int) {
+//                    Toast.makeText(this@MainActivity, "$progress of $max downloaded", Toast.LENGTH_SHORT).show()
+//                }
+//            })
+            .build()
+        downloadManager?.download()
     }
 }
 
