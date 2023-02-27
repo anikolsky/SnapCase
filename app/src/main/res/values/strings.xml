@@ -13,7 +13,7 @@
     <string name="dismiss">Закрыть</string>
     <string name="select">Выбрать</string>
     <string name="send">Отправить</string>
-    <string name="save_favorites">Сохранить в избранное</string>
+    <string name="add_favorites">Добавить в избранное</string>
     <string name="delete_favorite">Удалить из избранного</string>
     <string name="recent_list_empty">Список недавних дел пуст</string>
     <string name="favorite_list_empty">Список избранных дел пуст</string>
@@ -21,4 +21,17 @@
     <string name="search_cases">Поиск дел</string>
     <string name="show_schedule">Показать расписание</string>
     <string name="show_act">Открыть решение</string>
+
+    <string name="app_update_latest_version">Последняя версия на данный момент!</string>
+    <string name="app_update_start_download">Начать загрузку обновления</string>
+    <string name="app_update_start_download_hint">Вы можете проверить процесс загрузки обновления позже</string>
+    <string name="app_update_start_downloading">Загрузка обновления для приложения</string>
+    <string name="app_update_download_completed">Загрузка обновления завершена</string>
+    <string name="app_update_click_hint">Нажмите для установки</string>
+    <string name="app_update_download_error">Ошибка загрузки обновления</string>
+    <string name="app_update_continue_downloading">Нажмите для продолжения загрузки</string>
+    <string name="app_update_background_downloading">Фоновая загрузка обновления…</string>
+    <string name="app_update_dialog_new">Обновление %s может быть загружено!</string>
+    <string name="app_update_dialog_new_size">Размер обновления: %s</string>
+    <string name="app_update_update">Обновление</string>
 </resources>

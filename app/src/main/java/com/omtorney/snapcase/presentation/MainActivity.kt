@@ -1,82 +1,74 @@
 package com.omtorney.snapcase.presentation
 
-import android.Manifest
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.lifecycleScope
 import com.azhon.appupdate.manager.DownloadManager
 import com.omtorney.snapcase.BuildConfig
 import com.omtorney.snapcase.R
-import com.omtorney.snapcase.presentation.common.PermissionDialog
-import com.omtorney.snapcase.presentation.common.WriteStoragePermissionTextProvider
 import com.omtorney.snapcase.presentation.ui.theme.SnapCaseTheme
 import com.omtorney.snapcase.util.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.URL
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private lateinit var multiplePermissionResultLauncher: ActivityResultLauncher<Array<String>>
+//    private lateinit var multiplePermissionResultLauncher: ActivityResultLauncher<Array<String>>
+//    private val viewModel by viewModels<MainViewModel>()
+//    private val permissionsToRequest = arrayOf(
+//        Manifest.permission.WRITE_EXTERNAL_STORAGE
+//    )
     private lateinit var versionResult: Resource<String>
     private val baseUrl = "http://188.225.60.116/"
     private val versionFile = "SnapCaseVersion.txt"
     private val apkUpdateFile = "SnapCaseApp.apk"
     private val apkDownloadFile = "SnapCaseUpdate.apk"
     private var downloadManager: DownloadManager? = null
-    private val viewModel by viewModels<MainViewModel>()
-    private val permissionsToRequest = arrayOf(
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.READ_EXTERNAL_STORAGE
-    )
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        multiplePermissionResultLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        ) { permissions ->
-            permissionsToRequest.forEach { permission ->
-                viewModel.onPermissionResult(
-                    permission = permission,
-                    isGranted = permissions[permission] == true
-                )
-            }
-        }
+//        multiplePermissionResultLauncher = registerForActivityResult(
+//            ActivityResultContracts.RequestMultiplePermissions()
+//        ) { permissions ->
+//            permissionsToRequest.forEach { permission ->
+//                viewModel.onPermissionResult(
+//                    permission = permission,
+//                    isGranted = permissions[permission] == true
+//                )
+//            }
+//        }
 
-        runBlocking {
-            withContext(Dispatchers.IO) {
-                versionResult = getRemoteVersionCode()
+        lifecycleScope.launch {
+            versionResult = withContext(Dispatchers.IO) {
+                 getRemoteVersionCode()
             }
-        }
-
-        when (versionResult) {
-            is Resource.Success -> {
-                if (versionResult.data!!.toInt() > BuildConfig.VERSION_CODE) {
-                    Log.d("TESTLOG", "Версия приложения на сервере: ${versionResult.data}")
-                    showDialog()
+            when (versionResult) {
+                is Resource.Success -> {
+                    if (versionResult.data!!.toInt() > BuildConfig.VERSION_CODE) {
+                        Log.d("TESTLOG", "Версия приложения на сервере: ${versionResult.data}")
+                        showDialog()
+                    }
                 }
+                is Resource.Error -> {
+                    Log.d("TESTLOG", "Ошибка при проверке наличия обновления: ${versionResult.message}")
+                }
+                is Resource.Loading -> {}
             }
-            is Resource.Error -> {
-                Log.d("TESTLOG", "Ошибка при проверке наличия обновления: ${versionResult.message}")
-            }
-            is Resource.Loading -> {}
         }
 
         setContent {
@@ -85,28 +77,28 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    val dialogQueue = viewModel.visiblePermissionDialogQueue
                     AppNavHost()
-                    multiplePermissionResultLauncher.launch(permissionsToRequest)
-                    dialogQueue
-                        .reversed()
-                        .forEach { permission ->
-                            PermissionDialog(
-                                permissionTextProvider = when (permission) {
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE -> {
-                                        WriteStoragePermissionTextProvider()
-                                    }
-                                    else -> return@forEach
-                                },
-                                isPermanentlyDeclined = !shouldShowRequestPermissionRationale(permission),
-                                onDismiss = viewModel::dismissDialog,
-                                onOkClick = {
-                                    viewModel.dismissDialog()
-                                    multiplePermissionResultLauncher.launch(arrayOf(permission))
-                                },
-                                onGoToAppSettingsClick = ::openAppSettings
-                            )
-                        }
+//                    val dialogQueue = viewModel.visiblePermissionDialogQueue
+//                    multiplePermissionResultLauncher.launch(permissionsToRequest)
+//                    dialogQueue
+//                        .reversed()
+//                        .forEach { permission ->
+//                            PermissionDialog(
+//                                permissionTextProvider = when (permission) {
+//                                    Manifest.permission.WRITE_EXTERNAL_STORAGE -> {
+//                                        WriteStoragePermissionTextProvider()
+//                                    }
+//                                    else -> return@forEach
+//                                },
+//                                isPermanentlyDeclined = !shouldShowRequestPermissionRationale(permission),
+//                                onDismiss = viewModel::dismissDialog,
+//                                onOkClick = {
+//                                    viewModel.dismissDialog()
+//                                    multiplePermissionResultLauncher.launch(arrayOf(permission))
+//                                },
+//                                onGoToAppSettingsClick = ::openAppSettings
+//                            )
+//                        }
                 }
             }
         }
@@ -150,9 +142,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-fun Activity.openAppSettings() {
-    Intent(
-        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-        Uri.fromParts("package", packageName, null)
-    ).also(::startActivity)
-}
+//fun Activity.openAppSettings() {
+//    Intent(
+//        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+//        Uri.fromParts("package", packageName, null)
+//    ).also(::startActivity)
+//}

@@ -16,7 +16,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.snapcase.R
-import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.presentation.common.CaseCard
 import com.omtorney.snapcase.presentation.common.UiEvent
 import com.omtorney.snapcase.presentation.ui.theme.Shapes
@@ -143,7 +142,7 @@ fun DetailScreen(
                         text = if (state.case?.isFavorite == true) {
                             stringResource(R.string.delete_favorite).uppercase()
                         } else {
-                            stringResource(R.string.save_favorites).uppercase()
+                            stringResource(R.string.add_favorites).uppercase()
                         }
                     )
                 }
