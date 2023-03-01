@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,7 +36,7 @@ fun CaseCard(
 
     Card(
         shape = Shapes.small,
-        elevation = 8.dp,
+        elevation = 12.dp,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 4.dp, vertical = 2.dp)
@@ -99,7 +100,7 @@ fun CaseCard(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(color = MaterialTheme.colors.primary)
+                        .background(color = MaterialTheme.colors.primary.copy(alpha = 0.8f))
                 ) {
                     Text(
                         text = stringResource(R.string.show_act).uppercase(),
@@ -127,6 +128,7 @@ fun TextBlock(
         text = title,
         color = color,
         style = style,
+        fontWeight = FontWeight.Bold
     )
     Text(
         text = text,

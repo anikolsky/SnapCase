@@ -95,33 +95,35 @@ fun DetailScreen(
                                 }
                             }
                         }
-                        item {
-                            Box(modifier = Modifier.fillMaxWidth()) {
-                                Text(
-                                    text = "Последнее обжалование",
-                                    style = MaterialTheme.typography.h6,
-                                    textAlign = TextAlign.Center,
+                        if (case.appeal.isNotEmpty()) {
+                            item {
+                                Box(modifier = Modifier.fillMaxWidth()) {
+                                    Text(
+                                        text = "Последнее обжалование",
+                                        style = MaterialTheme.typography.h6,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 6.dp)
+                                    )
+                                }
+                            }
+                            item {
+                                Card(
+                                    shape = Shapes.small,
+                                    elevation = 6.dp,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(vertical = 6.dp)
-                                )
-                            }
-                        }
-                        item {
-                            Card(
-                                shape = Shapes.small,
-                                elevation = 6.dp,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(2.dp)
-                            ) {
-                                Text(
-                                    text = case.appealToString(),
-                                    modifier = Modifier.padding(
-                                        horizontal = 12.dp,
-                                        vertical = 8.dp
+                                        .padding(2.dp)
+                                ) {
+                                    Text(
+                                        text = case.appealToString(),
+                                        modifier = Modifier.padding(
+                                            horizontal = 12.dp,
+                                            vertical = 8.dp
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     }

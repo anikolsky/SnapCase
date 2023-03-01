@@ -128,7 +128,7 @@ fun SpinnerBlock(
 //        ),
         elevation = 10.dp,
         modifier = Modifier
-            .padding(horizontal = 14.dp, vertical = 8.dp)
+            .padding(horizontal = 14.dp, vertical = 6.dp)
             .fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -194,7 +194,7 @@ fun SearchBlock(
 //            color = MaterialTheme.colors.primary.copy(alpha = 0.4f)
 //        ),
         elevation = 10.dp,
-        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+        modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             OutlinedTextField(
@@ -215,7 +215,7 @@ fun SearchBlock(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(55.dp)
+                    .height(50.dp)
             )
             Spacer(modifier = Modifier.height(12.dp))
             Button(
@@ -254,7 +254,7 @@ fun ScheduleBlock(
 //            color = MaterialTheme.colors.primary.copy(alpha = 0.4f)
 //        ),
         elevation = 10.dp,
-        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+        modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
     ) {
         Column(
             modifier = Modifier

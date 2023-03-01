@@ -14,10 +14,8 @@ import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -44,7 +42,7 @@ fun BackButton(
         Icon(
             imageVector = Icons.Rounded.ArrowBack,
             contentDescription = "",
-            tint = contentColorFor(backgroundColor = MaterialTheme.colors.background)
+            tint = MaterialTheme.colors.primary
         )
     }
 }
@@ -57,9 +55,9 @@ fun TopBarTitle(
     Text(
         text = LocalContext.current.getString(title),
         style = MaterialTheme.typography.h6.merge(
-            TextStyle(color = contentColorFor(backgroundColor = MaterialTheme.colors.background))
+            TextStyle(color = MaterialTheme.colors.primary)
         ),
-        modifier = modifier.padding(start = 8.dp)
+        modifier = modifier.padding(start = 10.dp)
     )
 }
 
@@ -80,7 +78,7 @@ fun SettingsButton(onSettingsClick: () -> Unit) {
         Icon(
             imageVector = Icons.Rounded.Settings,
             contentDescription = "",
-            tint = contentColorFor(backgroundColor = MaterialTheme.colors.background)
+            tint = MaterialTheme.colors.primary
         )
     }
 }
