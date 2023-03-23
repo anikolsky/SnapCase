@@ -73,7 +73,7 @@ fun HomeScreen(
         ) {
             SpinnerBlock(
                 title = "Выберите суд",
-                availableQuantities = listOf(
+                items = listOf(
                     Courts.Dmitrov.title
                 ),
                 selectedItem = Courts.Dmitrov.title,
@@ -81,7 +81,7 @@ fun HomeScreen(
             )
             SpinnerBlock(
                 title = "Выберите вид производства",
-                availableQuantities = listOf(
+                items = listOf(
                     CaseType.GPK.title,
                     CaseType.KAS.title
                 ),
@@ -115,7 +115,7 @@ fun HomeScreen(
 @Composable
 fun SpinnerBlock(
     title: String,
-    availableQuantities: List<String>,
+    items: List<String>,
     selectedItem: String,
     onItemSelected: (String) -> Unit
 ) {
@@ -140,7 +140,7 @@ fun SpinnerBlock(
             Spacer(modifier = Modifier.height(12.dp))
             Spinner(
                 dropDownModifier = Modifier.wrapContentSize(),
-                items = availableQuantities,
+                items = items,
                 selectedItem = selectedItem,
                 onItemSelected = onItemSelected,
                 selectedItemFactory = { modifier, item ->

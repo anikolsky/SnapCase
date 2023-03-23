@@ -3,6 +3,7 @@ package com.omtorney.snapcase.presentation.home.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -26,12 +27,10 @@ fun <T> Spinner(
 
     Box(modifier = modifier.wrapContentSize(Alignment.TopStart)) {
         selectedItemFactory(
-            Modifier
-                .clickable { expanded = true },
+            Modifier.clickable { expanded = true },
             selectedItem
         )
-
-        androidx.compose.material.DropdownMenu(
+        DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = dropDownModifier

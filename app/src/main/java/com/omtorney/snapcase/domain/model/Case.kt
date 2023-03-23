@@ -1,14 +1,10 @@
 package com.omtorney.snapcase.domain.model
 
-import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import kotlinx.parcelize.IgnoredOnParcel
-import kotlinx.parcelize.Parcelize
 
-//@Parcelize
 @Entity(tableName = "cases")
 data class Case(
     @PrimaryKey
@@ -34,13 +30,10 @@ data class Case(
     var notes: String = "",
     @ColumnInfo(name = "is_favorite")
     val isFavorite: Boolean = false
-//) : Parcelable {
 ) {
 
-//    @IgnoredOnParcel
     @Ignore
     var process = mutableListOf<CaseProcess>()
-//    @IgnoredOnParcel
     @Ignore
     var appeal = mutableMapOf<String, String>()
 
@@ -66,6 +59,8 @@ data class Case(
         }
         return output
     }
+
+    fun doesJudgeMatchSearchQuery(query: String): Boolean = judge.contains(query)
 }
 
 data class CaseProcess(

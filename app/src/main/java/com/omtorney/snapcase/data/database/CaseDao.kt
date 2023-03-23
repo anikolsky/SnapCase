@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CaseDao {
 
-    @Query("SELECT * FROM cases WHERE is_favorite = true")
+    @Query("SELECT * FROM cases WHERE is_favorite = 1")
     fun getFavorites(): Flow<List<Case>>
 
-    @Query("SELECT * FROM cases WHERE is_favorite = false")
+    @Query("SELECT * FROM cases WHERE is_favorite = 0")
     fun getRecent(): Flow<List<Case>>
 
     @Query("SELECT * FROM cases WHERE number = :number")

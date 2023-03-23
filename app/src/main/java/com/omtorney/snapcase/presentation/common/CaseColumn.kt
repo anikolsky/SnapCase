@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,23 +21,21 @@ fun CaseColumn(
     onActTextClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(modifier = modifier) {
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background)
-                .padding(start = 4.dp, end = 4.dp, top = 4.dp, bottom = 0.dp)
-        ) {
-            items.map { case ->
-                item {
-                    CaseCard(
-                        case = case,
-                        isExpanded = false,
-                        onCardClick = { onCardClick(it) },
-                        onActTextClick = { onActTextClick(it) }
-                    )
-                }
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)
+            .padding(start = 4.dp, end = 4.dp, top = 4.dp, bottom = 0.dp)
+    ) {
+        items.map { case ->
+            item {
+                CaseCard(
+                    case = case,
+                    isExpanded = false,
+                    onCardClick = { onCardClick(it) },
+                    onActTextClick = { onActTextClick(it) }
+                )
             }
         }
     }
@@ -49,7 +48,7 @@ fun CaseColumnPreview() {
 }
 
 private val testCase = Case(
-    "1", "", "", "2-2222/2022", "", "",
+    "1", "", "", "2-2222/2022", "",
     "ИСТЕЦ: Иванов Иван Иванович ОТВЕТЧИК: Петров Петр Петрович",
-    "", "", "", "", "", "", ""
+    "Судья", "", "", "", "", "", "", ""
 )
