@@ -38,7 +38,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun HomeScreen(
     navController: NavController,
-    onSearchClick: (String, String) -> Unit,
+    onSearchClick: (String, String, String) -> Unit,
     onScheduleClick: (String, String) -> Unit,
     onSettingsClick: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
@@ -82,6 +82,14 @@ fun HomeScreen(
                 selectedItem = selectedCourt,
                 onItemSelected = viewModel::setSelectedCourt
             )
+            ScheduleBlock(
+                dateDialogState = dateDialogState,
+                date = formattedDate,
+                court = selectedCourt,
+                onScheduleClick = { date, court ->
+                    onScheduleClick(date, court)
+                }
+            )
             SpinnerBlock(
                 title = "Выберите вид производства",
                 items = listOf(
@@ -91,14 +99,9 @@ fun HomeScreen(
                 selectedItem = caseType,
                 onItemSelected = { caseType = it }
             )
-            SearchBlock(onSearchClick = { onSearchClick(caseType, it) })
-            ScheduleBlock(
-                dateDialogState = dateDialogState,
-                date = formattedDate,
-                court = selectedCourt,
-                onScheduleClick = { date, court ->
-                    onScheduleClick(date, court) }
-            )
+            SearchBlock(onSearchClick = {
+                onSearchClick(caseType, selectedCourt, it)
+            })
         }
     }
     MaterialDialog(
@@ -222,7 +225,11 @@ fun SearchBlock(
                 shape = Shapes.small,
                 onClick = {
                     if (input.isEmpty()) {
-                        Toast.makeText(context, R.string.enter_participant_or_number, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            R.string.enter_participant_or_number,
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
                         onSearchClick(input)
                     }
@@ -263,7 +270,7 @@ fun ScheduleBlock(
                     color = MaterialTheme.colors.primary
                 ),
                 modifier = Modifier
-                    .height(50.dp)
+                    .height(46.dp)
                     .fillMaxWidth()
             ) {
                 Text(

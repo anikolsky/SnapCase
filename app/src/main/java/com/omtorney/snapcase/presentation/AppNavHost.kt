@@ -30,8 +30,8 @@ fun AppNavHost() {
         composable(route = Screen.Home.route) {
             HomeScreen(
                 navController = navController,
-                onSearchClick = { caseType, searchInput ->
-                    navController.navigate(Screen.Search.route + "?caseType=$caseType&searchInput=$searchInput") {
+                onSearchClick = { caseType, courtTitle, searchInput ->
+                    navController.navigate(Screen.Search.route + "?caseType=$caseType&courtTitle=$courtTitle&searchInput=$searchInput") {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
@@ -53,9 +53,10 @@ fun AppNavHost() {
         }
 
         composable(
-            route = Screen.Search.route + "?caseType={caseType}&searchInput={searchInput}",
+            route = Screen.Search.route + "?caseType={caseType}&courtTitle={courtTitle}&searchInput={searchInput}",
             arguments = listOf(
                 navArgument(name = "caseType") { NavType.StringType },
+                navArgument(name = "courtTitle") { NavType.StringType },
                 navArgument(name = "searchInput") { NavType.StringType }
             )
         ) {

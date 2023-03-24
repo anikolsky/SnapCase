@@ -1,8 +1,10 @@
 package com.omtorney.snapcase.domain.usecase
 
+import android.util.Log
 import com.omtorney.snapcase.domain.Repository
 import com.omtorney.snapcase.domain.court.CaseType
 import com.omtorney.snapcase.domain.court.Court
+import com.omtorney.snapcase.domain.court.Courts
 import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.domain.parser.PageParserFactory
 import com.omtorney.snapcase.util.Resource
@@ -19,7 +21,7 @@ class SearchCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        court: Court,
+        courtTitle: String,
         caseType: CaseType,
         query: String
     ): Flow<Resource<List<Case>>> = flow {
@@ -31,6 +33,7 @@ class SearchCase @Inject constructor(
                 sideName = query
             else
                 caseNumber = query
+            val court = Courts.getCourtList().find { it.title == courtTitle } ?: Courts.Dmitrov
             val searchUrl = withContext(Dispatchers.IO) {
                 court.getSearchQuery(
                     caseType,
@@ -44,6 +47,7 @@ class SearchCase @Inject constructor(
             emit(Resource.Success(result))
         } catch (e: Exception) {
             emit(Resource.Error(message = handleException(e)))
+            Log.d("TESTLOG", "SearchCase: error: ${e.localizedMessage}")
         }
     }
 }

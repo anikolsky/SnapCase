@@ -44,8 +44,8 @@ class ScheduleViewModel @Inject constructor(
 
     init {
         val date =  savedStateHandle.get<String>("scheduleDate")!!
-        val court = savedStateHandle.get<String>("courtTitle")!!
-        showSchedule(court, date)
+        val courtTitle = savedStateHandle.get<String>("courtTitle")!!
+        showSchedule(courtTitle, date)
     }
 
     fun cacheCase(case: Case) {
@@ -58,8 +58,8 @@ class ScheduleViewModel @Inject constructor(
         _selectedJudge.value = text
     }
 
-    private fun showSchedule(court: String, date: String) = viewModelScope.launch {
-        caseUseCases.showSchedule(court, date).collect { result ->
+    private fun showSchedule(courtTitle: String, date: String) = viewModelScope.launch {
+        caseUseCases.showSchedule(courtTitle, date).collect { result ->
             when (result) {
                 is Resource.Loading -> {
                     _state.value = ScheduleState(isLoading = true)

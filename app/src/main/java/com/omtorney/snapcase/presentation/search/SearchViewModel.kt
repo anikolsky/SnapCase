@@ -25,12 +25,13 @@ class SearchViewModel @Inject constructor(
 
     init {
         val caseTypeInput = savedStateHandle.get<String>("caseType")
-        val searchInput = savedStateHandle.get<String>("searchInput")
+        val courtTitle = savedStateHandle.get<String>("courtTitle")!!
+        val searchInput = savedStateHandle.get<String>("searchInput")!!
         val caseType = when (caseTypeInput) {
             CaseType.GPK.title -> CaseType.GPK
             else -> CaseType.KAS
         }
-        searchCase(caseType, searchInput!!)
+        searchCase(courtTitle, caseType, searchInput)
     }
 
     fun cacheCase(case: Case) {
@@ -39,17 +40,19 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun searchCase(caseType: CaseType, input: String) = viewModelScope.launch {
-        caseUseCases.searchCase(Courts.Dmitrov, caseType, input).collect { result ->
-            when (result) {
-                is Resource.Loading -> {
-                    _state.value = SearchState(isLoading = true)
-                }
-                is Resource.Success -> {
-                    _state.value = SearchState(cases = result.data ?: emptyList())
-                }
-                is Resource.Error -> {
-                    _state.value = SearchState(error = result.message ?: "Unexpected error")
+    private fun searchCase(courtTitle: String, caseType: CaseType, input: String) {
+        viewModelScope.launch {
+            caseUseCases.searchCase(courtTitle, caseType, input).collect { result ->
+                when (result) {
+                    is Resource.Loading -> {
+                        _state.value = SearchState(isLoading = true)
+                    }
+                    is Resource.Success -> {
+                        _state.value = SearchState(cases = result.data ?: emptyList())
+                    }
+                    is Resource.Error -> {
+                        _state.value = SearchState(error = result.message ?: "Unexpected error")
+                    }
                 }
             }
         }

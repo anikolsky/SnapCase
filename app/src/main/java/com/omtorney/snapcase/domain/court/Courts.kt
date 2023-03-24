@@ -12,12 +12,12 @@ sealed class Courts(val title: String) {
     // NoMSK courts
     object Oblsud : Court, Courts("Московский областной") {
         override val type = PageType.NoMsk
-        override val baseUrl = "https://oblsud.mo.sudrf.ru"
+        override val baseUrl = "http://oblsud.mo.sudrf.ru"
     }
 
     object Dmitrov : Court, Courts("Дмитровский городской") {
         override val type = PageType.NoMsk
-        override val baseUrl = "https://dmitrov.mo.sudrf.ru"
+        override val baseUrl = "http://dmitrov.mo.sudrf.ru"
     }
 
     object Dolgoprudniy : Court, Courts("Долгопрудненский городской") {
@@ -27,7 +27,7 @@ sealed class Courts(val title: String) {
 
     object Dubna : Court, Courts("Дубненский городской") {
         override val type = PageType.NoMsk
-        override val baseUrl = "https://dubna.mo.sudrf.ru/"
+        override val baseUrl = "http://dubna.mo.sudrf.ru/"
     }
 
     object Lobnia : Court, Courts("Лобненский городской") {
@@ -37,7 +37,7 @@ sealed class Courts(val title: String) {
 
     object Mitishy : Court, Courts("Мытищинский городской") {
         override val type = PageType.NoMsk
-        override val baseUrl = "https://mitishy.mo.sudrf.ru"
+        override val baseUrl = "http://mitishy.mo.sudrf.ru"
     }
 
     object Pushkino : Court, Courts("Пушкинский городской") {
@@ -47,7 +47,7 @@ sealed class Courts(val title: String) {
 
     object Sergievposad : Court, Courts("Сергиево-Посадский городской") {
         override val type = PageType.NoMsk
-        override val baseUrl = "https://sergiev-posad.mo.sudrf.ru/"
+        override val baseUrl = "http://sergiev-posad.mo.sudrf.ru/"
     }
 
     object Taldom : Court, Courts("Талдомский городской") {
@@ -63,7 +63,7 @@ sealed class Courts(val title: String) {
     // MSK courts
     object Dorogomilovskij : Court, Courts("Дорогомиловский районный") {
         override val type = PageType.Msk
-        override val baseUrl = "https://mos-gorsud.ru/rs/dorogomilovskij"
+        override val baseUrl = "http://mos-gorsud.ru/rs/dorogomilovskij"
     }
 
     companion object {
