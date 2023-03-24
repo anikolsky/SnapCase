@@ -16,9 +16,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omtorney.snapcase.R
 import com.omtorney.snapcase.domain.court.CaseType
+import com.omtorney.snapcase.domain.court.Court
 import com.omtorney.snapcase.domain.court.Courts
 import com.omtorney.snapcase.presentation.common.BottomBar
 import com.omtorney.snapcase.presentation.common.SettingsButton
@@ -37,19 +39,22 @@ import java.time.format.DateTimeFormatter
 fun HomeScreen(
     navController: NavController,
     onSearchClick: (String, String) -> Unit,
-    onScheduleClick: (String) -> Unit,
+    onScheduleClick: (String, String) -> Unit,
     onSettingsClick: () -> Unit,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
     val dateDialogState = rememberMaterialDialogState()
     val scrollState = rememberScrollState()
     var caseType by remember { mutableStateOf(CaseType.GPK.title) }
     var pickedDate by remember { mutableStateOf(LocalDate.now()) }
+    val selectedCourt by viewModel.selectedCourt.collectAsState()
     val formattedDate by remember {
         derivedStateOf {
             DateTimeFormatter.ofPattern("dd.MM.yyyy").format(pickedDate)
         }
     }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -73,11 +78,9 @@ fun HomeScreen(
         ) {
             SpinnerBlock(
                 title = "Выберите суд",
-                items = listOf(
-                    Courts.Dmitrov.title
-                ),
-                selectedItem = Courts.Dmitrov.title,
-                onItemSelected = {}
+                items = Courts.getCourtList().map { it.title },
+                selectedItem = selectedCourt,
+                onItemSelected = viewModel::setSelectedCourt
             )
             SpinnerBlock(
                 title = "Выберите вид производства",
@@ -92,7 +95,9 @@ fun HomeScreen(
             ScheduleBlock(
                 dateDialogState = dateDialogState,
                 date = formattedDate,
-                onScheduleClick = { onScheduleClick(it) }
+                court = selectedCourt,
+                onScheduleClick = { date, court ->
+                    onScheduleClick(date, court) }
             )
         }
     }
@@ -122,10 +127,6 @@ fun SpinnerBlock(
     Card(
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
-//        border = BorderStroke(
-//            width = 1.dp,
-//            color = MaterialTheme.colors.primary.copy(alpha = 0.4f)
-//        ),
         elevation = 10.dp,
         modifier = Modifier
             .padding(horizontal = 14.dp, vertical = 6.dp)
@@ -189,10 +190,6 @@ fun SearchBlock(
     Card(
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
-//        border = BorderStroke(
-//            width = 1.dp,
-//            color = MaterialTheme.colors.primary.copy(alpha = 0.4f)
-//        ),
         elevation = 10.dp,
         modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
     ) {
@@ -244,15 +241,12 @@ fun SearchBlock(
 fun ScheduleBlock(
     dateDialogState: MaterialDialogState,
     date: String,
-    onScheduleClick: (String) -> Unit
+    court: String,
+    onScheduleClick: (String, String) -> Unit
 ) {
     Card(
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
-//        border = BorderStroke(
-//            width = 1.dp,
-//            color = MaterialTheme.colors.primary.copy(alpha = 0.4f)
-//        ),
         elevation = 10.dp,
         modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
     ) {
@@ -283,7 +277,7 @@ fun ScheduleBlock(
                     .height(40.dp)
                     .fillMaxWidth(),
                 shape = Shapes.small,
-                onClick = { onScheduleClick(date) }
+                onClick = { onScheduleClick(date, court) }
             ) {
                 Text(
                     text = stringResource(R.string.show_schedule).uppercase(),

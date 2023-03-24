@@ -48,4 +48,8 @@ class LocalDataSourceImpl @Inject constructor(
     override suspend fun setAccentColor(color: Long) = settingsStore.setAccentColor(color)
 
     override val getInitialColor: Long = Constants.INITIAL_COLOR
+
+    override val getSelectedCourt: Flow<String> = settingsStore.getSelectedCourt
+
+    override suspend fun setSelectedCourt(courtTitle: String) = settingsStore.setSelectedCourt(courtTitle)
 }

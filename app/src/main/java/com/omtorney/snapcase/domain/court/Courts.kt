@@ -10,15 +10,77 @@ enum class CaseType(val title: String) {
 sealed class Courts(val title: String) {
 
     // NoMSK courts
+    object Oblsud : Court, Courts("Московский областной") {
+        override val type = PageType.NoMsk
+        override val baseUrl = "https://oblsud.mo.sudrf.ru"
+    }
+
     object Dmitrov : Court, Courts("Дмитровский городской") {
         override val type = PageType.NoMsk
-        override val baseUrl = "https://dmitrov--mo.sudrf.ru"
+        override val baseUrl = "https://dmitrov.mo.sudrf.ru"
+    }
+
+    object Dolgoprudniy : Court, Courts("Долгопрудненский городской") {
+        override val type = PageType.NoMsk
+        override val baseUrl = "http://dolgoprudniy.mo.sudrf.ru/"
+    }
+
+    object Dubna : Court, Courts("Дубненский городской") {
+        override val type = PageType.NoMsk
+        override val baseUrl = "https://dubna.mo.sudrf.ru/"
+    }
+
+    object Lobnia : Court, Courts("Лобненский городской") {
+        override val type = PageType.NoMsk
+        override val baseUrl = "http://lobnia.mo.sudrf.ru/"
+    }
+
+    object Mitishy : Court, Courts("Мытищинский городской") {
+        override val type = PageType.NoMsk
+        override val baseUrl = "https://mitishy.mo.sudrf.ru"
+    }
+
+    object Pushkino : Court, Courts("Пушкинский городской") {
+        override val type = PageType.NoMsk
+        override val baseUrl = "http://pushkino.mo.sudrf.ru/"
+    }
+
+    object Sergievposad : Court, Courts("Сергиево-Посадский городской") {
+        override val type = PageType.NoMsk
+        override val baseUrl = "https://sergiev-posad.mo.sudrf.ru/"
+    }
+
+    object Taldom : Court, Courts("Талдомский городской") {
+        override val type = PageType.NoMsk
+        override val baseUrl = "http://taldom.mo.sudrf.ru/"
+    }
+
+    object Himki : Court, Courts("Химкинский городской") {
+        override val type = PageType.NoMsk
+        override val baseUrl = "http://himki.mo.sudrf.ru/"
     }
 
     // MSK courts
     object Dorogomilovskij : Court, Courts("Дорогомиловский районный") {
         override val type = PageType.Msk
         override val baseUrl = "https://mos-gorsud.ru/rs/dorogomilovskij"
+    }
+
+    companion object {
+        fun getCourtList(): List<Court> {
+            return listOf(
+                Oblsud,
+                Dmitrov,
+                Dolgoprudniy,
+                Dubna,
+                Lobnia,
+                Mitishy,
+                Pushkino,
+                Sergievposad,
+                Taldom,
+                Himki
+            )
+        }
     }
 }
 

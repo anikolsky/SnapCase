@@ -59,15 +59,13 @@ fun ScheduleScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp, horizontal = 8.dp)
+                    .padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 0.dp)
             )
             Spinner(
                 dropDownModifier = Modifier.wrapContentSize(),
                 items = judgeList,
                 selectedItem = selectedJudge,
-                onItemSelected = {
-                    viewModel.onJudgeSelect(it)
-                },
+                onItemSelected = viewModel::onJudgeSelect,
                 selectedItemFactory = { modifier, item ->
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,

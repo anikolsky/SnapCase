@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.omtorney.snapcase.domain.court.Court
 import com.omtorney.snapcase.presentation.act.ActScreen
 import com.omtorney.snapcase.presentation.detail.DetailScreen
 import com.omtorney.snapcase.presentation.favorites.FavoritesScreen
@@ -38,8 +39,8 @@ fun AppNavHost() {
                         restoreState = true
                     }
                 },
-                onScheduleClick = { scheduleDate ->
-                    navController.navigate(Screen.Schedule.route + "/$scheduleDate") {
+                onScheduleClick = { scheduleDate, courtTitle ->
+                    navController.navigate(Screen.Schedule.route + "?scheduleDate=$scheduleDate&courtTitle=$courtTitle") {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
@@ -66,8 +67,11 @@ fun AppNavHost() {
         }
 
         composable(
-            route = Screen.Schedule.route + "/{scheduleDate}",
-            arguments = listOf(navArgument(name = "scheduleDate") { NavType.StringType })
+            route = Screen.Schedule.route + "?scheduleDate={scheduleDate}&courtTitle={courtTitle}",
+            arguments = listOf(
+                navArgument(name = "scheduleDate") { NavType.StringType },
+                navArgument(name = "courtTitle") { NavType.StringType }
+            )
         ) {
             ScheduleScreen(
                 navController = navController,

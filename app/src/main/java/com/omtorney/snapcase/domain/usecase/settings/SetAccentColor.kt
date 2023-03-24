@@ -8,7 +8,6 @@ import javax.inject.Inject
 class SetAccentColor @Inject constructor(
     private val repository: Repository
 ) {
-
     suspend operator fun invoke(color: Color) {
         repository.setAccentColor(color.toArgb().toLong())
     }

@@ -55,4 +55,8 @@ class RepositoryImpl @Inject constructor(
     override suspend fun setAccentColor(color: Long) = localDataSource.setAccentColor(color)
 
     override val getInitialColor: Long = localDataSource.getInitialColor
+
+    override val getSelectedCourt: Flow<String> = localDataSource.getSelectedCourt
+
+    override suspend fun setSelectedCourt(courtTitle: String) = localDataSource.setSelectedCourt(courtTitle)
 }
