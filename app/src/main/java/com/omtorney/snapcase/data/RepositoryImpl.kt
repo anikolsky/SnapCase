@@ -4,7 +4,6 @@ import com.omtorney.snapcase.data.local.LocalDataSource
 import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.data.remote.RemoteDataSource
 import com.omtorney.snapcase.domain.Repository
-import com.omtorney.snapcase.util.Constants
 import kotlinx.coroutines.flow.Flow
 import org.jsoup.nodes.Document
 import javax.inject.Inject
@@ -49,14 +48,4 @@ class RepositoryImpl @Inject constructor(
     override fun getRecentCases(): Flow<List<Case>> {
         return localDataSource.getRecentCases()
     }
-
-    override val getAccentColor: Flow<Long> = localDataSource.getAccentColor
-
-    override suspend fun setAccentColor(color: Long) = localDataSource.setAccentColor(color)
-
-    override val getInitialColor: Long = localDataSource.getInitialColor
-
-    override val getSelectedCourt: Flow<String> = localDataSource.getSelectedCourt
-
-    override suspend fun setSelectedCourt(courtTitle: String) = localDataSource.setSelectedCourt(courtTitle)
 }

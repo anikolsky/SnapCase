@@ -4,13 +4,11 @@ import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -22,7 +20,8 @@ import com.omtorney.snapcase.R
 
 @Composable
 fun ActScreen(
-    viewModel: ActViewModel = hiltViewModel()
+    accentColor: Long,
+    viewModel: ActViewModel = hiltViewModel() // TODO move to NavHost
 ) {
     val state = viewModel.state.value
     val context = LocalContext.current
@@ -38,6 +37,7 @@ fun ActScreen(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RectangleShape,
+                colors = ButtonDefaults.buttonColors(Color(accentColor)),
                 onClick = {
                     val intent = Intent()
                     intent.action = Intent.ACTION_SEND
@@ -49,7 +49,10 @@ fun ActScreen(
             }
         }
         if (state.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = Color(accentColor)
+            )
         }
         if (state.error.isNotBlank()) {
             Text(

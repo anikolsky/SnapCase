@@ -1,6 +1,9 @@
 package com.omtorney.snapcase.presentation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
@@ -8,7 +11,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.omtorney.snapcase.domain.court.Court
 import com.omtorney.snapcase.presentation.act.ActScreen
 import com.omtorney.snapcase.presentation.detail.DetailScreen
 import com.omtorney.snapcase.presentation.favorites.FavoritesScreen
@@ -21,6 +23,9 @@ import com.omtorney.snapcase.presentation.settings.SettingsScreen
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()
+    val mainViewModel: MainViewModel = hiltViewModel()
+
+    val accentColor by mainViewModel.accentColor.collectAsStateWithLifecycle()
 
     NavHost(
         navController = navController,
@@ -30,6 +35,7 @@ fun AppNavHost() {
         composable(route = Screen.Home.route) {
             HomeScreen(
                 navController = navController,
+                accentColor = accentColor,
                 onSearchClick = { caseType, courtTitle, searchInput ->
                     navController.navigate(Screen.Search.route + "?caseType=$caseType&courtTitle=$courtTitle&searchInput=$searchInput") {
                         popUpTo(navController.graph.findStartDestination().id) {
@@ -62,6 +68,7 @@ fun AppNavHost() {
         ) {
             SearchScreen(
                 navController = navController,
+                accentColor = accentColor,
                 onCardClick = { goToCaseDetail(it.number, Screen.Search, navController) },
                 onActTextClick = { goToActText(it, navController) }
             )
@@ -76,6 +83,7 @@ fun AppNavHost() {
         ) {
             ScheduleScreen(
                 navController = navController,
+                accentColor = accentColor,
                 onCardClick = { goToCaseDetail(it.number, Screen.Schedule, navController) },
                 onActTextClick = { goToActText(it, navController) }
             )
@@ -86,6 +94,7 @@ fun AppNavHost() {
             arguments = listOf(navArgument(name = "caseNumber") { NavType.StringType })
         ) {
             DetailScreen(
+                accentColor = accentColor,
                 onActTextClick = { goToActText(it, navController) },
                 onDismiss = { navController.popBackStack() }
             )
@@ -95,12 +104,13 @@ fun AppNavHost() {
             route = Screen.Act.route + "/{caseActUrl}",
             arguments = listOf(navArgument(name = "caseActUrl") { NavType.StringType })
         ) {
-            ActScreen()
+            ActScreen(accentColor = accentColor)
         }
 
         composable(route = Screen.Favorites.route) {
             FavoritesScreen(
                 navController = navController,
+                accentColor = accentColor,
                 onSettingsClick = { goToSettings(navController) },
                 onBackClick = { navController.popBackStack() },
                 onCardClick = { goToCaseDetail(it.number, Screen.Favorites, navController) },
@@ -111,6 +121,7 @@ fun AppNavHost() {
         composable(route = Screen.Recent.route) {
             RecentScreen(
                 navController = navController,
+                accentColor = accentColor,
                 onSettingsClick = { goToSettings(navController) },
                 onBackClick = { navController.popBackStack() },
                 onCardClick = { goToCaseDetail(it.number, Screen.Recent, navController) },
@@ -120,6 +131,7 @@ fun AppNavHost() {
 
         composable(route = Screen.Settings.route) {
             SettingsScreen(
+                accentColor = accentColor,
                 onBackClick = { navController.popBackStack() }
             )
         }

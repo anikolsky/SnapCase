@@ -10,6 +10,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.omtorney.snapcase.domain.model.Case
@@ -17,6 +18,7 @@ import com.omtorney.snapcase.domain.model.Case
 @Composable
 fun CaseColumn(
     items: List<Case>,
+    accentColor: Long,
     onCardClick: (Case) -> Unit,
     onActTextClick: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -33,6 +35,7 @@ fun CaseColumn(
                 CaseCard(
                     case = case,
                     isExpanded = false,
+                    accentColor = accentColor,
                     onCardClick = { onCardClick(it) },
                     onActTextClick = { onActTextClick(it) }
                 )
@@ -44,7 +47,7 @@ fun CaseColumn(
 @Preview
 @Composable
 fun CaseColumnPreview() {
-    CaseColumn(items = listOf(testCase, testCase), {}, {})
+    CaseColumn(items = listOf(testCase, testCase), 0xFF4D4D5A, {}, {})
 }
 
 private val testCase = Case(

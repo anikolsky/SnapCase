@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -23,9 +24,10 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun DetailScreen(
+    accentColor: Long,
     onActTextClick: (String) -> Unit,
     onDismiss: () -> Unit,
-    viewModel: DetailViewModel = hiltViewModel()
+    viewModel: DetailViewModel = hiltViewModel() // TODO move to NavHost
 ) {
     val state = viewModel.state.value
     val scaffoldState = rememberScaffoldState()
@@ -60,6 +62,7 @@ fun DetailScreen(
                     CaseCard(
                         case = case,
                         isExpanded = true,
+                        accentColor = accentColor,
                         onCardClick = {},
                         onActTextClick = { onActTextClick(it) }
                     )
@@ -138,6 +141,7 @@ fun DetailScreen(
                         }
                     },
                     shape = RectangleShape,
+                    colors = ButtonDefaults.buttonColors(Color(accentColor)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
@@ -145,12 +149,15 @@ fun DetailScreen(
                             stringResource(R.string.delete_favorite).uppercase()
                         } else {
                             stringResource(R.string.add_favorites).uppercase()
-                        }
+                        },
                     )
                 }
             }
             if (state.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                CircularProgressIndicator(
+                    color = Color(accentColor),
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
             if (state.error.isNotBlank()) {
                 Text(

@@ -13,11 +13,4 @@ interface LocalDataSource {
     suspend fun getCaseByNumber(number: String): Case?
     fun getFavoriteCases(): Flow<List<Case>>
     fun getRecentCases(): Flow<List<Case>>
-
-    val getAccentColor: Flow<Long>
-    suspend fun setAccentColor(color: Long)
-    val getInitialColor: Long
-
-    val getSelectedCourt: Flow<String>
-    suspend fun setSelectedCourt(courtTitle: String)
 }

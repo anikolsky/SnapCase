@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -20,7 +21,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omtorney.snapcase.R
 import com.omtorney.snapcase.domain.court.CaseType
-import com.omtorney.snapcase.domain.court.Court
 import com.omtorney.snapcase.domain.court.Courts
 import com.omtorney.snapcase.presentation.common.BottomBar
 import com.omtorney.snapcase.presentation.common.SettingsButton
@@ -38,10 +38,11 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun HomeScreen(
     navController: NavController,
+    accentColor: Long,
     onSearchClick: (String, String, String) -> Unit,
     onScheduleClick: (String, String) -> Unit,
     onSettingsClick: () -> Unit,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel() // TODO move to NavHost
 ) {
     val scaffoldState = rememberScaffoldState()
     val dateDialogState = rememberMaterialDialogState()
@@ -61,9 +62,13 @@ fun HomeScreen(
             TopBar {
                 TopBarTitle(
                     title = R.string.app_title,
+                    accentColor = accentColor,
                     modifier = Modifier.weight(1f)
                 )
-                SettingsButton { onSettingsClick() }
+                SettingsButton(
+                    accentColor = accentColor,
+                    onSettingsClick = onSettingsClick
+                )
             }
         },
         scaffoldState = scaffoldState,
@@ -80,12 +85,14 @@ fun HomeScreen(
                 title = "Выберите суд",
                 items = Courts.getCourtList().map { it.title },
                 selectedItem = selectedCourt,
+                accentColor = accentColor,
                 onItemSelected = viewModel::setSelectedCourt
             )
             ScheduleBlock(
                 dateDialogState = dateDialogState,
                 date = formattedDate,
                 court = selectedCourt,
+                accentColor = accentColor,
                 onScheduleClick = { date, court ->
                     onScheduleClick(date, court)
                 }
@@ -97,11 +104,14 @@ fun HomeScreen(
                     CaseType.KAS.title
                 ),
                 selectedItem = caseType,
+                accentColor = accentColor,
                 onItemSelected = { caseType = it }
             )
-            SearchBlock(onSearchClick = {
-                onSearchClick(caseType, selectedCourt, it)
-            })
+            SearchBlock(
+                accentColor = accentColor,
+                onSearchClick = { query ->
+                    onSearchClick(caseType, selectedCourt, query)
+                })
         }
     }
     MaterialDialog(
@@ -125,6 +135,7 @@ fun SpinnerBlock(
     title: String,
     items: List<String>,
     selectedItem: String,
+    accentColor: Long,
     onItemSelected: (String) -> Unit
 ) {
     Card(
@@ -175,7 +186,7 @@ fun SpinnerBlock(
                     .fillMaxWidth()
                     .border(
                         width = 1.dp,
-                        color = MaterialTheme.colors.primary,
+                        color = Color(accentColor),
                         shape = MaterialTheme.shapes.small
                     )
             )
@@ -185,6 +196,7 @@ fun SpinnerBlock(
 
 @Composable
 fun SearchBlock(
+    accentColor: Long,
     onSearchClick: (String) -> Unit
 ) {
     var input by remember { mutableStateOf("") }
@@ -211,7 +223,8 @@ fun SearchBlock(
                 maxLines = 1,
                 shape = Shapes.small,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    unfocusedBorderColor = MaterialTheme.colors.primary
+                    focusedBorderColor = Color(accentColor),
+                    unfocusedBorderColor = Color(accentColor)
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -223,6 +236,7 @@ fun SearchBlock(
                     .height(40.dp)
                     .fillMaxWidth(),
                 shape = Shapes.small,
+                colors = ButtonDefaults.buttonColors(Color(accentColor)),
                 onClick = {
                     if (input.isEmpty()) {
                         Toast.makeText(
@@ -249,6 +263,7 @@ fun ScheduleBlock(
     dateDialogState: MaterialDialogState,
     date: String,
     court: String,
+    accentColor: Long,
     onScheduleClick: (String, String) -> Unit
 ) {
     Card(
@@ -267,7 +282,7 @@ fun ScheduleBlock(
                 shape = Shapes.small,
                 border = BorderStroke(
                     width = 1.dp,
-                    color = MaterialTheme.colors.primary
+                    color = Color(accentColor)
                 ),
                 modifier = Modifier
                     .height(46.dp)
@@ -275,6 +290,7 @@ fun ScheduleBlock(
             ) {
                 Text(
                     text = date,
+                    color = Color(accentColor),
                     style = MaterialTheme.typography.body1
                 )
             }
@@ -284,6 +300,7 @@ fun ScheduleBlock(
                     .height(40.dp)
                     .fillMaxWidth(),
                 shape = Shapes.small,
+                colors = ButtonDefaults.buttonColors(Color(accentColor)),
                 onClick = { onScheduleClick(date, court) }
             ) {
                 Text(

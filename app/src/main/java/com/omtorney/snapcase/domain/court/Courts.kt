@@ -12,52 +12,57 @@ sealed class Courts(val title: String) {
     // NoMSK courts
     object Oblsud : Court, Courts("Московский областной") {
         override val type = PageType.NoMsk
-        override val baseUrl = "http://oblsud.mo.sudrf.ru"
+        override val baseUrl = "http://oblsud.mo.sudrf.ru" // http://oblsud.mo.sudrf.ru
     }
 
     object Dmitrov : Court, Courts("Дмитровский городской") {
         override val type = PageType.NoMsk
-        override val baseUrl = "http://dmitrov.mo.sudrf.ru"
+        override val baseUrl = "https://dmitrov--mo.sudrf.ru" // http://dmitrov--mo.sudrf.ru
     }
 
     object Dolgoprudniy : Court, Courts("Долгопрудненский городской") {
         override val type = PageType.NoMsk
-        override val baseUrl = "http://dolgoprudniy.mo.sudrf.ru/"
+        override val baseUrl = "http://dolgoprudniy.mo.sudrf.ru" // http://dolgoprudniy.mo.sudrf.ru
     }
 
     object Dubna : Court, Courts("Дубненский городской") {
         override val type = PageType.NoMsk
-        override val baseUrl = "http://dubna.mo.sudrf.ru/"
+        override val baseUrl = "http://dubna.mo.sudrf.ru" // http://dubna.mo.sudrf.ru
+    }
+
+    object Krasnogorsk : Court, Courts("Красногорский городской") {
+        override val type = PageType.NoMsk
+        override val baseUrl = "http://krasnogorsk.mo.sudrf.ru" // http://krasnogorsk.mo.sudrf.ru
     }
 
     object Lobnia : Court, Courts("Лобненский городской") {
         override val type = PageType.NoMsk
-        override val baseUrl = "http://lobnia.mo.sudrf.ru/"
+        override val baseUrl = "http://lobnia.mo.sudrf.ru" // http://lobnia.mo.sudrf.ru
     }
 
     object Mitishy : Court, Courts("Мытищинский городской") {
         override val type = PageType.NoMsk
-        override val baseUrl = "http://mitishy.mo.sudrf.ru"
+        override val baseUrl = "http://mitishy.mo.sudrf.ru" // http://mitishy.mo.sudrf.ru
     }
 
     object Pushkino : Court, Courts("Пушкинский городской") {
         override val type = PageType.NoMsk
-        override val baseUrl = "http://pushkino.mo.sudrf.ru/"
+        override val baseUrl = "http://pushkino.mo.sudrf.ru" // http://pushkino.mo.sudrf.ru
     }
 
     object Sergievposad : Court, Courts("Сергиево-Посадский городской") {
         override val type = PageType.NoMsk
-        override val baseUrl = "http://sergiev-posad.mo.sudrf.ru/"
+        override val baseUrl = "http://sergiev-posad.mo.sudrf.ru" // http://sergiev-posad.mo.sudrf.ru
     }
 
     object Taldom : Court, Courts("Талдомский городской") {
         override val type = PageType.NoMsk
-        override val baseUrl = "http://taldom.mo.sudrf.ru/"
+        override val baseUrl = "http://taldom.mo.sudrf.ru" // http://taldom.mo.sudrf.ru
     }
 
     object Himki : Court, Courts("Химкинский городской") {
         override val type = PageType.NoMsk
-        override val baseUrl = "http://himki.mo.sudrf.ru/"
+        override val baseUrl = "http://himki.mo.sudrf.ru" // http://himki.mo.sudrf.ru
     }
 
     // MSK courts
@@ -73,6 +78,7 @@ sealed class Courts(val title: String) {
                 Dmitrov,
                 Dolgoprudniy,
                 Dubna,
+                Krasnogorsk,
                 Lobnia,
                 Mitishy,
                 Pushkino,

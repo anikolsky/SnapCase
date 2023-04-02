@@ -1,6 +1,9 @@
 package com.omtorney.snapcase.presentation.favorites
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -21,23 +24,31 @@ import com.omtorney.snapcase.presentation.common.*
 fun FavoritesScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
+    accentColor: Long,
     onSettingsClick: () -> Unit,
     onBackClick: () -> Unit,
     onCardClick: (Case) -> Unit,
     onActTextClick: (String) -> Unit,
-    viewModel: FavoritesViewModel = hiltViewModel()
+    viewModel: FavoritesViewModel = hiltViewModel() // TODO move to NavHost
 ) {
     val state = viewModel.state.value
 
     Scaffold(
         topBar = {
             TopBar {
-                BackButton { onBackClick() }
+                BackButton(
+                    accentColor = accentColor,
+                    onBackClick = onBackClick
+                )
                 TopBarTitle(
                     title = Screen.Favorites.title,
+                    accentColor = accentColor,
                     modifier = Modifier.weight(1f)
                 )
-                SettingsButton { onSettingsClick() }
+                SettingsButton(
+                    accentColor = accentColor,
+                    onSettingsClick = onSettingsClick
+                )
             }
         },
         bottomBar = { BottomBar(navController = navController) },
@@ -46,6 +57,7 @@ fun FavoritesScreen(
         Box(modifier = Modifier.padding(paddingValues)) {
             CaseColumn(
                 items = state.cases,
+                accentColor = accentColor,
                 onCardClick = { onCardClick(it) },
                 onActTextClick = { onActTextClick(it) }
             )

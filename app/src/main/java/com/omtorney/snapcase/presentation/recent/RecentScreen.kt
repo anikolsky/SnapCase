@@ -2,7 +2,7 @@ package com.omtorney.snapcase.presentation.recent
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -24,23 +24,31 @@ import com.omtorney.snapcase.presentation.common.*
 fun RecentScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
+    accentColor: Long,
     onSettingsClick: () -> Unit,
     onBackClick: () -> Unit,
     onCardClick: (Case) -> Unit,
     onActTextClick: (String) -> Unit,
-    viewModel: RecentViewModel = hiltViewModel()
+    viewModel: RecentViewModel = hiltViewModel() // TODO move to NavHost
 ) {
     val state = viewModel.state.value
 
     Scaffold(
         topBar = {
             TopBar {
-                BackButton { onBackClick() }
+                BackButton(
+                    accentColor = accentColor,
+                    onBackClick = onBackClick
+                )
                 TopBarTitle(
                     title = Screen.Recent.title,
+                    accentColor = accentColor,
                     modifier = Modifier.weight(1f)
                 )
-                SettingsButton { onSettingsClick() }
+                SettingsButton(
+                    accentColor = accentColor,
+                    onSettingsClick = onSettingsClick
+                )
             }
         },
         bottomBar = { BottomBar(navController = navController) },
@@ -50,6 +58,7 @@ fun RecentScreen(
             Column {
                 CaseColumn(
                     items = state.cases,
+                    accentColor = accentColor,
                     onCardClick = { onCardClick(it) },
                     onActTextClick = { onActTextClick(it) },
                     modifier = Modifier.weight(1f)
@@ -58,6 +67,7 @@ fun RecentScreen(
                     Button(
                         onClick = { viewModel.onEvent(RecentEvent.Clear) },
                         shape = RectangleShape,
+                        colors = ButtonDefaults.buttonColors(Color(accentColor)),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(text = stringResource(R.string.clear).uppercase())

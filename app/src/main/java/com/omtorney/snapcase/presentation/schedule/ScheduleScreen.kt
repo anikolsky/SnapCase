@@ -6,10 +6,12 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.omtorney.snapcase.R
 import com.omtorney.snapcase.domain.model.Case
@@ -20,14 +22,15 @@ import com.omtorney.snapcase.presentation.home.components.Spinner
 @Composable
 fun ScheduleScreen(
     navController: NavController,
+    accentColor: Long,
     onCardClick: (Case) -> Unit,
     onActTextClick: (String) -> Unit,
-    viewModel: ScheduleViewModel = hiltViewModel()
+    viewModel: ScheduleViewModel = hiltViewModel() // TODO move to NavHost
 ) {
     val state = viewModel.state.value
     val judgeList = state.cases.map { it.judge }.distinct()
-    val selectedJudge by viewModel.selectedJudge.collectAsState()
-    val filteredCases by viewModel.filteredCases.collectAsState()
+    val selectedJudge by viewModel.selectedJudge.collectAsStateWithLifecycle()
+    val filteredCases by viewModel.filteredCases.collectAsStateWithLifecycle()
 
     Scaffold(bottomBar = { BottomBar(navController = navController) }) { paddingValues ->
         Column(
@@ -37,7 +40,10 @@ fun ScheduleScreen(
         ) {
             if (state.isLoading) {
                 Box(modifier = Modifier.fillMaxSize()) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    CircularProgressIndicator(
+                        color = Color(accentColor),
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
             }
             if (state.error.isNotBlank()) {
@@ -102,6 +108,7 @@ fun ScheduleScreen(
             /** Case list */
             CaseColumn(
                 items = filteredCases, // state.cases
+                accentColor = accentColor,
                 onCardClick = { case ->
                     viewModel.cacheCase(case)
                     onCardClick(case)

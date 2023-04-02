@@ -29,6 +29,7 @@ import com.omtorney.snapcase.presentation.ui.theme.SnapCaseTheme
 fun CaseCard(
     case: Case,
     isExpanded: Boolean,
+    accentColor: Long,
     onCardClick: (Case) -> Unit,
     onActTextClick: (String) -> Unit
 ) {
@@ -73,7 +74,7 @@ fun CaseCard(
                     Row { TextBlock(
                         title = "Время заседания: ",
                         text = case.hearingDateTime,
-                        color = MaterialTheme.colors.primary,
+                        color = Color(accentColor),
                         style = MaterialTheme.typography.subtitle1
                     ) }
                 Column { TextBlock(title = "Участники: ", text = case.participants) }
@@ -89,7 +90,7 @@ fun CaseCard(
                         Column { TextBlock(
                             title = "Решение: ",
                             text = case.result,
-                            color = MaterialTheme.colors.primary,
+                            color = Color(accentColor),
                             style = MaterialTheme.typography.subtitle1
                         ) }
                     if (case.actDateTime.isNotEmpty())
@@ -100,7 +101,7 @@ fun CaseCard(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(color = MaterialTheme.colors.primary.copy(alpha = 0.8f))
+                        .background(color = Color(accentColor).copy(alpha = 0.8f))
                 ) {
                     Text(
                         text = stringResource(R.string.show_act).uppercase(),
@@ -144,7 +145,7 @@ fun TextBlock(
 @Composable
 private fun CaseCardPreview() {
     SnapCaseTheme {
-        CaseCard(testCase, true, {}, {})
+        CaseCard(testCase, true, 0xFF4D4D5A, {}, {})
     }
 }
 

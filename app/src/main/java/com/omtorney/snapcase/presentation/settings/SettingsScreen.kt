@@ -28,17 +28,21 @@ import com.omtorney.snapcase.presentation.ui.theme.SnapCaseTheme
 
 @Composable
 fun SettingsScreen(
+    accentColor: Long,
     onBackClick: () -> Unit,
-    viewModel: SettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel = hiltViewModel() // TODO move to NavHost
 ) {
-    val accentColor by viewModel.accentColor.collectAsState()
     var colorPickerOpened by remember { mutableStateOf(false) }
 
     Column {
         TopBar {
-            BackButton { onBackClick() }
+            BackButton(
+                accentColor = accentColor,
+                onBackClick = onBackClick
+            )
             TopBarTitle(
                 title = Screen.Settings.title,
+                accentColor = accentColor,
                 modifier = Modifier.weight(1f)
             )
             Text(
@@ -51,7 +55,8 @@ fun SettingsScreen(
             icon = R.drawable.round_color,
             title = "Акцентный цвет",
             subtitle = "Выберите дополнительный цвет приложения",
-            onClick = { /* colorPickerOpened = true */ } // TODO accent color fetching
+            accentColor = accentColor,
+            onClick = { colorPickerOpened = true }
         )
     }
 
@@ -69,6 +74,7 @@ fun SettingsMenuButton(
     @DrawableRes icon: Int,
     title: String,
     subtitle: String,
+    accentColor: Long,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -88,7 +94,10 @@ fun SettingsMenuButton(
             Text(text = title)
             Text(text = subtitle, style = MaterialTheme.typography.caption)
         }
-        Button(onClick = onClick) {
+        Button(
+            colors = ButtonDefaults.buttonColors(Color(accentColor)),
+            onClick = onClick
+        ) {
             Text(text = "Выбрать")
         }
     }
@@ -178,6 +187,7 @@ fun SettingsMenuButtonPreview() {
             icon = R.drawable.round_color,
             title = "Title",
             subtitle = "subtitle",
+            accentColor = 0xFF4D4D5A,
             {})
     }
 }

@@ -14,6 +14,7 @@ import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,13 +37,14 @@ fun TopBar(
 
 @Composable
 fun BackButton(
+    accentColor: Long,
     onBackClick: () -> Unit
 ) {
     IconButton(onClick = onBackClick) {
         Icon(
             imageVector = Icons.Rounded.ArrowBack,
             contentDescription = "",
-            tint = MaterialTheme.colors.primary
+            tint = Color(accentColor)
         )
     }
 }
@@ -50,35 +52,39 @@ fun BackButton(
 @Composable
 fun TopBarTitle(
     modifier: Modifier = Modifier,
+    accentColor: Long,
     @StringRes title: Int
 ) {
     Text(
         text = LocalContext.current.getString(title),
         style = MaterialTheme.typography.h6.merge(
-            TextStyle(color = MaterialTheme.colors.primary)
+            TextStyle(color = Color(accentColor))
         ),
         modifier = modifier.padding(start = 10.dp)
     )
 }
 
 @Composable
-fun MoreButton() {
+fun MoreButton(accentColor: Long) {
     IconButton(onClick = {}) {
         Icon(
             imageVector = Icons.Rounded.MoreVert,
             contentDescription = "",
-            tint = contentColorFor(backgroundColor = MaterialTheme.colors.background)
+            tint = contentColorFor(backgroundColor = Color(accentColor))
         )
     }
 }
 
 @Composable
-fun SettingsButton(onSettingsClick: () -> Unit) {
+fun SettingsButton(
+    accentColor: Long,
+    onSettingsClick: () -> Unit
+) {
     IconButton(onClick = onSettingsClick) {
         Icon(
             imageVector = Icons.Rounded.Settings,
             contentDescription = "",
-            tint = MaterialTheme.colors.primary
+            tint = Color(accentColor)
         )
     }
 }

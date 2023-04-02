@@ -11,21 +11,22 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omtorney.snapcase.domain.model.Case
-import com.omtorney.snapcase.presentation.Screen
 import com.omtorney.snapcase.presentation.common.BottomBar
 import com.omtorney.snapcase.presentation.common.CaseColumn
 
 @Composable
 fun SearchScreen(
     navController: NavController,
+    accentColor: Long,
     onCardClick: (Case) -> Unit,
     onActTextClick: (String) -> Unit,
-    viewModel: SearchViewModel = hiltViewModel()
+    viewModel: SearchViewModel = hiltViewModel() // TODO move to NavHost
 ) {
     val state = viewModel.state.value
 
@@ -37,6 +38,7 @@ fun SearchScreen(
         ) {
             CaseColumn(
                 items = state.cases,
+                accentColor = accentColor,
                 onCardClick = { case ->
                     viewModel.cacheCase(case)
                     onCardClick(case)
@@ -44,7 +46,10 @@ fun SearchScreen(
                 onActTextClick = { onActTextClick(it) }
             )
             if (state.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                CircularProgressIndicator(
+                    color = Color(accentColor),
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
             if (state.error.isNotBlank()) {
                 Text(

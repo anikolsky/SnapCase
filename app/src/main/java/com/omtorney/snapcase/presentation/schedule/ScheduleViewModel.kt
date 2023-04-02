@@ -5,8 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.omtorney.snapcase.domain.court.Court
-import com.omtorney.snapcase.domain.court.Courts
 import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.domain.usecase.CaseUseCases
 import com.omtorney.snapcase.util.Resource
