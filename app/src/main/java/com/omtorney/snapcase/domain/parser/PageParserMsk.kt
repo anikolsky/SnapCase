@@ -7,11 +7,11 @@ import org.jsoup.nodes.Element
 
 class PageParserMsk : PageParser {
 
-    override fun extractSchedule(html: String, court: Court): List<Case> {
+    override fun extractSchedule(document: Document, court: Court): List<Case> {
         TODO("Not yet implemented")
     }
 
-    override fun extractSearchResult(html: String, court: Court): List<Case> {
+    override fun extractSearchResult(document: Document, court: Court): List<Case> {
         TODO("Not yet implemented")
     }
 

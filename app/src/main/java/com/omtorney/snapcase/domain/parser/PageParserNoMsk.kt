@@ -14,9 +14,8 @@ class PageParserNoMsk @Inject constructor(
     private val repository: Repository
 ) : PageParser {
 
-    override fun extractSchedule(html: String, court: Court): List<Case> {
+    override fun extractSchedule(document: Document, court: Court): List<Case> {
         val caseList = mutableListOf<Case>()
-        val document = parseHtmlToDocument(html)
         val mainCard = document.select("div[id=content]")
         val searchResult = mainCard.select("table[id=tablcont]").first()
         val resultLines = searchResult?.getElementsByAttributeValue("valign", "top")
@@ -44,11 +43,10 @@ class PageParserNoMsk @Inject constructor(
         return caseList
     }
 
-    override fun extractSearchResult(html: String, court: Court): List<Case> {
+    override fun extractSearchResult(document: Document, court: Court): List<Case> {
         val caseList = mutableListOf<Case>()
         // TODO: загружается только первый лист результатов, обернуть в цикл, вызвать createPagesUrlsList()
         // TODO: загружать следующие страницы только по запросу
-        val document = parseHtmlToDocument(html)
         val mainCard = document.select("div[id=content]")
         val searchResult = mainCard.select("table[id=tablcont]").first()
         val resultLines = searchResult!!.getElementsByAttributeValue("valign", "top")
@@ -222,14 +220,5 @@ class PageParserNoMsk @Inject constructor(
             /** Если страница одна */
         } else pagesUrls = arrayListOf(searchUrl)
         return pagesUrls
-    }
-
-    private fun parseHtmlToDocument(html: String): Document {
-        return try {
-            Jsoup.parse(html)
-        } catch (e: Exception) {
-            Log.d("TESTLOG", "PageParserNoMsk (parseHtmlToDocument) error: ${e.message}")
-            Document("")
-        }
     }
 }

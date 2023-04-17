@@ -92,7 +92,11 @@ fun SettingsMenuButton(
                 .padding(horizontal = 8.dp)
         ) {
             Text(text = title)
-            Text(text = subtitle, style = MaterialTheme.typography.caption)
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.caption,
+                color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f)
+            )
         }
         Button(
             colors = ButtonDefaults.buttonColors(Color(accentColor)),

@@ -14,18 +14,17 @@ import javax.inject.Inject
 class ShowSchedule @Inject constructor(
     private val repository: Repository
 ) {
-
     suspend operator fun invoke(courtTitle: String, date: String): Flow<Resource<List<Case>>> = flow {
         try {
             emit(Resource.Loading())
             val court = Courts.getCourtList().find { it.title == courtTitle } ?: Courts.Dmitrov
-            val html = repository.getJsoupDocument(court.getScheduleQuery(date)).toString()
+            val document = repository.getJsoupDocument(court.getScheduleQuery(date))
             val page = PageParserFactory(repository).create(court)
-            val cases = page.extractSchedule(html, court)
-            emit(Resource.Success(cases))
-        } catch (e: Exception) {
+            val cases = page.extractSchedule(document!!, court)
+            emit(Resource.Success(data = cases))
+        } catch (e: Throwable) {
             emit(Resource.Error(message = handleException(e)))
-            Log.d("TESTLOG", "ShowSchedule: error: ${e.localizedMessage}")
+            Log.d("TESTLOG", "[ShowSchedule] exception: ${e.localizedMessage}")
         }
     }
 }

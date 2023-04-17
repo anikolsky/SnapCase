@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -30,6 +31,8 @@ import com.omtorney.snapcase.presentation.home.components.Spinner
 import com.omtorney.snapcase.presentation.ui.theme.Shapes
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.MaterialDialogState
+import com.vanpra.composematerialdialogs.datetime.date.DatePickerColors
+import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalDate
@@ -123,7 +126,16 @@ fun HomeScreen(
     ) {
         datepicker(
             initialDate = LocalDate.now(),
-            title = "Выберите дату"
+            title = "Выберите дату",
+            colors = DatePickerDefaults.colors(
+                headerBackgroundColor = MaterialTheme.colors.background,
+                headerTextColor = MaterialTheme.colors.onBackground,
+                calendarHeaderTextColor = MaterialTheme.colors.onBackground,
+                dateActiveBackgroundColor = Color(accentColor).copy(alpha = 0.5f),
+                dateInactiveBackgroundColor = MaterialTheme.colors.background.copy(alpha = 0.3f),
+                dateActiveTextColor = MaterialTheme.colors.onBackground,
+                dateInactiveTextColor = MaterialTheme.colors.onBackground
+            )
         ) {
             pickedDate = it
         }
@@ -141,7 +153,7 @@ fun SpinnerBlock(
     Card(
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
-        elevation = 10.dp,
+        elevation = 4.dp,
         modifier = Modifier
             .padding(horizontal = 14.dp, vertical = 6.dp)
             .fillMaxWidth()
@@ -205,7 +217,7 @@ fun SearchBlock(
     Card(
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
-        elevation = 10.dp,
+        elevation = 4.dp,
         modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
@@ -269,7 +281,7 @@ fun ScheduleBlock(
     Card(
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
-        elevation = 10.dp,
+        elevation = 4.dp,
         modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
     ) {
         Column(
@@ -290,7 +302,7 @@ fun ScheduleBlock(
             ) {
                 Text(
                     text = date,
-                    color = Color(accentColor),
+                    color = MaterialTheme.colors.onBackground,
                     style = MaterialTheme.typography.body1
                 )
             }

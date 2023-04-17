@@ -22,7 +22,7 @@ fun BottomBar(navController: NavController) {
     )
 
     BottomNavigation(
-        elevation = 12.dp,
+        elevation = 4.dp,
 //        backgroundColor = Color(accentColor),
 //        contentColor = contentColorFor(backgroundColor = Color(accentColor)),
         modifier = Modifier.graphicsLayer {

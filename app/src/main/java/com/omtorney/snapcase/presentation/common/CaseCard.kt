@@ -37,7 +37,7 @@ fun CaseCard(
 
     Card(
         shape = Shapes.small,
-        elevation = 12.dp,
+        elevation = 4.dp,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 4.dp, vertical = 2.dp)

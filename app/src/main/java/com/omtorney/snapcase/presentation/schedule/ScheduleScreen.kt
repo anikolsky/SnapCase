@@ -101,7 +101,7 @@ fun ScheduleScreen(
                     .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 0.dp)
                     .border(
                         width = 1.dp,
-                        color = MaterialTheme.colors.primary,
+                        color = Color(accentColor),
                         shape = MaterialTheme.shapes.small
                     )
             )

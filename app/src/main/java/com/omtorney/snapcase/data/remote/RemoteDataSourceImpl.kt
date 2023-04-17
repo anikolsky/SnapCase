@@ -8,35 +8,37 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import java.net.URLEncoder
 import javax.inject.Inject
 
 class RemoteDataSourceImpl @Inject constructor() : RemoteDataSource {
 
-    override suspend fun getJsoupDocument(url: String): Document {
+    override suspend fun getJsoupDocument(url: String): Document? {
         return withContext(Dispatchers.IO) {
             try {
+//                Log.d("TESTLOG", "[RemoteDataSourceImpl] url: $url")
                 val document = Jsoup.connect(url).get()
-                Log.d("TESTLOG", "RemoteDataSourceImpl: document: ${document.title()}")
+//                Log.d("TESTLOG", "[RemoteDataSourceImpl] val document: ${document!!.select("div[id=content]")}")
                 if (document.text().contains("Информация временно недоступна. Приносим свои извинения")) {
-                    Log.d("TESTLOG", "RemoteDataSourceImpl: Информация временно недоступна. Приносим свои извинения")
+                    Log.d("TESTLOG", "[RemoteDataSourceImpl] Информация временно недоступна. Приносим свои извинения")
                     throw SiteDataUnavailable()
                 }
                 else if (document.text().contains("Данных по запросу не обнаружено") ||
                     document.text().contains("По вашему запросу ничего не найдено")) {
-                    Log.d("TESTLOG", "RemoteDataSourceImpl: Данных по запросу не обнаружено || По вашему запросу ничего не найдено")
+                    Log.d("TESTLOG", "[RemoteDataSourceImpl] Данных по запросу не обнаружено || По вашему запросу ничего не найдено")
                     throw NoResultFound()
                 }
                 else if (document.text().contains("дел не назначено")) {
-                    Log.d("TESTLOG", "RemoteDataSourceImpl: На выбранную дату дел не назначено")
+                    Log.d("TESTLOG", "[RemoteDataSourceImpl] На выбранную дату дел не назначено")
                     throw NoScheduledCases()
                 }
                 else {
-                    Log.d("TESTLOG", "RemoteDataSourceImpl: RESULTS FOUND!")
+                    Log.d("TESTLOG", "[RemoteDataSourceImpl] CASES FOUND!")
                     document
                 }
-            } catch (e: Exception) {
-                Log.d("TESTLOG", "RemoteDataSourceImpl: error: ${e.localizedMessage}")
-                Document("")
+            } catch (e: Throwable) {
+                Log.d("TESTLOG", "[RemoteDataSourceImpl] exception: ${e.localizedMessage}")
+                null
             }
         }
     }

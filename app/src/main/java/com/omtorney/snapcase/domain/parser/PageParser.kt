@@ -7,9 +7,9 @@ import org.jsoup.nodes.Element
 
 interface PageParser {
 
-    fun extractSchedule(html: String, court: Court): List<Case>
+    fun extractSchedule(document: Document, court: Court): List<Case>
 
-    fun extractSearchResult(html: String, court: Court): List<Case>
+    fun extractSearchResult(document: Document, court: Court): List<Case>
 
     suspend fun fillCase(case: Case, court: Court): Case
 
