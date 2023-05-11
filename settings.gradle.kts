@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "SnapCase"
-include ':app'
+include(":app")

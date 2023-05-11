@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: Repository
+    repository: Repository
 ): ViewModel() {
 
     val accentColor: StateFlow<Long> = repository.getAccentColor.stateIn(
