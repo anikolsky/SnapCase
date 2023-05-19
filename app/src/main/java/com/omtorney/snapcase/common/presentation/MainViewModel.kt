@@ -1,6 +1,5 @@
 package com.omtorney.snapcase.common.presentation
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.snapcase.common.domain.Repository
@@ -21,19 +20,4 @@ class MainViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000L),
         initialValue = Constants.INITIAL_COLOR
     )
-
-    val visiblePermissionDialogQueue = mutableStateListOf<String>()
-
-    fun dismissDialog() {
-        visiblePermissionDialogQueue.removeFirst()
-    }
-
-    fun onPermissionResult(
-        permission: String,
-        isGranted: Boolean
-    ) {
-        if (!isGranted && !visiblePermissionDialogQueue.contains(permission)) {
-            visiblePermissionDialogQueue.add(permission)
-        }
-    }
 }

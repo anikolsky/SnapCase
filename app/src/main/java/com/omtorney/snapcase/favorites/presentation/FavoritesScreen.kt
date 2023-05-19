@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omtorney.snapcase.R
 import com.omtorney.snapcase.common.presentation.components.BackButton
@@ -29,29 +28,25 @@ import com.omtorney.snapcase.common.presentation.Screen
 fun FavoritesScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    accentColor: Long,
+    state: FavoritesState,
+    onEvent: (FavoritesEvent) -> Unit,
+    accentColor: Color,
     onSettingsClick: () -> Unit,
     onBackClick: () -> Unit,
     onCardClick: (Case) -> Unit,
-    onActTextClick: (String) -> Unit,
-    viewModel: FavoritesViewModel = hiltViewModel() // TODO move to NavHost
+    onActTextClick: (String) -> Unit
 ) {
-    val state = viewModel.state.value
-
     Scaffold(
         topBar = {
             TopBar {
                 BackButton(
-                    accentColor = accentColor,
                     onBackClick = onBackClick
                 )
                 TopBarTitle(
                     title = Screen.Favorites.title,
-                    accentColor = accentColor,
                     modifier = Modifier.weight(1f)
                 )
                 SettingsButton(
-                    accentColor = accentColor,
                     onSettingsClick = onSettingsClick
                 )
             }

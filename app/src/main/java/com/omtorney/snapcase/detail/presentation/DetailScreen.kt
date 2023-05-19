@@ -5,7 +5,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -15,7 +23,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.snapcase.R
 import com.omtorney.snapcase.common.presentation.components.CaseCard
 import com.omtorney.snapcase.common.presentation.components.UiEvent
@@ -24,29 +31,29 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun DetailScreen(
-    accentColor: Long,
+    state: DetailState,
+    onEvent: (DetailEvent) -> Unit,
+    accentColor: Color,
     onActTextClick: (String) -> Unit,
-    onDismiss: () -> Unit,
-    viewModel: DetailViewModel = hiltViewModel() // TODO move to NavHost
+    onDismiss: () -> Unit
 ) {
-    val state = viewModel.state.value
     val scaffoldState = rememberScaffoldState()
 
-    LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                UiEvent.Save -> {
-                    scaffoldState.snackbarHostState.showSnackbar(message = "Сохранено в избранное")
-                }
-                UiEvent.Delete -> {
-                    scaffoldState.snackbarHostState.showSnackbar(message = "Удалено из избранного")
-                }
-                is UiEvent.ShowSnackbar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(message = event.message)
-                }
-            }
-        }
-    }
+//    LaunchedEffect(key1 = true) {
+//        viewModel.eventFlow.collectLatest { event ->
+//            when (event) {
+//                UiEvent.Save -> {
+//                    scaffoldState.snackbarHostState.showSnackbar(message = "Сохранено в избранное")
+//                }
+//                UiEvent.Delete -> {
+//                    scaffoldState.snackbarHostState.showSnackbar(message = "Удалено из избранного")
+//                }
+//                is UiEvent.ShowSnackbar -> {
+//                    scaffoldState.snackbarHostState.showSnackbar(message = event.message)
+//                }
+//            }
+//        }
+//    }
 
     Scaffold(scaffoldState = scaffoldState) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
@@ -82,8 +89,9 @@ fun DetailScreen(
                         case.process.map { process ->
                             item {
                                 Card(
-                                    shape = Shapes.small,
-                                    elevation = 6.dp,
+                                    shape = RoundedCornerShape(6.dp),
+                                    elevation = 0.dp,
+                                    backgroundColor = accentColor.copy(alpha = 0.2f),
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(2.dp)
@@ -114,7 +122,7 @@ fun DetailScreen(
                             item {
                                 Card(
                                     shape = Shapes.small,
-                                    elevation = 6.dp,
+                                    backgroundColor = accentColor.copy(alpha = 0.2f),
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(2.dp)
@@ -134,14 +142,14 @@ fun DetailScreen(
                 Button(
                     onClick = {
                         if (state.case!!.isFavorite) {
-                            viewModel.onEvent(DetailEvent.Delete(state.case))
+                            onEvent(DetailEvent.Delete(state.case))
                             onDismiss()
                         } else {
-                            viewModel.onEvent(DetailEvent.Save(state.case))
+                            onEvent(DetailEvent.Save(state.case))
                         }
                     },
                     shape = RectangleShape,
-                    colors = ButtonDefaults.buttonColors(Color(accentColor)),
+                    colors = ButtonDefaults.buttonColors(accentColor),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
@@ -155,7 +163,7 @@ fun DetailScreen(
             }
             if (state.isLoading) {
                 CircularProgressIndicator(
-                    color = Color(accentColor),
+                    color = accentColor,
                     modifier = Modifier.align(Alignment.Center)
                 )
             }

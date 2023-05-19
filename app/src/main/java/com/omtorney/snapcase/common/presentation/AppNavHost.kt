@@ -2,6 +2,7 @@ package com.omtorney.snapcase.common.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -12,16 +13,26 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.omtorney.snapcase.act.presentation.ActScreen
+import com.omtorney.snapcase.act.presentation.ActViewModel
 import com.omtorney.snapcase.detail.presentation.DetailScreen
+import com.omtorney.snapcase.detail.presentation.DetailViewModel
 import com.omtorney.snapcase.favorites.presentation.FavoritesScreen
+import com.omtorney.snapcase.favorites.presentation.FavoritesViewModel
 import com.omtorney.snapcase.home.presentation.HomeScreen
+import com.omtorney.snapcase.home.presentation.HomeViewModel
 import com.omtorney.snapcase.recent.presentation.RecentScreen
+import com.omtorney.snapcase.recent.presentation.RecentViewModel
 import com.omtorney.snapcase.schedule.presentation.ScheduleScreen
+import com.omtorney.snapcase.schedule.presentation.ScheduleViewModel
 import com.omtorney.snapcase.search.presentation.SearchScreen
+import com.omtorney.snapcase.search.presentation.SearchViewModel
 import com.omtorney.snapcase.settings.presentation.SettingsScreen
+import com.omtorney.snapcase.settings.presentation.SettingsViewModel
 
 @Composable
-fun AppNavHost() {
+fun AppNavHost(
+    onGoToAppSettingsClick: () -> Unit
+) {
     val navController = rememberNavController()
     val mainViewModel: MainViewModel = hiltViewModel()
 
@@ -33,9 +44,13 @@ fun AppNavHost() {
     ) {
 
         composable(route = Screen.Home.route) {
+            val viewModel: HomeViewModel = hiltViewModel()
+            val state by viewModel.state
             HomeScreen(
                 navController = navController,
-                accentColor = accentColor,
+                state = state,
+                onEvent = viewModel::onEvent,
+                accentColor = Color(accentColor),
                 onSearchClick = { caseType, courtTitle, searchInput ->
                     navController.navigate(Screen.Search.route + "?caseType=$caseType&courtTitle=$courtTitle&searchInput=$searchInput") {
                         popUpTo(navController.graph.findStartDestination().id) {
@@ -66,9 +81,13 @@ fun AppNavHost() {
                 navArgument(name = "searchInput") { NavType.StringType }
             )
         ) {
+            val viewModel: SearchViewModel = hiltViewModel()
+            val state = viewModel.state.value
             SearchScreen(
                 navController = navController,
-                accentColor = accentColor,
+                state = state,
+                onEvent = viewModel::onEvent,
+                accentColor = Color(accentColor),
                 onCardClick = { goToCaseDetail(it.number, Screen.Search, navController) },
                 onActTextClick = { goToActText(it, navController) }
             )
@@ -81,9 +100,13 @@ fun AppNavHost() {
                 navArgument(name = "courtTitle") { NavType.StringType }
             )
         ) {
+            val viewModel: ScheduleViewModel = hiltViewModel()
+            val state = viewModel.state.value
             ScheduleScreen(
                 navController = navController,
-                accentColor = accentColor,
+                state = state,
+                onEvent = viewModel::onEvent,
+                accentColor = Color(accentColor),
                 onCardClick = { goToCaseDetail(it.number, Screen.Schedule, navController) },
                 onActTextClick = { goToActText(it, navController) }
             )
@@ -93,8 +116,12 @@ fun AppNavHost() {
             route = Screen.Detail.route + "/{caseNumber}",
             arguments = listOf(navArgument(name = "caseNumber") { NavType.StringType })
         ) {
+            val viewModel: DetailViewModel = hiltViewModel()
+            val state = viewModel.state.value
             DetailScreen(
-                accentColor = accentColor,
+                accentColor = Color(accentColor),
+                state = state,
+                onEvent = viewModel::onEvent,
                 onActTextClick = { goToActText(it, navController) },
                 onDismiss = { navController.popBackStack() }
             )
@@ -104,13 +131,22 @@ fun AppNavHost() {
             route = Screen.Act.route + "/{caseActUrl}",
             arguments = listOf(navArgument(name = "caseActUrl") { NavType.StringType })
         ) {
-            ActScreen(accentColor = accentColor)
+            val viewModel: ActViewModel = hiltViewModel()
+            val state = viewModel.state.value
+            ActScreen(
+                state = state,
+                accentColor = Color(accentColor)
+            )
         }
 
         composable(route = Screen.Favorites.route) {
+            val viewModel: FavoritesViewModel = hiltViewModel()
+            val state = viewModel.state.value
             FavoritesScreen(
                 navController = navController,
-                accentColor = accentColor,
+                state = state,
+                onEvent = viewModel::onEvent,
+                accentColor = Color(accentColor),
                 onSettingsClick = { goToSettings(navController) },
                 onBackClick = { navController.popBackStack() },
                 onCardClick = { goToCaseDetail(it.number, Screen.Favorites, navController) },
@@ -119,9 +155,13 @@ fun AppNavHost() {
         }
 
         composable(route = Screen.Recent.route) {
+            val viewModel: RecentViewModel = hiltViewModel()
+            val state = viewModel.state.value
             RecentScreen(
                 navController = navController,
-                accentColor = accentColor,
+                state = state,
+                onEvent = viewModel::onEvent,
+                accentColor = Color(accentColor),
                 onSettingsClick = { goToSettings(navController) },
                 onBackClick = { navController.popBackStack() },
                 onCardClick = { goToCaseDetail(it.number, Screen.Recent, navController) },
@@ -130,9 +170,14 @@ fun AppNavHost() {
         }
 
         composable(route = Screen.Settings.route) {
+            val viewModel: SettingsViewModel = hiltViewModel()
+            val state = viewModel.state
             SettingsScreen(
-                accentColor = accentColor,
-                onBackClick = { navController.popBackStack() }
+                state = state,
+                onEvent = viewModel::onEvent,
+                accentColor = Color(accentColor),
+                onBackClick = { navController.popBackStack() },
+                onGoToAppSettingsClick = onGoToAppSettingsClick
             )
         }
     }

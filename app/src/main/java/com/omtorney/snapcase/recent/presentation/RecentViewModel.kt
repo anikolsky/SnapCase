@@ -40,7 +40,9 @@ class RecentViewModel @Inject constructor(
                     caseUseCases.clearRecentCases()
                 }
             }
-            is RecentEvent.Refresh -> { }
+            is RecentEvent.Refresh -> {
+
+            }
         }
     }
 }

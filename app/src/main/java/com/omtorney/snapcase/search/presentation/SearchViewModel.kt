@@ -1,14 +1,13 @@
 package com.omtorney.snapcase.search.presentation
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.snapcase.common.domain.court.CaseType
-import com.omtorney.snapcase.common.domain.model.Case
 import com.omtorney.snapcase.common.domain.usecase.CaseUseCases
+import com.omtorney.snapcase.common.presentation.logd
 import com.omtorney.snapcase.common.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -31,13 +30,16 @@ class SearchViewModel @Inject constructor(
             CaseType.GPK.title -> CaseType.GPK
             else -> CaseType.KAS
         }
-//        Log.d("TESTLOG", "[SearchViewModel] val courtTitle: \"$courtTitle\", val caseType: \"$caseType\", val searchInput: \"$searchInput\"")
         searchCase(courtTitle, caseType, searchInput)
     }
 
-    fun cacheCase(case: Case) {
-        viewModelScope.launch {
-            caseUseCases.saveCase(case)
+    fun onEvent(event: SearchEvent) {
+        when (event) {
+            is SearchEvent.CacheCase -> {
+                viewModelScope.launch {
+                    caseUseCases.saveCase(event.case)
+                }
+            }
         }
     }
 
@@ -47,15 +49,13 @@ class SearchViewModel @Inject constructor(
                 when (result) {
                     is Resource.Loading -> {
                         _state.value = SearchState(isLoading = true)
-//                        Log.d("TESTLOG", "[SearchViewModel] searchCase(): loading...")
                     }
                     is Resource.Success -> {
                         _state.value = SearchState(cases = result.data ?: emptyList())
-//                        Log.d("TESTLOG", "[SearchViewModel] searchCase(): success: result.data: ${result.data}")
                     }
                     is Resource.Error -> {
                         _state.value = SearchState(error = result.message ?: "Unexpected error")
-                        Log.d("TESTLOG", "[SearchViewModel] searchCase(): error: ${result.message}")
+                        logd("error: ${result.message}")
                     }
                 }
             }

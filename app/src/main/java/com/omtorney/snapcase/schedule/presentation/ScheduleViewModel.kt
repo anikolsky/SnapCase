@@ -1,6 +1,7 @@
 package com.omtorney.snapcase.schedule.presentation
 
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -22,23 +23,20 @@ class ScheduleViewModel @Inject constructor(
     private val _state = mutableStateOf(ScheduleState())
     val state: State<ScheduleState> = _state
 
-    private val _selectedJudge = MutableStateFlow("")
-    val selectedJudge = _selectedJudge.asStateFlow()
-
-    private val _filteredCases = MutableStateFlow(state.value.cases)
-    val filteredCases = selectedJudge
-        .combine(_filteredCases) { text, cases ->
-            if (text.isBlank()) {
-                cases
-            } else {
-                cases.filter { it.doesJudgeMatchSearchQuery(text) }
-            }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = _filteredCases.value
-        )
+//    private val _filteredCases = MutableStateFlow(state.value.cases)
+//    val filteredCases = state.value.selectedJudge // selectedJudge was StateFlow and now it is String
+//        .combine(_filteredCases) { text, cases ->
+//            if (text.isBlank()) {
+//                cases
+//            } else {
+//                cases.filter { it.doesJudgeMatchSearchQuery(text) }
+//            }
+//        }
+//        .stateIn(
+//            scope = viewModelScope,
+//            started = SharingStarted.WhileSubscribed(5000),
+//            initialValue = _filteredCases.value
+//        )
 
     init {
         val date =  savedStateHandle.get<String>("scheduleDate")!!
@@ -46,31 +44,54 @@ class ScheduleViewModel @Inject constructor(
         showSchedule(courtTitle, date)
     }
 
-    fun cacheCase(case: Case) {
-        viewModelScope.launch {
-            caseUseCases.saveCase(case)
+    fun onEvent(event: ScheduleEvent) {
+        when (event) {
+            is ScheduleEvent.CacheCase -> {
+                viewModelScope.launch {
+                    caseUseCases.saveCase(event.case)
+                }
+            }
+            is ScheduleEvent.SelectJudge -> {
+                _state.value = state.value.copy(selectedJudge = event.judge)
+                updateFilteredCases()
+            }
         }
-    }
-
-    fun onJudgeSelect(text: String) {
-        _selectedJudge.value = text
     }
 
     private fun showSchedule(courtTitle: String, date: String) = viewModelScope.launch {
         caseUseCases.showSchedule(courtTitle, date).collect { result ->
             when (result) {
                 is Resource.Loading -> {
-                    _state.value = ScheduleState(isLoading = true)
+                    _state.value = state.value.copy(
+                        isLoading = true
+                    )
                 }
                 is Resource.Success -> {
                     val cases = result.data ?: emptyList()
-                    _state.value = ScheduleState(cases = cases)
-                    _filteredCases.value = cases
+                    _state.value = state.value.copy(
+                        cases = cases,
+                        filteredCases = cases,
+                        isLoading = false
+                    )
                 }
                 is Resource.Error -> {
-                    _state.value = ScheduleState(error = result.message ?: "Unexpected error")
+                    _state.value = state.value.copy(
+                        error = result.message ?: "Unexpected error",
+                        isLoading = false
+                    )
                 }
             }
         }
+    }
+
+    private fun updateFilteredCases() {
+        val currentCases = _state.value.cases
+        val selectedJudge = _state.value.selectedJudge
+        val filteredCases = if (selectedJudge.isBlank()) {
+            currentCases
+        } else {
+            currentCases.filter { it.doesJudgeMatchSearchQuery(selectedJudge) }
+        }
+        _state.value = state.value.copy(filteredCases = filteredCases)
     }
 }

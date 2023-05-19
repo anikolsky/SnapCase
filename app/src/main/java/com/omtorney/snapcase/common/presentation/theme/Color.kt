@@ -26,7 +26,8 @@ val PastelYellow = Color(0xFFFFFFE0)
 val PastelPurple = Color(0xFFB39EB5)
 val PastelPeach = Color(0xFFFFE5B4)
 
-val Mariner = Color(0xFF3663A7)
+val Mariner1 = Color(0xFF3663A7)
+val Mariner2 = Color(0xFF6892B0)
 
 val Purple200 = Color(0xFFBB86FC)
 val Purple500 = Color(0xFF6200EE)

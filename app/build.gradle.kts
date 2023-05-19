@@ -87,18 +87,20 @@ dependencies {
 
     val composeUiVersion = "1.4.3"
     val hiltComposeVersion = "1.0.0"
-    val hiltVersion = "2.45"
+    val hiltVersion = "2.46.1"
+    val hiltWork = "1.0.0"
     val lifecycleVersion = "2.6.1"
     val navVersion = "2.5.3"
     val roomVersion = "2.5.1"
     val accompanistVersion = "0.30.0"
 
-    implementation("androidx.core:core-ktx:1.10.0")
+    implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.activity:activity-compose:1.7.1")
     implementation("androidx.compose.ui:ui:$composeUiVersion")
     implementation("androidx.compose.ui:ui-tooling-preview:$composeUiVersion")
     implementation("androidx.compose.material:material:$composeUiVersion")
 
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.0-alpha03")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("org.jsoup:jsoup:1.16.1")
@@ -121,9 +123,16 @@ dependencies {
     kapt("com.google.dagger:hilt-compiler:$hiltVersion")
     implementation("androidx.hilt:hilt-navigation-compose:$hiltComposeVersion")
 
+    // Hilt Work
+    implementation("androidx.hilt:hilt-work:$hiltWork")
+    kapt("androidx.hilt:hilt-compiler:$hiltWork")
+
     // Room
     implementation("androidx.room:room-ktx:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
+
+    // Work
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
 
     // AppUpdate
     implementation("io.github.azhon:appupdate:4.2.8")

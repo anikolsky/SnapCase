@@ -67,13 +67,13 @@ interface PermissionTextProvider {
     fun getDescription(isPermanentlyDeclined: Boolean): String
 }
 
-class WriteStoragePermissionTextProvider : PermissionTextProvider {
+class PostNotificationsPermissionTextProvider : PermissionTextProvider {
     override fun getDescription(isPermanentlyDeclined: Boolean): String {
         return if (isPermanentlyDeclined) {
-            "Кажется, Вы отказались от предоставления разрешения на доступ к хранилищу. " +
-                    "Вы можете предоставить их вручную в системных настройках приложения"
+            "Похоже, Вы отказались от предоставления разрешение на уведомления. " +
+                    "Вы можете предоставить его вручную в системных настройках приложения"
         } else {
-            "Приложению требуется разрешение на доступ к хранилищу устройства для получения обновлений"
+            "Приложению требуется разрешение на уведомления, чтобы сообщать Вам о наличии обновлений по отслеживаемым делам"
         }
     }
 }

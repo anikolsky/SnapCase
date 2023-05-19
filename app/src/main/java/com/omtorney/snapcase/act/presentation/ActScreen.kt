@@ -15,15 +15,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.snapcase.R
 
 @Composable
 fun ActScreen(
-    accentColor: Long,
-    viewModel: ActViewModel = hiltViewModel() // TODO move to NavHost
+    state: ActState,
+    accentColor: Color
 ) {
-    val state = viewModel.state.value
     val context = LocalContext.current
     val scrollState = rememberScrollState()
 
@@ -37,7 +35,7 @@ fun ActScreen(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RectangleShape,
-                colors = ButtonDefaults.buttonColors(Color(accentColor)),
+                colors = ButtonDefaults.buttonColors(accentColor),
                 onClick = {
                     val intent = Intent()
                     intent.action = Intent.ACTION_SEND
@@ -51,7 +49,7 @@ fun ActScreen(
         if (state.isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
-                color = Color(accentColor)
+                color = accentColor
             )
         }
         if (state.error.isNotBlank()) {

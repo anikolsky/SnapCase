@@ -37,14 +37,14 @@ fun TopBar(
 
 @Composable
 fun BackButton(
-    accentColor: Long,
+//    accentColor: Color,
     onBackClick: () -> Unit
 ) {
     IconButton(onClick = onBackClick) {
         Icon(
             imageVector = Icons.Rounded.ArrowBack,
-            contentDescription = "",
-            tint = Color(accentColor)
+            contentDescription = "Back",
+//            tint = accentColor
         )
     }
 }
@@ -52,14 +52,16 @@ fun BackButton(
 @Composable
 fun TopBarTitle(
     modifier: Modifier = Modifier,
-    accentColor: Long,
+//    accentColor: Color,
     @StringRes title: Int
 ) {
     Text(
         text = LocalContext.current.getString(title),
-        style = MaterialTheme.typography.h6.merge(
-            TextStyle(color = Color(accentColor))
-        ),
+        style = MaterialTheme.typography.h6
+//            .merge(
+//            TextStyle(color = Color(accentColor))
+//        )
+        ,
         modifier = modifier.padding(start = 10.dp)
     )
 }
@@ -77,14 +79,14 @@ fun MoreButton(accentColor: Long) {
 
 @Composable
 fun SettingsButton(
-    accentColor: Long,
+//    accentColor: Long,
     onSettingsClick: () -> Unit
 ) {
     IconButton(onClick = onSettingsClick) {
         Icon(
             imageVector = Icons.Rounded.Settings,
-            contentDescription = "",
-            tint = Color(accentColor)
+            contentDescription = "Settings",
+//            tint = Color(accentColor)
         )
     }
 }

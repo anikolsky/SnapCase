@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.omtorney.snapcase.common.domain.model.Case
@@ -15,7 +16,7 @@ import com.omtorney.snapcase.common.domain.model.Case
 @Composable
 fun CaseColumn(
     items: List<Case>,
-    accentColor: Long,
+    accentColor: Color,
     onCardClick: (Case) -> Unit,
     onActTextClick: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -44,7 +45,7 @@ fun CaseColumn(
 @Preview
 @Composable
 fun CaseColumnPreview() {
-    CaseColumn(items = listOf(testCase, testCase), 0xFF4D4D5A, {}, {})
+    CaseColumn(items = listOf(testCase, testCase), Color.Magenta, {}, {})
 }
 
 private val testCase = Case(

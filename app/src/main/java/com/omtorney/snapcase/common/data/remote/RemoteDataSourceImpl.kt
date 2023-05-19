@@ -1,6 +1,6 @@
 package com.omtorney.snapcase.common.data.remote
 
-import android.util.Log
+import com.omtorney.snapcase.common.presentation.logd
 import com.omtorney.snapcase.common.util.NoResultFound
 import com.omtorney.snapcase.common.util.NoScheduledCases
 import com.omtorney.snapcase.common.util.SiteDataUnavailable
@@ -8,7 +8,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import java.net.URLEncoder
 import javax.inject.Inject
 
 class RemoteDataSourceImpl @Inject constructor() : RemoteDataSource {
@@ -16,28 +15,28 @@ class RemoteDataSourceImpl @Inject constructor() : RemoteDataSource {
     override suspend fun getJsoupDocument(url: String): Document? {
         return withContext(Dispatchers.IO) {
             try {
-//                Log.d("TESTLOG", "[RemoteDataSourceImpl] url: $url")
+//                logd("url: $url")
                 val document = Jsoup.connect(url).get()
-//                Log.d("TESTLOG", "[RemoteDataSourceImpl] val document: ${document!!.select("div[id=content]")}")
+//                logd("val document: ${document!!.select("div[id=content]")}")
                 if (document.text().contains("Информация временно недоступна. Приносим свои извинения")) {
-                    Log.d("TESTLOG", "[RemoteDataSourceImpl] Информация временно недоступна. Приносим свои извинения")
+                    logd("Информация временно недоступна. Приносим свои извинения")
                     throw SiteDataUnavailable()
                 }
                 else if (document.text().contains("Данных по запросу не обнаружено") ||
                     document.text().contains("По вашему запросу ничего не найдено")) {
-                    Log.d("TESTLOG", "[RemoteDataSourceImpl] Данных по запросу не обнаружено || По вашему запросу ничего не найдено")
+                    logd("Данных по запросу не обнаружено || По вашему запросу ничего не найдено")
                     throw NoResultFound()
                 }
                 else if (document.text().contains("дел не назначено")) {
-                    Log.d("TESTLOG", "[RemoteDataSourceImpl] На выбранную дату дел не назначено")
+                    logd("На выбранную дату дел не назначено")
                     throw NoScheduledCases()
                 }
                 else {
-                    Log.d("TESTLOG", "[RemoteDataSourceImpl] CASES FOUND!")
+//                    logd("CASES FOUND!")
                     document
                 }
             } catch (e: Throwable) {
-                Log.d("TESTLOG", "[RemoteDataSourceImpl] exception: ${e.localizedMessage}")
+                logd("exception: ${e.localizedMessage}")
                 null
             }
         }

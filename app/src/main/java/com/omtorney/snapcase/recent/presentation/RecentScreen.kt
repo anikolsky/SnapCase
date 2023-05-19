@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omtorney.snapcase.R
 import com.omtorney.snapcase.common.presentation.components.BackButton
@@ -27,37 +26,32 @@ import com.omtorney.snapcase.common.presentation.Screen
 
 @Composable
 fun RecentScreen(
-    modifier: Modifier = Modifier,
     navController: NavController,
-    accentColor: Long,
+    state: RecentState,
+    onEvent: (RecentEvent) -> Unit,
+    accentColor: Color,
     onSettingsClick: () -> Unit,
     onBackClick: () -> Unit,
     onCardClick: (Case) -> Unit,
-    onActTextClick: (String) -> Unit,
-    viewModel: RecentViewModel = hiltViewModel() // TODO move to NavHost
+    onActTextClick: (String) -> Unit
 ) {
-    val state = viewModel.state.value
-
     Scaffold(
         topBar = {
             TopBar {
                 BackButton(
-                    accentColor = accentColor,
                     onBackClick = onBackClick
                 )
                 TopBarTitle(
                     title = Screen.Recent.title,
-                    accentColor = accentColor,
                     modifier = Modifier.weight(1f)
                 )
                 SettingsButton(
-                    accentColor = accentColor,
                     onSettingsClick = onSettingsClick
                 )
             }
         },
         bottomBar = { BottomBar(navController = navController) },
-        modifier = modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             Column {
@@ -70,9 +64,9 @@ fun RecentScreen(
                 )
                 if (state.cases.isNotEmpty()) {
                     Button(
-                        onClick = { viewModel.onEvent(RecentEvent.Clear) },
+                        onClick = { onEvent(RecentEvent.Clear) },
                         shape = RectangleShape,
-                        colors = ButtonDefaults.buttonColors(Color(accentColor)),
+                        colors = ButtonDefaults.buttonColors(accentColor),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(text = stringResource(R.string.clear).uppercase())

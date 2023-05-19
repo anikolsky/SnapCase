@@ -54,7 +54,7 @@ class DetailViewModel @Inject constructor(
             }
             is DetailEvent.Fill -> {
                 viewModelScope.launch {
-                    caseUseCases.fillCase(state.value.case!!, Courts.Dmitrov).collect { result ->
+                    caseUseCases.fillCase(state.value.case!!, Courts.Dmitrov).collect { result -> // FIXME crashes occasionally with nullpointerex
                         when (result) {
                             is Resource.Loading -> {
                                 _state.value = state.value.copy(isLoading = true)

@@ -5,6 +5,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -20,11 +21,9 @@ fun BottomBar(navController: NavController) {
         Screen.Favorites,
         Screen.Recent
     )
-
     BottomNavigation(
-        elevation = 4.dp,
-//        backgroundColor = Color(accentColor),
-//        contentColor = contentColorFor(backgroundColor = Color(accentColor)),
+        backgroundColor = Color.DarkGray,
+        contentColor = Color.White,
         modifier = Modifier.graphicsLayer {
             shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
             clip = true

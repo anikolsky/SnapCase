@@ -10,8 +10,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.omtorney.snapcase.R
 import com.omtorney.snapcase.common.domain.model.Case
@@ -22,15 +20,15 @@ import com.omtorney.snapcase.home.presentation.components.Spinner
 @Composable
 fun ScheduleScreen(
     navController: NavController,
-    accentColor: Long,
+    state: ScheduleState,
+    onEvent: (ScheduleEvent) -> Unit,
+    accentColor: Color,
     onCardClick: (Case) -> Unit,
-    onActTextClick: (String) -> Unit,
-    viewModel: ScheduleViewModel = hiltViewModel() // TODO move to NavHost
+    onActTextClick: (String) -> Unit
 ) {
-    val state = viewModel.state.value
     val judgeList = state.cases.map { it.judge }.distinct()
-    val selectedJudge by viewModel.selectedJudge.collectAsStateWithLifecycle()
-    val filteredCases by viewModel.filteredCases.collectAsStateWithLifecycle()
+    val selectedJudge = state.selectedJudge
+    val filteredCases = state.filteredCases
 
     Scaffold(bottomBar = { BottomBar(navController = navController) }) { paddingValues ->
         Column(
@@ -41,7 +39,7 @@ fun ScheduleScreen(
             if (state.isLoading) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     CircularProgressIndicator(
-                        color = Color(accentColor),
+                        color = accentColor,
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
@@ -71,7 +69,7 @@ fun ScheduleScreen(
                 dropDownModifier = Modifier.wrapContentSize(),
                 items = judgeList,
                 selectedItem = selectedJudge,
-                onItemSelected = viewModel::onJudgeSelect,
+                onItemSelected = { judge -> onEvent(ScheduleEvent.SelectJudge(judge)) },
                 selectedItemFactory = { modifier, item ->
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -101,7 +99,7 @@ fun ScheduleScreen(
                     .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 0.dp)
                     .border(
                         width = 1.dp,
-                        color = Color(accentColor),
+                        color = accentColor,
                         shape = MaterialTheme.shapes.small
                     )
             )
@@ -110,7 +108,7 @@ fun ScheduleScreen(
                 items = filteredCases, // state.cases
                 accentColor = accentColor,
                 onCardClick = { case ->
-                    viewModel.cacheCase(case)
+                    onEvent(ScheduleEvent.CacheCase(case))
                     onCardClick(case)
                 },
                 onActTextClick = { onActTextClick(it) }

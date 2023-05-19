@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
+import androidx.work.WorkManager
 import com.omtorney.snapcase.common.data.database.AppDatabase
 import com.omtorney.snapcase.common.data.database.CaseDao
 import com.omtorney.snapcase.common.util.Constants.DATA_STORE_NAME
@@ -18,12 +19,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class AppModule {
-
-    @Provides
-    fun provideCaseDao(appDatabase: AppDatabase): CaseDao {
-        return appDatabase.caseDao()
-    }
+object AppModule {
 
     @Provides
     @Singleton
@@ -36,10 +32,21 @@ class AppModule {
     }
 
     @Provides
+    fun provideCaseDao(appDatabase: AppDatabase): CaseDao {
+        return appDatabase.caseDao()
+    }
+
+    @Provides
     @Singleton
     fun provideSettingsStore(@ApplicationContext appContext: Context): DataStore<Preferences> {
         return PreferenceDataStoreFactory.create {
             appContext.preferencesDataStoreFile(DATA_STORE_NAME)
         }
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkManager(@ApplicationContext appContext: Context): WorkManager {
+        return WorkManager.getInstance(appContext)
     }
 }
