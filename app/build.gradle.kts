@@ -124,9 +124,6 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
     implementation("androidx.hilt:hilt-navigation-compose:$hiltComposeVersion")
 
-//    annotationProcessor("javax.annotation:javax.annotation-api:1.3.2")
-//    implementation("javax.annotation:javax.annotation-api:1.3.2")
-
     // Hilt Work
     implementation("androidx.hilt:hilt-work:$hiltWork")
     kapt("androidx.hilt:hilt-compiler:$hiltWork")

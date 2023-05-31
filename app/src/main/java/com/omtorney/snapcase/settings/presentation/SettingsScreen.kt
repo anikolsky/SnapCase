@@ -27,6 +27,7 @@ import androidx.compose.material.Switch
 import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -89,6 +90,10 @@ fun SettingsScreen(
         }
     )
 
+    LaunchedEffect(workInfo) {
+        workState = workInfo?.state == WorkInfo.State.ENQUEUED
+    }
+
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxSize()
@@ -127,17 +132,13 @@ fun SettingsScreen(
             subtitle = "Включите для получения уведомлений при появлении новых записей о ходе рассмотрения избранных дел",
             state = workState,
             onCheckedChange = { checked ->
-                logd("switcher on: $checked")
                 workState = checked
-                logd("workState: $workState")
                 if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
                     == PackageManager.PERMISSION_GRANTED
                 ) {
                     if (workState) {
-                        logd("Scheduling work...")
                         onEvent(SettingsEvent.SchedulePeriodicWork)
                     } else {
-                        logd("Cancelling work...")
                         onEvent(SettingsEvent.CancelWork)
                     }
                 } else {

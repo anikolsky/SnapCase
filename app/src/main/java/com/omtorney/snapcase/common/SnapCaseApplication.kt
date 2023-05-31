@@ -18,7 +18,7 @@ import javax.inject.Inject
 class SnapCaseApplication : Application(), Configuration.Provider {
 
     @Inject
-    lateinit var workerFactory: HiltWorkerFactory
+    lateinit var workerFactory: CustomWorkerFactory
 
     override fun getWorkManagerConfiguration() =
         Configuration.Builder()
@@ -27,14 +27,14 @@ class SnapCaseApplication : Application(), Configuration.Provider {
             .build()
 }
 
-//class CustomWorkerFactory @Inject constructor(
-//    private val caseUseCases: CaseUseCases,
-//    private val repository: Repository
-//) : WorkerFactory() {
-//
-//    override fun createWorker(
-//        appContext: Context,
-//        workerClassName: String,
-//        workerParameters: WorkerParameters
-//    ): ListenableWorker = CaseCheckWorker(appContext, workerParameters, caseUseCases, repository)
-//}
+class CustomWorkerFactory @Inject constructor(
+    private val caseUseCases: CaseUseCases,
+    private val repository: Repository
+) : WorkerFactory() {
+
+    override fun createWorker(
+        appContext: Context,
+        workerClassName: String,
+        workerParameters: WorkerParameters
+    ): ListenableWorker = CaseCheckWorker(appContext, workerParameters, caseUseCases, repository)
+}

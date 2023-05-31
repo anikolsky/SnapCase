@@ -52,7 +52,6 @@ class SettingsViewModel @Inject constructor(
             }
 
             SettingsEvent.CancelWork -> {
-                logd("Cancelling work...")
                 workManager.cancelAllWork()
             }
 
@@ -66,7 +65,6 @@ class SettingsViewModel @Inject constructor(
                     .setConstraints(constraints)
                     .build()
 
-                logd("Enqueueing work...")
                 workManager.enqueueUniquePeriodicWork(
                     Constants.WORKER_UNIQUE_PERIODIC_WORK_NAME,
                     ExistingPeriodicWorkPolicy.UPDATE,
