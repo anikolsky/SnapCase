@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.omtorney.snapcase.common.presentation.Screen
 
@@ -47,13 +48,12 @@ fun BottomBar(navController: NavController) {
                 selected = currentRoute == item.route,
                 onClick = {
                     navController.navigate(route = item.route) {
-                        navController.graph.startDestinationRoute?.let { route ->
-                            popUpTo(route = route) {
-                                saveState = true
-                            }
+                        popUpTo(route = navController.graph.findStartDestination().displayName) {
+//                            saveState = true
+                            inclusive = true
                         }
                         launchSingleTop = true
-                        restoreState = true
+//                        restoreState = true
                     }
                 }
             )

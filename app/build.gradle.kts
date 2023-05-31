@@ -95,12 +95,12 @@ dependencies {
     val accompanistVersion = "0.30.0"
 
     implementation("androidx.core:core-ktx:1.10.1")
-    implementation("androidx.activity:activity-compose:1.7.1")
+    implementation("androidx.activity:activity-compose:1.7.2")
     implementation("androidx.compose.ui:ui:$composeUiVersion")
     implementation("androidx.compose.ui:ui-tooling-preview:$composeUiVersion")
     implementation("androidx.compose.material:material:$composeUiVersion")
 
-    implementation("androidx.compose.runtime:runtime-livedata:1.5.0-alpha03")
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.0-beta01")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("org.jsoup:jsoup:1.16.1")
@@ -121,7 +121,11 @@ dependencies {
     // Hilt
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     kapt("com.google.dagger:hilt-compiler:$hiltVersion")
+    kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
     implementation("androidx.hilt:hilt-navigation-compose:$hiltComposeVersion")
+
+//    annotationProcessor("javax.annotation:javax.annotation-api:1.3.2")
+//    implementation("javax.annotation:javax.annotation-api:1.3.2")
 
     // Hilt Work
     implementation("androidx.hilt:hilt-work:$hiltWork")
@@ -135,10 +139,10 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.8.1")
 
     // AppUpdate
-    implementation("io.github.azhon:appupdate:4.2.8")
+    implementation("io.github.azhon:appupdate:4.2.9")
 
     // Firebase
-    implementation("com.google.firebase:firebase-analytics-ktx:21.2.2")
+    implementation("com.google.firebase:firebase-analytics-ktx:21.3.0")
     implementation("com.google.firebase:firebase-crashlytics-ktx:18.3.7")
 
     // Unit tests

@@ -2,6 +2,7 @@ package com.omtorney.snapcase.common.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -171,9 +172,11 @@ fun AppNavHost(
 
         composable(route = Screen.Settings.route) {
             val viewModel: SettingsViewModel = hiltViewModel()
-            val state = viewModel.state
+            val state = viewModel.state.value
+            val workInfo = viewModel.workInfo.observeAsState().value
             SettingsScreen(
                 state = state,
+                workInfo = workInfo,
                 onEvent = viewModel::onEvent,
                 accentColor = Color(accentColor),
                 onBackClick = { navController.popBackStack() },

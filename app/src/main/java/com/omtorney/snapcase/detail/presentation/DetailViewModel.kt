@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.snapcase.common.domain.court.Courts
+import com.omtorney.snapcase.common.domain.model.Case
 import com.omtorney.snapcase.common.domain.usecase.CaseUseCases
 import com.omtorney.snapcase.common.presentation.components.UiEvent
 import com.omtorney.snapcase.common.util.Resource
@@ -31,7 +32,7 @@ class DetailViewModel @Inject constructor(
         savedStateHandle.get<String>("caseNumber")?.let { caseNumber ->
             val caseNumberParam = caseNumber.replace("+", "/")
             viewModelScope.launch {
-                _state.value = DetailState(case = caseUseCases.getCaseByNumber(caseNumberParam))
+                _state.value = DetailState(case = caseUseCases.getCaseByNumber(caseNumberParam) ?: Case())
                 onEvent(DetailEvent.Fill)
             }
         }
@@ -54,13 +55,13 @@ class DetailViewModel @Inject constructor(
             }
             is DetailEvent.Fill -> {
                 viewModelScope.launch {
-                    caseUseCases.fillCase(state.value.case!!, Courts.Dmitrov).collect { result -> // FIXME crashes occasionally with nullpointerex
+                    caseUseCases.fillCase(state.value.case, Courts.Dmitrov).collect { result ->
                         when (result) {
                             is Resource.Loading -> {
                                 _state.value = state.value.copy(isLoading = true)
                             }
                             is Resource.Success -> {
-                                _state.value = state.value.copy(case = result.data, isLoading = false)
+                                _state.value = state.value.copy(case = result.data ?: Case(), isLoading = false)
                             }
                             is Resource.Error -> {
                                 _state.value =

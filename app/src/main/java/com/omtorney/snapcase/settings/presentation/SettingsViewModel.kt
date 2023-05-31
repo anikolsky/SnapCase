@@ -1,8 +1,7 @@
 package com.omtorney.snapcase.settings.presentation
 
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
@@ -27,16 +26,8 @@ class SettingsViewModel @Inject constructor(
     private val workManager: WorkManager
 ) : ViewModel() {
 
-    var state by mutableStateOf(SettingsState())
-        private set
-
-    init {
-        state = SettingsState(workInfo = workManager.getWorkInfosForUniqueWorkLiveData(Constants.WORKER_UNIQUE_PERIODIC_WORK_NAME)
-            .map { workInfos ->
-                workInfos.firstOrNull()
-            }
-        )
-    }
+    private val _state = mutableStateOf(SettingsState())
+    val state: State<SettingsState> = _state
 
     val workInfo =
         workManager.getWorkInfosForUniqueWorkLiveData(Constants.WORKER_UNIQUE_PERIODIC_WORK_NAME)
@@ -53,8 +44,10 @@ class SettingsViewModel @Inject constructor(
             }
 
             is SettingsEvent.OnPermissionResult -> {
-                if (!event.isGranted && !state.visiblePermissionDialogQueue.contains(event.permission)) {
-                    state.visiblePermissionDialogQueue.add(event.permission)
+                if (!event.isGranted && !state.value.visiblePermissionDialogQueue.contains(event.permission)) {
+                    _state.value = state.value.copy(
+                        visiblePermissionDialogQueue = state.value.visiblePermissionDialogQueue + event.permission
+                    )
                 }
             }
 
@@ -83,7 +76,11 @@ class SettingsViewModel @Inject constructor(
             }
 
             SettingsEvent.DismissDialog -> {
-                state.visiblePermissionDialogQueue.removeFirst()
+                if (state.value.visiblePermissionDialogQueue.isNotEmpty()) {
+                    _state.value = _state.value.copy(
+                        visiblePermissionDialogQueue = state.value.visiblePermissionDialogQueue.drop(1)
+                    )
+                }
             }
         }
     }

@@ -17,8 +17,8 @@ import kotlinx.coroutines.flow.first
 class CaseCheckWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val caseUseCases: CaseUseCases,
-    private val repository: Repository
+//    private val caseUseCases: CaseUseCases,
+//    private val repository: Repository
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {

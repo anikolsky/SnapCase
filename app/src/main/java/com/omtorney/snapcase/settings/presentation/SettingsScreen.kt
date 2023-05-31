@@ -28,7 +28,6 @@ import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -64,6 +63,7 @@ import com.omtorney.snapcase.common.presentation.theme.SnapCaseTheme
 @Composable
 fun SettingsScreen(
     state: SettingsState,
+    workInfo: WorkInfo?,
     onEvent: (SettingsEvent) -> Unit,
     accentColor: Color,
     onBackClick: () -> Unit,
@@ -71,7 +71,7 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val activity = context as Activity
-    val workInfo = state.workInfo?.observeAsState()?.value
+//    val workInfo = state.workInfo?.observeAsState()?.value
     var workState by remember { mutableStateOf(workInfo?.state == WorkInfo.State.ENQUEUED) }
     var colorPickerOpened by remember { mutableStateOf(false) }
     val dialogQueue = state.visiblePermissionDialogQueue
