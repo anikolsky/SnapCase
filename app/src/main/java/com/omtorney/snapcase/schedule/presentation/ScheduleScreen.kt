@@ -3,6 +3,8 @@ package com.omtorney.snapcase.schedule.presentation
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,33 +32,14 @@ fun ScheduleScreen(
     val selectedJudge = state.selectedJudge
     val filteredCases = state.filteredCases
 
-    Scaffold(bottomBar = { BottomBar(navController = navController) }) { paddingValues ->
+    Scaffold(bottomBar = {
+        BottomBar(navController = navController)
+    }) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (state.isLoading) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    CircularProgressIndicator(
-                        color = accentColor,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
-            if (state.error.isNotBlank()) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Text(
-                        text = state.error,
-                        color = MaterialTheme.colors.error,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp)
-                            .align(Alignment.Center)
-                    )
-                }
-            }
             /** Judge filter */
             Text(
                 text = "Выберите судью для фильтрации дел",
@@ -65,44 +48,54 @@ fun ScheduleScreen(
                     .fillMaxWidth()
                     .padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 0.dp)
             )
-            Spinner(
-                dropDownModifier = Modifier.wrapContentSize(),
-                items = judgeList,
-                selectedItem = selectedJudge,
-                onItemSelected = { judge -> onEvent(ScheduleEvent.SelectJudge(judge)) },
-                selectedItemFactory = { modifier, item ->
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = modifier
-                            .padding(12.dp)
-                            .fillMaxWidth()
-                    ) {
+            Row {
+                Spinner(
+                    dropDownModifier = Modifier.wrapContentSize(),
+                    items = judgeList,
+                    selectedItem = selectedJudge,
+                    onItemSelected = { judge -> onEvent(ScheduleEvent.SelectJudge(judge)) },
+                    selectedItemFactory = { modifier, item ->
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = modifier
+                                .padding(12.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                text = item,
+                                style = MaterialTheme.typography.body1
+                            )
+                            Icon(
+                                painter = painterResource(R.drawable.ic_round_arrow_drop_down),
+                                contentDescription = "Drop down"
+                            )
+                        }
+                    },
+                    dropdownItemFactory = { item, _ ->
                         Text(
                             text = item,
                             style = MaterialTheme.typography.body1
                         )
-                        Icon(
-                            painter = painterResource(R.drawable.ic_round_arrow_drop_down),
-                            contentDescription = "Drop down"
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 0.dp)
+                        .border(
+                            width = 1.dp,
+                            color = accentColor,
+                            shape = MaterialTheme.shapes.small
                         )
-                    }
-                },
-                dropdownItemFactory = { item, _ ->
-                    Text(
-                        text = item,
-                        style = MaterialTheme.typography.body1
+                )
+                Button(onClick = {
+                    onEvent(ScheduleEvent.ResetJudge)
+                }) {
+                    Icon(
+                        imageVector = Icons.Rounded.Refresh,
+                        contentDescription = "Reset judges"
                     )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 0.dp)
-                    .border(
-                        width = 1.dp,
-                        color = accentColor,
-                        shape = MaterialTheme.shapes.small
-                    )
-            )
+                }
+            }
             /** Case list */
             CaseColumn(
                 items = filteredCases, // state.cases
@@ -113,6 +106,27 @@ fun ScheduleScreen(
                 },
                 onActTextClick = { onActTextClick(it) }
             )
+        }
+        if (state.isLoading) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(
+                    color = accentColor,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }
+        if (state.error.isNotBlank()) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Text(
+                    text = state.error,
+                    color = MaterialTheme.colors.error,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .align(Alignment.Center)
+                )
+            }
         }
     }
 }

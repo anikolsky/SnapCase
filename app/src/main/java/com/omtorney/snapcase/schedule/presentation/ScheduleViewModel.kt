@@ -39,7 +39,7 @@ class ScheduleViewModel @Inject constructor(
 //        )
 
     init {
-        val date =  savedStateHandle.get<String>("scheduleDate")!!
+        val date = savedStateHandle.get<String>("scheduleDate")!!
         val courtTitle = savedStateHandle.get<String>("courtTitle")!!
         showSchedule(courtTitle, date)
     }
@@ -51,9 +51,14 @@ class ScheduleViewModel @Inject constructor(
                     caseUseCases.saveCase(event.case)
                 }
             }
+
             is ScheduleEvent.SelectJudge -> {
                 _state.value = state.value.copy(selectedJudge = event.judge)
                 updateFilteredCases()
+            }
+
+            ScheduleEvent.ResetJudge -> {
+                // TODO show full case list
             }
         }
     }
@@ -66,6 +71,7 @@ class ScheduleViewModel @Inject constructor(
                         isLoading = true
                     )
                 }
+
                 is Resource.Success -> {
                     val cases = result.data ?: emptyList()
                     _state.value = state.value.copy(
@@ -74,6 +80,7 @@ class ScheduleViewModel @Inject constructor(
                         isLoading = false
                     )
                 }
+
                 is Resource.Error -> {
                     _state.value = state.value.copy(
                         error = result.message ?: "Unexpected error",

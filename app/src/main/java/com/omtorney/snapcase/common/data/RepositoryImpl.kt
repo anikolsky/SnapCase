@@ -48,18 +48,4 @@ class RepositoryImpl @Inject constructor(
     override fun getRecentCases(): Flow<List<Case>> {
         return localDataSource.getRecentCases()
     }
-
-    override val getAccentColor: Flow<Long>
-        get() = localDataSource.getAccentColor
-
-    override suspend fun setAccentColor(color: Long) {
-        localDataSource.setAccentColor(color)
-    }
-
-    override val getSelectedCourt: Flow<String>
-        get() = localDataSource.getSelectedCourt
-
-    override suspend fun setSelectedCourt(courtTitle: String) {
-        localDataSource.setSelectedCourt(courtTitle)
-    }
 }

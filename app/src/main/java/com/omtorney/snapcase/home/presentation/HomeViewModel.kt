@@ -4,14 +4,14 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.omtorney.snapcase.common.domain.Repository
+import com.omtorney.snapcase.settings.data.SettingsStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: Repository
+    private val settings: SettingsStore
 ) : ViewModel() {
 
     private val _state = mutableStateOf(HomeState())
@@ -19,7 +19,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            repository.getSelectedCourt.collect { courtTitle ->
+            settings.getSelectedCourt.collect { courtTitle ->
                 _state.value = state.value.copy(selectedCourt = courtTitle)
             }
         }
@@ -35,7 +35,7 @@ class HomeViewModel @Inject constructor(
         when (event) {
             is HomeEvent.SetSelectedCourt -> {
                 viewModelScope.launch {
-                    repository.setSelectedCourt(event.courtTitle)
+                    settings.setSelectedCourt(event.courtTitle)
                 }
             }
         }

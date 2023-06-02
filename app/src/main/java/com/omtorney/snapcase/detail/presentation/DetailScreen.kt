@@ -65,7 +65,7 @@ fun DetailScreen(
                         .align(Alignment.CenterHorizontally)
                         .padding(vertical = 2.dp)
                 )
-                state.case?.let { case ->
+                state.case.let { case ->
                     CaseCard(
                         case = case,
                         isExpanded = true,
@@ -141,7 +141,7 @@ fun DetailScreen(
                 }
                 Button(
                     onClick = {
-                        if (state.case!!.isFavorite) {
+                        if (state.case.isFavorite) {
                             onEvent(DetailEvent.Delete(state.case))
                             onDismiss()
                         } else {
@@ -150,10 +150,11 @@ fun DetailScreen(
                     },
                     shape = RectangleShape,
                     colors = ButtonDefaults.buttonColors(accentColor),
+                    enabled = !state.isLoading,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = if (state.case?.isFavorite == true) {
+                        text = if (state.case.isFavorite) {
                             stringResource(R.string.delete_favorite).uppercase()
                         } else {
                             stringResource(R.string.add_favorites).uppercase()

@@ -7,8 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class LocalDataSourceImpl @Inject constructor(
-    private val caseDao: CaseDao,
-    private val settingsStore: SettingsStore
+    private val caseDao: CaseDao
 ) : LocalDataSource {
 
     override suspend fun saveCase(case: Case) {
@@ -41,19 +40,5 @@ class LocalDataSourceImpl @Inject constructor(
 
     override fun getRecentCases(): Flow<List<Case>> {
         return caseDao.getRecent()
-    }
-
-    override val getAccentColor: Flow<Long>
-        get() = settingsStore.getAccentColor
-
-    override suspend fun setAccentColor(color: Long) {
-        settingsStore.setAccentColor(color)
-    }
-
-    override val getSelectedCourt: Flow<String>
-        get() = settingsStore.getSelectedCourt
-
-    override suspend fun setSelectedCourt(courtTitle: String) {
-        settingsStore.setSelectedCourt(courtTitle)
     }
 }

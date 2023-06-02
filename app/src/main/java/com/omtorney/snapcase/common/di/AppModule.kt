@@ -38,7 +38,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSettingsStore(@ApplicationContext appContext: Context): DataStore<Preferences> {
+    fun provideDataStore(@ApplicationContext appContext: Context): DataStore<Preferences> {
         return PreferenceDataStoreFactory.create {
             appContext.preferencesDataStoreFile(DATA_STORE_NAME)
         }

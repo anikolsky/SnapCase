@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
     private val baseUrl = "http://188.225.60.116/"
     private val versionFile = "SnapCaseVersion.txt"
     private val apkUpdateFile = "SnapCaseApp.apk"
-    private val apkDownloadFile = "SnapCaseUpdate.apk"
+    private val apkDownloadedFileName = "SnapCaseUpdate.apk"
     private var downloadManager: DownloadManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,7 +98,7 @@ class MainActivity : ComponentActivity() {
     private fun updateMute() {
         downloadManager = DownloadManager.Builder(this)
             .apkUrl(baseUrl + apkUpdateFile)
-            .apkName(apkDownloadFile)
+            .apkName(apkDownloadedFileName)
             .smallIcon(R.drawable.ic_round_case)
 //            .onDownloadListener(object : OnDownloadListenerAdapter() {
 //                override fun downloading(max: Int, progress: Int) {

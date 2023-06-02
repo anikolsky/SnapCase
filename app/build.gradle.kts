@@ -22,8 +22,8 @@ android {
         applicationId = "com.omtorney.snapcase"
         minSdk = 26
         targetSdk = 33
-        versionCode = 3
-        versionName = "0.3"
+        versionCode = 4
+        versionName = "0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -92,7 +92,6 @@ dependencies {
     val lifecycleVersion = "2.6.1"
     val navVersion = "2.5.3"
     val roomVersion = "2.5.1"
-    val accompanistVersion = "0.30.0"
 
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.activity:activity-compose:1.7.2")
@@ -102,13 +101,9 @@ dependencies {
 
     implementation("androidx.compose.runtime:runtime-livedata:1.5.0-beta01")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+//    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("org.jsoup:jsoup:1.16.1")
     implementation("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
-    implementation("com.github.skydoves:colorpicker-compose:1.0.2")
-
-    // Accompanist
-    implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
 
     // Lifecycle
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
