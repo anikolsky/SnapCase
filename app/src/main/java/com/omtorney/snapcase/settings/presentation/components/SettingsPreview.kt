@@ -48,21 +48,21 @@ fun SettingsPreview() {
                     state = true,
                     onCheckedChange = {}
                 )
-                MenuDropdown(
-                    accentColor = Color.Blue,
-                    icon = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_round_timer),
-                            contentDescription = "Time period"
-                        )
-                    },
-                    title = { Text(text = "Dropdown") },
-                    subtitle = "Selected period: 15 minutes",
-                    expanded = false,
-                    onClickButton = {},
-                    onClickMenu = {},
-                    onDismissRequest = {}
-                )
+//                MenuDropdown(
+//                    accentColor = Color.Blue,
+//                    icon = {
+//                        Icon(
+//                            painter = painterResource(R.drawable.ic_round_timer),
+//                            contentDescription = "Time period"
+//                        )
+//                    },
+//                    title = { Text(text = "Dropdown") },
+//                    subtitle = "Selected period: 15 minutes",
+//                    expanded = false,
+//                    onClickButton = {},
+//                    onClickMenu = {},
+//                    onDismissRequest = {}
+//                )
             }
         }
     }

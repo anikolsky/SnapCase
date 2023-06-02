@@ -41,6 +41,7 @@ import com.omtorney.snapcase.common.presentation.components.TopBarTitle
 import com.omtorney.snapcase.settings.presentation.components.MenuDropdown
 import com.omtorney.snapcase.settings.presentation.components.MenuSwitcher
 
+@OptIn(ExperimentalStdlibApi::class)
 @Composable
 fun SettingsScreen(
     state: SettingsState,
@@ -93,8 +94,8 @@ fun SettingsScreen(
                 )
             },
             title = { Text(text = "Отслеживание дел") },
-            subtitle = "Включите для получения уведомлений при появлении новых записей о ходе рассмотрения избранных дел" +
-                    "\nСостояние: ${workInfo?.state ?: "EMPTY"}",
+            subtitle = "Включите для получения уведомлений при обновлении на сайте информации об избранных делах" +
+                    "\n\nСостояние: ${workInfo?.state ?: "EMPTY"}",
             state = workState,
             onCheckedChange = { checked ->
                 workState = checked
@@ -117,7 +118,6 @@ fun SettingsScreen(
             }
         )
         MenuDropdown(
-            accentColor = accentColor,
             icon = {
                 Icon(
                     painter = painterResource(R.drawable.ic_round_timer),
@@ -125,13 +125,15 @@ fun SettingsScreen(
                 )
             },
             title = { Text(text = "Период проверки дел") },
-            subtitle = "Выбранный период: ${backgroundCheckPeriod.title}",
+            subtitle = "Функция отслеживания будет перезапущена при изменении периода",
             expanded = backgroundCheckMenuExpanded,
-            onClickButton = { backgroundCheckMenuExpanded = true },
-            onClickMenu = { period ->
-                onEvent(SettingsEvent.SetBackgroundCheckPeriod(period))
-                backgroundCheckPeriod = period
+            items = CheckPeriod.values().map { it.title },
+            selectedItemText = backgroundCheckPeriod.title,
+            onItemSelected = { periodTitle ->
+                onEvent(SettingsEvent.SetBackgroundCheckPeriod(periodTitle))
+                backgroundCheckPeriod = periodTitle
             },
+            onClick = { backgroundCheckMenuExpanded = true },
             onDismissRequest = { backgroundCheckMenuExpanded = false }
         )
         Box(

@@ -21,7 +21,7 @@ fun <T> Spinner(
     selectedItem: T,
     onItemSelected: (T) -> Unit,
     selectedItemFactory: @Composable (Modifier, T) -> Unit,
-    dropdownItemFactory: @Composable (T, Int) -> Unit,
+    dropdownItemFactory: @Composable (T, Int) -> Unit
 ) {
     var expanded: Boolean by remember { mutableStateOf(false) }
 
