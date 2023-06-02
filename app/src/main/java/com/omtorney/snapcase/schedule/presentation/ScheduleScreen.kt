@@ -3,14 +3,13 @@ package com.omtorney.snapcase.schedule.presentation
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.omtorney.snapcase.R
@@ -48,7 +47,10 @@ fun ScheduleScreen(
                     .fillMaxWidth()
                     .padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 0.dp)
             )
-            Row {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.height(IntrinsicSize.Max)
+            ) {
                 Spinner(
                     dropDownModifier = Modifier.wrapContentSize(),
                     items = judgeList,
@@ -64,6 +66,8 @@ fun ScheduleScreen(
                         ) {
                             Text(
                                 text = item,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                                 style = MaterialTheme.typography.body1
                             )
                             Icon(
@@ -79,21 +83,37 @@ fun ScheduleScreen(
                         )
                     },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 0.dp)
+                        .weight(1f)
+                        .padding(start = 8.dp, end = 0.dp, top = 8.dp, bottom = 0.dp)
                         .border(
                             width = 1.dp,
                             color = accentColor,
                             shape = MaterialTheme.shapes.small
                         )
                 )
-                Button(onClick = {
-                    onEvent(ScheduleEvent.ResetJudge)
-                }) {
-                    Icon(
-                        imageVector = Icons.Rounded.Refresh,
-                        contentDescription = "Reset judges"
-                    )
+                TextButton(
+                    onClick = { onEvent(ScheduleEvent.ResetJudge) },
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = accentColor,
+                        backgroundColor = MaterialTheme.colors.background
+                    ),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(end = 8.dp, top = 4.dp)
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_round_restart_alt),
+                            contentDescription = "Reset judges"
+                        )
+                        Text(
+                            text = "Сброс",
+                            style = MaterialTheme.typography.body2
+                        )
+                    }
                 }
             }
             /** Case list */

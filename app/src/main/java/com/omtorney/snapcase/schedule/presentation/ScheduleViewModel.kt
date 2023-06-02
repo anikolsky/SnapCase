@@ -58,7 +58,8 @@ class ScheduleViewModel @Inject constructor(
             }
 
             ScheduleEvent.ResetJudge -> {
-                // TODO show full case list
+                _state.value = state.value.copy(selectedJudge = "")
+                updateFilteredCases()
             }
         }
     }

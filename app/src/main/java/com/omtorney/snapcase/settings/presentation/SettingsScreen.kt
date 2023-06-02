@@ -41,7 +41,6 @@ import com.omtorney.snapcase.common.presentation.components.TopBarTitle
 import com.omtorney.snapcase.settings.presentation.components.MenuDropdown
 import com.omtorney.snapcase.settings.presentation.components.MenuSwitcher
 
-@OptIn(ExperimentalStdlibApi::class)
 @Composable
 fun SettingsScreen(
     state: SettingsState,
