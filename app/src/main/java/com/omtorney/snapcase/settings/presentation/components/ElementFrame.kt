@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,8 +35,8 @@ fun ElementFrame(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = subtitle,
-                style = MaterialTheme.typography.caption,
-                color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
                 modifier = Modifier.fillMaxWidth(0.75f)
             )
         }

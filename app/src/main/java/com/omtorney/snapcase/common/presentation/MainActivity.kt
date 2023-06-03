@@ -10,8 +10,8 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import com.azhon.appupdate.manager.DownloadManager
@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
             SnapCaseTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    color = MaterialTheme.colorScheme.background
                 ) {
                     AppNavHost(onGoToAppSettingsClick = ::openAppSettings)
                 }

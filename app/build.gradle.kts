@@ -97,13 +97,12 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation("androidx.compose.ui:ui:$composeUiVersion")
     implementation("androidx.compose.ui:ui-tooling-preview:$composeUiVersion")
-    implementation("androidx.compose.material:material:$composeUiVersion")
+    implementation("androidx.compose.material3:material3:1.1.0")
 
     implementation("androidx.compose.runtime:runtime-livedata:1.5.0-beta01")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 //    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("org.jsoup:jsoup:1.16.1")
-    implementation("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
 
     // Lifecycle
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")

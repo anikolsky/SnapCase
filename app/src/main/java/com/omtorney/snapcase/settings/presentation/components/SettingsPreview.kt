@@ -2,9 +2,9 @@ package com.omtorney.snapcase.settings.presentation.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource

@@ -2,7 +2,13 @@ package com.omtorney.snapcase.schedule.presentation
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,7 +51,7 @@ fun ScheduleScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 0.dp)
+                    .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 2.dp)
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -68,7 +74,7 @@ fun ScheduleScreen(
                                 text = item,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.body1
+                                style = MaterialTheme.typography.bodyLarge
                             )
                             Icon(
                                 painter = painterResource(R.drawable.ic_round_arrow_drop_down),
@@ -79,7 +85,7 @@ fun ScheduleScreen(
                     dropdownItemFactory = { item, _ ->
                         Text(
                             text = item,
-                            style = MaterialTheme.typography.body1
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     },
                     modifier = Modifier
@@ -95,7 +101,7 @@ fun ScheduleScreen(
                     onClick = { onEvent(ScheduleEvent.ResetJudge) },
                     colors = ButtonDefaults.buttonColors(
                         contentColor = accentColor,
-                        backgroundColor = MaterialTheme.colors.background
+                        containerColor = MaterialTheme.colorScheme.background
                     ),
                     modifier = Modifier
                         .fillMaxHeight()
@@ -111,14 +117,14 @@ fun ScheduleScreen(
                         )
                         Text(
                             text = "Сброс",
-                            style = MaterialTheme.typography.body2
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 }
             }
             /** Case list */
             CaseColumn(
-                items = filteredCases, // state.cases
+                items = filteredCases,
                 accentColor = accentColor,
                 onCardClick = { case ->
                     onEvent(ScheduleEvent.CacheCase(case))
@@ -139,7 +145,7 @@ fun ScheduleScreen(
             Box(modifier = Modifier.fillMaxSize()) {
                 Text(
                     text = state.error,
-                    color = MaterialTheme.colors.error,
+                    color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()

@@ -1,32 +1,37 @@
 package com.omtorney.snapcase.common.presentation.components
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.omtorney.snapcase.common.domain.model.Case
+import com.omtorney.snapcase.common.presentation.theme.SnapCaseTheme
 
 @Composable
 fun CaseColumn(
+    modifier: Modifier = Modifier,
     items: List<Case>,
     accentColor: Color,
     onCardClick: (Case) -> Unit,
-    onActTextClick: (String) -> Unit,
-    modifier: Modifier = Modifier
+    onActTextClick: (String) -> Unit
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.background)
-            .padding(start = 4.dp, end = 4.dp, top = 4.dp, bottom = 0.dp)
+            .background(MaterialTheme.colorScheme.background)
+            .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 0.dp)
     ) {
         items.map { case ->
             item {
@@ -38,14 +43,26 @@ fun CaseColumn(
                     onActTextClick = { onActTextClick(it) }
                 )
             }
+            item {
+                Spacer(modifier = Modifier.height(0.dp))
+            }
         }
     }
 }
 
-@Preview
+@Preview(uiMode = UI_MODE_NIGHT_YES, showSystemUi = true)
 @Composable
 fun CaseColumnPreview() {
-    CaseColumn(items = listOf(testCase, testCase), Color.Magenta, {}, {})
+    SnapCaseTheme {
+        Surface {
+            CaseColumn(
+                items = listOf(testCase, testCase),
+                accentColor = Color.Gray,
+                onCardClick = {},
+                onActTextClick = {}
+            )
+        }
+    }
 }
 
 private val testCase = Case(
