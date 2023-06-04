@@ -103,6 +103,7 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 //    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("org.jsoup:jsoup:1.16.1")
+    implementation("com.google.code.gson:gson:2.10.1")
 
     // Lifecycle
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")

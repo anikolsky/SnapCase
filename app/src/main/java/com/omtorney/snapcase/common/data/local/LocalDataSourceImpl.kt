@@ -2,7 +2,6 @@ package com.omtorney.snapcase.common.data.local
 
 import com.omtorney.snapcase.common.data.database.CaseDao
 import com.omtorney.snapcase.common.domain.model.Case
-import com.omtorney.snapcase.settings.data.SettingsStore
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -18,16 +17,12 @@ class LocalDataSourceImpl @Inject constructor(
         caseDao.delete(case)
     }
 
-    override suspend fun updateFavorite(case: Case) {
-        caseDao.update(case)
-    }
-
     override suspend fun checkCase(uid: String): Int {
-        return caseDao.check(uid)
+        return caseDao.checkCase(uid)
     }
 
     override suspend fun clearRecentCases() {
-        caseDao.deleteRecent()
+        caseDao.deleteRecentCases()
     }
 
     override suspend fun getCaseByNumber(number: String): Case? {
@@ -35,10 +30,10 @@ class LocalDataSourceImpl @Inject constructor(
     }
 
     override fun getFavoriteCases(): Flow<List<Case>> {
-        return caseDao.getFavorites()
+        return caseDao.getFavoriteCases()
     }
 
     override fun getRecentCases(): Flow<List<Case>> {
-        return caseDao.getRecent()
+        return caseDao.getRecentCases()
     }
 }

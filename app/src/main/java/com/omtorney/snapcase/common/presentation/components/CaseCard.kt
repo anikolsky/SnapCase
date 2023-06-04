@@ -57,7 +57,14 @@ fun CaseCard(
                 )
             )
         ) {
-            Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 6.dp, bottom = 0.dp)) {
+            Column(
+                modifier = Modifier.padding(
+                    start = 12.dp,
+                    end = 12.dp,
+                    top = 6.dp,
+                    bottom = 0.dp
+                )
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -81,7 +88,7 @@ fun CaseCard(
                         )
                     }
                 }
-                if (case.hearingDateTime.isNotEmpty())
+                if (case.hearingDateTime.isNotEmpty()) {
                     Row {
                         TextBlock(
                             title = "Время заседания: ",
@@ -89,6 +96,7 @@ fun CaseCard(
                             color = accentColor
                         )
                     }
+                }
                 Column {
                     TextBlock(
                         title = "Участники: ",
@@ -204,5 +212,5 @@ private fun TextBlockPreview() {
 private val testCase = Case(
     "1", "", "", "2-2222/2022", "",
     "ИСТЕЦ: Иванов Иван Иванович ОТВЕТЧИК: Петров Петр Петрович",
-    "Судья", "", "", "", "", "", "", ""
+    "Судья", "", "", "", "", "", mutableListOf(), mutableMapOf(), "", false
 )

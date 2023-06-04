@@ -88,7 +88,7 @@ fun SettingsButton(
     IconButton(onClick = onSettingsClick) {
         Icon(
             imageVector = Icons.Rounded.Settings,
-            contentDescription = "Settings",
+            contentDescription = "SettingsStore",
 //            tint = Color(accentColor)
         )
     }

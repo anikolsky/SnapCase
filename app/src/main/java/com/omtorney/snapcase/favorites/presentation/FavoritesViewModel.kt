@@ -41,14 +41,13 @@ class FavoritesViewModel @Inject constructor(
                     caseUseCases.deleteCase(event.case)
                 }
             }
-            is FavoritesEvent.Refresh -> {
-                viewModelScope.launch {
-                    event.cases.forEach { case ->
-                        caseUseCases.fillCase(case, Courts.Dmitrov)
-                        caseUseCases.updateCase(case)
-                    }
-                }
-            }
+//            is FavoritesEvent.Refresh -> {
+//                viewModelScope.launch {
+//                    event.cases.forEach { case ->
+//                        caseUseCases.fillCase(case, case.court) // add new field?
+//                    }
+//                }
+//            }
         }
     }
 }

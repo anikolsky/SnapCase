@@ -1,16 +1,13 @@
 package com.omtorney.snapcase.schedule.presentation
 
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.omtorney.snapcase.common.domain.model.Case
 import com.omtorney.snapcase.common.domain.usecase.CaseUseCases
 import com.omtorney.snapcase.common.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -98,7 +95,7 @@ class ScheduleViewModel @Inject constructor(
         val filteredCases = if (selectedJudge.isBlank()) {
             currentCases
         } else {
-            currentCases.filter { it.doesJudgeMatchSearchQuery(selectedJudge) }
+            currentCases.filter { it.doesJudgeMatchQuery(selectedJudge) }
         }
         _state.value = state.value.copy(filteredCases = filteredCases)
     }

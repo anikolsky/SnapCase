@@ -6,6 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.omtorney.snapcase.common.domain.Repository
 import com.omtorney.snapcase.common.domain.model.Case
+import com.omtorney.snapcase.common.domain.model.ProcessStep
 import com.omtorney.snapcase.common.domain.usecase.CaseUseCases
 import com.omtorney.snapcase.common.presentation.logd
 import com.omtorney.snapcase.common.util.NotificationHelper
@@ -22,49 +23,42 @@ class CaseCheckWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
-        logd("starting work...")
+        logd("Starting work...")
         return try {
             val favorites = caseUseCases.getFavoriteCases().first()
             favorites.forEach { case ->
-
-                logd("iterating through favorites...")
-
-                var eventInfo: String
-                val lastEvent = case.lastEvent
-                val process = mutableListOf<String>()
+                logd("Iterating through favorites...")
+                val processList = mutableListOf<ProcessStep>()
                 val appeal = mutableMapOf<String, String>()
-
                 val page = repository.getJsoupDocument(case.url)
                 val mainCard = page?.select("div[id=content]")
                 val tabsContent = mainCard?.select("table[id=tablcont]")
                 val tabTitles = tabsContent?.select("th")
-
                 for (tab in tabsContent!!.indices) {
                     val tableLines = tabsContent[tab].select("tr")
                     repeat(2) { tableLines.removeFirstOrNull() }
-
                     for (line in tableLines.indices) {
 
                         if (tabTitles!![tab].text() == "ДВИЖЕНИЕ ДЕЛА") {
                             val processLineElements = tableLines[line].select("td")
-
                             for (elem in processLineElements.indices) {
                                 if (processLineElements[elem].text().isEmpty())
                                     processLineElements[elem].text("")
                             }
-
-                            val date = processLineElements[1].text()
-                            val time = processLineElements[2].text()
-                            eventInfo = date + time
-
-                            logd("eventInfo: $eventInfo")
-
-                            process.add(eventInfo)
-
-                            if (process.last() != lastEvent) {
-                                logd("Sending notification...")
-                                sendNotification(case)
-                            }
+                            val processElement = ProcessStep(
+                                event = processLineElements[0].text(),
+                                date = processLineElements[1].text(),
+                                time = processLineElements[2].text(),
+                                result = processLineElements[4].text(),
+                                cause = processLineElements[5].text(),
+                                dateOfPublishing = processLineElements[7].text()
+                            )
+                            processList.add(processElement)
+                            logd("Process added: $processElement")
+                        }
+                        if (processList.last() != case.process.last()) {
+                            logd("Process has changed, sending notification...")
+                            sendNotification(case, CaseEvent.Process)
                         }
 
                         if (tabTitles[tab].text() == "ОБЖАЛОВАНИЕ РЕШЕНИЙ, ОПРЕДЕЛЕНИЙ (ПОСТ.)") {
@@ -73,13 +67,13 @@ class CaseCheckWorker @AssistedInject constructor(
                                 if (appealsLineElements[elem].text().isEmpty())
                                     appealsLineElements[elem].text("")
                             }
-                            // Получаем только актуальное обжалование
+                            // Получаем только последнее обжалование
                             appeal[appealsLineElements[0].text()] = appealsLineElements[appealsLineElements.size - 1].text()
+                        }
 
-                            // Если обжалование было пустое, а стало не пустое - уведомление
-                            // Если обжалование было не пустое, но не соответствует новому - уведомление
-                            // Сравнение тоже по каким-то полям
-
+                        if (appeal != case.appeal) {
+                            logd("Appeal has changed, sending notification...")
+                            sendNotification(case, CaseEvent.Appeal)
                         }
                     }
                 }
@@ -87,15 +81,30 @@ class CaseCheckWorker @AssistedInject constructor(
             logd("Result.success without result")
             Result.success()
         } catch (e: Exception) {
-            logd("work exception: ${e.localizedMessage}")
+            logd("Work exception: ${e.localizedMessage}")
             Result.failure()
         }
     }
 
-    private fun sendNotification(case: Case) {
-        NotificationHelper(context).createNotification(
-            title = "Обновление информации по делу",
-            message = "Новая запись по делу № ${case.number}\n${case.participants}"
-        )
+    private fun sendNotification(case: Case, event: CaseEvent) {
+        when (event) {
+            CaseEvent.Process -> {
+                NotificationHelper(context).createNotification(
+                    title = "Обновление информации по делу",
+                    message = "Движение дела № ${case.number}\n${case.participants}"
+                )
+            }
+            CaseEvent.Appeal -> {
+                NotificationHelper(context).createNotification(
+                    title = "Обновление информации по делу",
+                    message = "Обжалование по делу № ${case.number}\n${case.participants}"
+                )
+            }
+        }
     }
+}
+
+sealed class CaseEvent {
+    object Process : CaseEvent()
+    object Appeal : CaseEvent()
 }

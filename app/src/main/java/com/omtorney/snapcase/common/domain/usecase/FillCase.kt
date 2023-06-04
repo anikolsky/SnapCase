@@ -15,10 +15,12 @@ class FillCase @Inject constructor(
 ) {
     suspend operator fun invoke(case: Case, court: Court): Flow<Resource<Case>> = flow {
         try {
-            emit(Resource.Loading())
+            val cachedCase = repository.getCaseByNumber(case.number)
+            emit(Resource.Loading(data = cachedCase))
             val page = PageParserFactory(repository).create(court)
-            val resultCase = page.fillCase(case, court)
-            emit(Resource.Success(resultCase))
+            val fetchedCase = page.fillCase(case, court)
+            repository.saveCase(case = fetchedCase)
+            emit(Resource.Success(data = fetchedCase))
         } catch (e: Exception) {
             emit(Resource.Error(message = handleException(e)))
         }

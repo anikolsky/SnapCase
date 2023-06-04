@@ -9,7 +9,6 @@ import com.omtorney.snapcase.detail.domain.usecase.GetCaseByNumber
 import com.omtorney.snapcase.common.domain.usecase.SaveCase
 import com.omtorney.snapcase.common.domain.usecase.FillCase
 import com.omtorney.snapcase.favorites.domain.usecase.GetFavoriteCases
-import com.omtorney.snapcase.favorites.domain.usecase.UpdateCase
 import com.omtorney.snapcase.recent.domain.usecase.ClearRecentCases
 import com.omtorney.snapcase.recent.domain.usecase.GetRecentCases
 import com.omtorney.snapcase.schedule.domain.usecase.ShowSchedule
@@ -38,8 +37,7 @@ object DomainModule {
             loadActText = LoadActText(repository),
             saveCase = SaveCase(repository),
             searchCase = SearchCase(repository),
-            showSchedule = ShowSchedule(repository),
-            updateCase = UpdateCase(repository)
+            showSchedule = ShowSchedule(repository)
         )
     }
 }

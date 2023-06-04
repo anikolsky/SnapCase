@@ -8,26 +8,23 @@ import kotlinx.coroutines.flow.Flow
 interface CaseDao {
 
     @Query("SELECT * FROM cases WHERE is_favorite = 1")
-    fun getFavorites(): Flow<List<Case>>
+    fun getFavoriteCases(): Flow<List<Case>>
 
     @Query("SELECT * FROM cases WHERE is_favorite = 0")
-    fun getRecent(): Flow<List<Case>>
+    fun getRecentCases(): Flow<List<Case>>
 
     @Query("SELECT * FROM cases WHERE number = :number")
     suspend fun getCaseByNumber(number: String): Case?
 
     @Query("SELECT COUNT() FROM cases WHERE uid =:uid")
-    suspend fun check(uid: String): Int
+    suspend fun checkCase(uid: String): Int
 
     @Query("DELETE FROM cases WHERE is_favorite = 0")
-    suspend fun deleteRecent()
+    suspend fun deleteRecentCases()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(case: Case)
 
     @Delete
     suspend fun delete(case: Case)
-
-    @Update
-    suspend fun update(case: Case)
 }

@@ -68,5 +68,5 @@ fun CaseColumnPreview() {
 private val testCase = Case(
     "1", "", "", "2-2222/2022", "",
     "ИСТЕЦ: Иванов Иван Иванович ОТВЕТЧИК: Петров Петр Петрович",
-    "Судья", "", "", "", "", "", "", ""
+    "Судья", "", "", "", "", "", mutableListOf(), mutableMapOf(), "", false
 )

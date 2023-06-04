@@ -25,10 +25,6 @@ class RepositoryImpl @Inject constructor(
         localDataSource.deleteFavorite(case)
     }
 
-    override suspend fun updateFavorite(case: Case) {
-        localDataSource.updateFavorite(case)
-    }
-
     override suspend fun checkCase(uid: String): Int {
         return localDataSource.checkCase(uid)
     }

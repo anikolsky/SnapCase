@@ -3,7 +3,7 @@ package com.omtorney.snapcase.common.domain.parser
 import com.omtorney.snapcase.common.domain.Repository
 import com.omtorney.snapcase.common.domain.court.Court
 import com.omtorney.snapcase.common.domain.model.Case
-import com.omtorney.snapcase.common.domain.model.CaseProcess
+import com.omtorney.snapcase.common.domain.model.ProcessStep
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import javax.inject.Inject
@@ -28,13 +28,7 @@ class PageParserNoMsk @Inject constructor(
                 participants = "${getPlaintiff(info)}\n${getDefendant(info)}",
                 judge = lineElements[5].text(),
                 result = lineElements[6].text(),
-                actTextUrl = getCaseActUrl(lineElements[7], court),
-                uid = "",
-                receiptDate = "",
-                actDateTime = "",
-                actDateForce = "",
-                lastEvent = "",
-                notes = ""
+                actTextUrl = getCaseActUrl(lineElements[7], court)
             )
             caseList.add(case)
         }
@@ -56,16 +50,12 @@ class PageParserNoMsk @Inject constructor(
                 number = getCaseNumber(resultElement[0].text()),
                 receiptDate = resultElement[1].text(),
                 category = getCaseCategory(info),
-                participants = "${getPlaintiff(info)} ${getDefendant(info)}",
+                participants = "${getPlaintiff(info)}\n${getDefendant(info)}",
                 judge = resultElement[3].text(),
                 actDateTime = resultElement[4].text(),
                 result = resultElement[5].text(),
                 actDateForce = resultElement[6].text(),
-                actTextUrl = getCaseActUrl(resultElement[7], court),
-                uid = "",
-                hearingDateTime = "",
-                lastEvent = "",
-                notes = ""
+                actTextUrl = getCaseActUrl(resultElement[7], court)
             )
             caseList.add(case)
         }
@@ -99,13 +89,14 @@ class PageParserNoMsk @Inject constructor(
                             processLineElements[elem].text("")
                     }
                     case.process.add(
-                        CaseProcess(
+                        ProcessStep(
                             event = processLineElements[0].text(),
                             date = processLineElements[1].text(),
                             time = processLineElements[2].text(),
                             result = processLineElements[4].text(),
                             cause = processLineElements[5].text(),
-                            dateOfPublishing = processLineElements[7].text()
+                            dateOfPublishing = processLineElements[7].text(),
+//                            isNew = false
                         )
                     )
                 }
@@ -124,13 +115,12 @@ class PageParserNoMsk @Inject constructor(
                         if (appealsLineElements[elem].text().isEmpty())
                             appealsLineElements[elem].text("")
                     }
-                    // Получаем только актуальное обжалование
+                    // Получаем только последнее обжалование
                     case.appeal[appealsLineElements[0].text()] =
                         appealsLineElements[appealsLineElements.size - 1].text()
                 }
             }
         }
-        case.lastEvent = case.process.last().date + case.process.last().time
         return case
     }
 

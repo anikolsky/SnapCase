@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.snapcase.common.domain.court.Courts
 import com.omtorney.snapcase.common.domain.model.Case
+import com.omtorney.snapcase.common.domain.model.ProcessStep
 import com.omtorney.snapcase.common.domain.usecase.CaseUseCases
 import com.omtorney.snapcase.common.presentation.components.UiEvent
 import com.omtorney.snapcase.common.util.Resource

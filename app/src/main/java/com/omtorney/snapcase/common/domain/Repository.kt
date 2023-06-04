@@ -10,7 +10,6 @@ interface Repository {
 
     suspend fun saveCase(case: Case)
     suspend fun deleteFavorite(case: Case)
-    suspend fun updateFavorite(case: Case)
     suspend fun checkCase(uid: String): Int
     suspend fun clearRecentCases()
     suspend fun getCaseByNumber(number: String): Case?
