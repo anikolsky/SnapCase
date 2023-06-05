@@ -85,7 +85,6 @@ fun AppNavHost(
             val viewModel: SearchViewModel = hiltViewModel()
             val state = viewModel.state.value
             SearchScreen(
-                navController = navController,
                 state = state,
                 onEvent = viewModel::onEvent,
                 accentColor = Color(accentColor),
@@ -104,7 +103,6 @@ fun AppNavHost(
             val viewModel: ScheduleViewModel = hiltViewModel()
             val state = viewModel.state.value
             ScheduleScreen(
-                navController = navController,
                 state = state,
                 onEvent = viewModel::onEvent,
                 accentColor = Color(accentColor),

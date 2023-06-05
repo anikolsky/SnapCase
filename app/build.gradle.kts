@@ -1,8 +1,6 @@
-//import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-//import java.util.Properties
-//import com.android.build.api.variant.BuildConfigField
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
-//val serverAddress: String = gradleLocalProperties(rootDir).getProperty("SERVER_IP_ADDRESS")
+//val localProperties = gradleLocalProperties(rootProject.projectDir)
 
 plugins {
     id("com.android.application")
@@ -30,10 +28,15 @@ android {
             useSupportLibrary = true
         }
 
-//        val localProperties = Properties()
-//        localProperties.load(project.rootProject.file("local.properties").inputStream())
-//        buildConfigField("String", "SERVER_IP_ADDRESS", "\"${localProperties.getProperty("SERVER_IP_ADDRESS")}\"")
-
+        val localProperties = gradleLocalProperties(rootProject.projectDir)
+        val serverAddressProperty = localProperties.getProperty("serverAddress")
+        val versionFileProperty = localProperties.getProperty("appVersionFile")
+        val apkUpdateFileProperty = localProperties.getProperty("apkUpdateFile")
+        val apkDownloadedFileNameProperty = localProperties.getProperty("apkDownloadedFileName")
+        buildConfigField("String", "SERVER_ADDRESS", "\"$serverAddressProperty\"")
+        buildConfigField("String", "VERSION_FILE", "\"$versionFileProperty\"")
+        buildConfigField("String", "APK_UPDATE", "\"$apkUpdateFileProperty\"")
+        buildConfigField("String", "DOWNLOADED_UPDATE", "\"$apkDownloadedFileNameProperty\"")
     }
 
     buildTypes {
@@ -43,13 +46,12 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         getByName("debug") {
-
-//            buildConfigField("String", "SERVER_IP_ADDRESS", "\"${serverAddress}\"")
+//            val serverAddressProperty = localProperties.getProperty("serverAddress") ?: "empty"
+//            buildConfigField("String", "SERVER_ADDRESS", "\"$serverAddressProperty\"")
 
             isDebuggable = true
             isMinifyEnabled = false
             isShrinkResources = false
-//            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {
@@ -72,16 +74,6 @@ android {
         }
     }
 }
-
-//androidComponents {
-//    onVariants {
-//        it.buildConfigFields.put(
-//            "BUILD_TIME", BuildConfigField(
-//                "String", "\"" + System.currentTimeMillis().toString() + "\"", "build timestamp"
-//            )
-//        )
-//    }
-//}
 
 dependencies {
 

@@ -26,7 +26,6 @@ import com.omtorney.snapcase.home.presentation.components.Spinner
 
 @Composable
 fun ScheduleScreen(
-    navController: NavController,
     state: ScheduleState,
     onEvent: (ScheduleEvent) -> Unit,
     accentColor: Color,
@@ -37,9 +36,7 @@ fun ScheduleScreen(
     val selectedJudge = state.selectedJudge
     val filteredCases = state.filteredCases
 
-    Scaffold(bottomBar = {
-        BottomBar(navController = navController)
-    }) { paddingValues ->
+    Scaffold { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()

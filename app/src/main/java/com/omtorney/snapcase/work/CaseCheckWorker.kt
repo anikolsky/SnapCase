@@ -79,6 +79,7 @@ class CaseCheckWorker @AssistedInject constructor(
                 }
             }
             logd("Result.success without result")
+            sendNotification(Case(), CaseEvent.NoEvent) // TODO remove test
             Result.success()
         } catch (e: Exception) {
             logd("Work exception: ${e.localizedMessage}")
@@ -100,6 +101,12 @@ class CaseCheckWorker @AssistedInject constructor(
                     message = "Обжалование по делу № ${case.number}\n${case.participants}"
                 )
             }
+            CaseEvent.NoEvent -> {
+                NotificationHelper(context).createNotification(
+                    title = "Проведена проверка",
+                    message = "Обновления отсутствуют"
+                )
+            }
         }
     }
 }
@@ -107,4 +114,5 @@ class CaseCheckWorker @AssistedInject constructor(
 sealed class CaseEvent {
     object Process : CaseEvent()
     object Appeal : CaseEvent()
+    object NoEvent : CaseEvent()
 }

@@ -1,7 +1,6 @@
 package com.omtorney.snapcase.common.presentation
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -12,11 +11,17 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
+import com.azhon.appupdate.listener.OnDownloadListenerAdapter
 import com.azhon.appupdate.manager.DownloadManager
 import com.omtorney.snapcase.BuildConfig
 import com.omtorney.snapcase.R
+import com.omtorney.snapcase.common.presentation.components.UpdateDialog
 import com.omtorney.snapcase.common.presentation.theme.SnapCaseTheme
 import com.omtorney.snapcase.common.util.NotificationHelper
 import com.omtorney.snapcase.common.util.Resource
@@ -24,17 +29,20 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import java.net.URL
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private lateinit var versionResult: Resource<String>
-    private val baseUrl = "http://188.225.60.116/"
-    private val versionFile = "SnapCaseVersion.txt"
-    private val apkUpdateFile = "SnapCaseApp.apk"
-    private val apkDownloadedFileName = "SnapCaseUpdate.apk"
+    private val baseUrl = BuildConfig.SERVER_ADDRESS
+    private val versionFile = BuildConfig.VERSION_FILE
+    private val apkUpdateFile = BuildConfig.APK_UPDATE
+    private val apkDownloadedFileName = BuildConfig.DOWNLOADED_UPDATE
     private var downloadManager: DownloadManager? = null
+    private var downloadProgress by mutableFloatStateOf(0f)
+    private var openDialog by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,13 +52,13 @@ class MainActivity : ComponentActivity() {
 
         lifecycleScope.launch {
             versionResult = withContext(Dispatchers.IO) {
-                 getRemoteVersionCode()
+                 fetchRemoteVersionCode()
             }
             when (versionResult) {
                 is Resource.Success -> {
                     if (versionResult.data!!.toInt() > BuildConfig.VERSION_CODE) {
+                        openDialog = true
                         logd("Версия приложения на сервере: ${versionResult.data}")
-                        showDialog()
                     }
                 }
                 is Resource.Error -> {
@@ -67,12 +75,19 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     AppNavHost(onGoToAppSettingsClick = ::openAppSettings)
+                    if (openDialog && downloadProgress != 1f) {
+                        UpdateDialog(
+                            downloadProgress = downloadProgress,
+                            onOkClick = { updateApp() },
+                            onDismissClick = { openDialog = false }
+                        )
+                    }
                 }
             }
         }
     }
 
-    private fun getRemoteVersionCode(): Resource<String> {
+    private fun fetchRemoteVersionCode(): Resource<String> {
         return try {
             val url = URL(baseUrl + versionFile)
             val connection = url.openConnection()
@@ -81,30 +96,23 @@ class MainActivity : ComponentActivity() {
             val versionCode = inputStream.bufferedReader().use { it.readText().trim().toIntOrNull() }
             inputStream.close()
             Resource.Success(data = "$versionCode")
-        } catch (e: Exception) {
-            Resource.Error(message = e.localizedMessage ?: "Unexpected error")
+        } catch (e: IOException) {
+            Resource.Error(message = "Ошибка при запросе версии обновления: ${e.localizedMessage}")
         }
     }
 
-    private fun showDialog() {
-        AlertDialog.Builder(this@MainActivity)
-            .setTitle("Доступно обновление")
-            .setMessage("Пожалуйста, установите актуальную версию приложения")
-            .setNegativeButton("Отмена") { dialog, _ -> dialog.cancel() }
-            .setPositiveButton("Обновить") { _, _ -> updateMute() }
-            .show()
-    }
-
-    private fun updateMute() {
+    private fun updateApp() {
         downloadManager = DownloadManager.Builder(this)
             .apkUrl(baseUrl + apkUpdateFile)
             .apkName(apkDownloadedFileName)
             .smallIcon(R.drawable.ic_round_case)
-//            .onDownloadListener(object : OnDownloadListenerAdapter() {
-//                override fun downloading(max: Int, progress: Int) {
-//                    Toast.makeText(this@MainActivity, "$progress of $max downloaded", Toast.LENGTH_SHORT).show()
-//                }
-//            })
+            .showNotification(false)
+            .showBgdToast(false)
+            .onDownloadListener(object : OnDownloadListenerAdapter() {
+                override fun downloading(max: Int, progress: Int) {
+                    downloadProgress = progress.toFloat() / max.toFloat()
+                }
+            })
             .build()
         downloadManager?.download()
     }

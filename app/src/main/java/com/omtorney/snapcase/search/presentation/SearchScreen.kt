@@ -21,14 +21,13 @@ import com.omtorney.snapcase.common.presentation.components.CaseColumn
 
 @Composable
 fun SearchScreen(
-    navController: NavController,
     state: SearchState,
     onEvent: (SearchEvent) -> Unit,
     accentColor: Color,
     onCardClick: (Case) -> Unit,
     onActTextClick: (String) -> Unit
 ) {
-    Scaffold(bottomBar = { BottomBar(navController = navController) }) { paddingValues ->
+    Scaffold { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
