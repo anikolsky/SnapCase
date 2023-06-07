@@ -29,12 +29,12 @@ class SnapCaseApplication : Application(), Configuration.Provider {
 
 class CustomWorkerFactory @Inject constructor(
     private val caseUseCases: CaseUseCases,
-    private val repository: Repository
+//    private val repository: Repository
 ) : WorkerFactory() {
 
     override fun createWorker(
         appContext: Context,
         workerClassName: String,
         workerParameters: WorkerParameters
-    ): ListenableWorker = CaseCheckWorker(appContext, workerParameters, caseUseCases, repository)
+    ): ListenableWorker = CaseCheckWorker(appContext, workerParameters, caseUseCases)
 }

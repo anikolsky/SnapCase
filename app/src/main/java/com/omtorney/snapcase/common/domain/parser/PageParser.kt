@@ -11,7 +11,7 @@ interface PageParser {
 
     fun extractSearchResult(document: Document, court: Court): List<Case>
 
-    suspend fun fillCase(case: Case, court: Court): Case
+    suspend fun fetchCase(case: Case): Case
 
     suspend fun extractActText(url: String): String
 

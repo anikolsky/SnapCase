@@ -15,7 +15,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.omtorney.snapcase.R
-import com.omtorney.snapcase.common.presentation.components.BackButton
 import com.omtorney.snapcase.common.presentation.components.BottomBar
 import com.omtorney.snapcase.common.presentation.components.CaseColumn
 import com.omtorney.snapcase.common.presentation.components.SettingsButton
@@ -29,19 +28,19 @@ fun FavoritesScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
     state: FavoritesState,
-    onEvent: (FavoritesEvent) -> Unit,
+//    onEvent: (FavoritesEvent) -> Unit,
     accentColor: Color,
     onSettingsClick: () -> Unit,
-    onBackClick: () -> Unit,
+//    onBackClick: () -> Unit,
     onCardClick: (Case) -> Unit,
     onActTextClick: (String) -> Unit
 ) {
     Scaffold(
         topBar = {
             TopBar {
-                BackButton(
-                    onBackClick = onBackClick
-                )
+//                BackButton(
+//                    onBackClick = onBackClick
+//                )
                 TopBarTitle(
                     title = Screen.Favorites.title,
                     modifier = Modifier.weight(1f)

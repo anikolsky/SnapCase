@@ -22,7 +22,7 @@ fun BottomBar(navController: NavController) {
     val items = listOf(
         Screen.Home,
         Screen.Favorites,
-        Screen.Recent
+//        Screen.Recent
     )
     NavigationBar(
 //        containerColor = Color.DarkGray,

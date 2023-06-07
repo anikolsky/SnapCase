@@ -12,7 +12,7 @@ data class CaseUseCases(
     val checkCase: CheckCase,
     val clearRecentCases: ClearRecentCases,
     val deleteCase: DeleteCase,
-    val fillCase: FillCase,
+    val fetchCase: FetchCase,
     val getCaseByNumber: GetCaseByNumber,
     val getFavoriteCases: GetFavoriteCases,
     val getRecentCases: GetRecentCases,

@@ -23,26 +23,26 @@ class RecentViewModel @Inject constructor(
     private var getRecentCasesJob: Job? = null
 
     init {
-        getRecentCases()
+//        getRecentCases()
     }
 
-    private fun getRecentCases() {
-        getRecentCasesJob?.cancel()
-        getRecentCasesJob = caseUseCases.getRecentCases().onEach { cases ->
-            _state.value = state.value.copy(cases = cases)
-        }.launchIn(viewModelScope)
-    }
+//    private fun getRecentCases() {
+//        getRecentCasesJob?.cancel()
+//        getRecentCasesJob = caseUseCases.getRecentCases().onEach { cases ->
+//            _state.value = state.value.copy(cases = cases)
+//        }.launchIn(viewModelScope)
+//    }
 
-    fun onEvent(event: RecentEvent) {
-        when (event) {
-            is RecentEvent.Clear -> {
-                viewModelScope.launch {
-                    caseUseCases.clearRecentCases()
-                }
-            }
-            is RecentEvent.Refresh -> {
-
-            }
-        }
-    }
+//    fun onEvent(event: RecentEvent) {
+//        when (event) {
+//            is RecentEvent.Clear -> {
+//                viewModelScope.launch {
+//                    caseUseCases.clearRecentCases()
+//                }
+//            }
+//            is RecentEvent.Refresh -> {
+//
+//            }
+//        }
+//    }
 }

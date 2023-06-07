@@ -43,20 +43,28 @@ class ScheduleViewModel @Inject constructor(
 
     fun onEvent(event: ScheduleEvent) {
         when (event) {
-            is ScheduleEvent.CacheCase -> {
-                viewModelScope.launch {
-                    caseUseCases.saveCase(event.case)
-                }
+            is ScheduleEvent.SelectJudge -> {
+                _state.value = state.value.copy(selectedJudge = event.query)
+                updateFilteredCases(_state.value.selectedJudge, "judge") // TODO make enum
             }
 
-            is ScheduleEvent.SelectJudge -> {
-                _state.value = state.value.copy(selectedJudge = event.judge)
-                updateFilteredCases()
+            is ScheduleEvent.FilterByParticipant -> {
+                _state.value = state.value.copy(participantQuery = event.query)
+                updateFilteredCases(_state.value.participantQuery, "participant") // TODO make enum
+            }
+
+            ScheduleEvent.ToggleSearchSection -> {
+                _state.value = state.value.copy(isSearchSectionVisible = !state.value.isSearchSectionVisible)
             }
 
             ScheduleEvent.ResetJudge -> {
                 _state.value = state.value.copy(selectedJudge = "")
-                updateFilteredCases()
+                updateFilteredCases(_state.value.selectedJudge, "judge") // TODO make enum
+            }
+
+            ScheduleEvent.ResetParticipant -> {
+                _state.value = state.value.copy(participantQuery = "")
+                updateFilteredCases(_state.value.participantQuery, "participant") // TODO make enum
             }
         }
     }
@@ -89,13 +97,12 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
-    private fun updateFilteredCases() {
+    private fun updateFilteredCases(query: String, type: String) {
         val currentCases = _state.value.cases
-        val selectedJudge = _state.value.selectedJudge
-        val filteredCases = if (selectedJudge.isBlank()) {
+        val filteredCases = if (query.isBlank()) {
             currentCases
         } else {
-            currentCases.filter { it.doesJudgeMatchQuery(selectedJudge) }
+            currentCases.filter { it.doesFieldMatchQuery(query.lowercase(), type) }
         }
         _state.value = state.value.copy(filteredCases = filteredCases)
     }

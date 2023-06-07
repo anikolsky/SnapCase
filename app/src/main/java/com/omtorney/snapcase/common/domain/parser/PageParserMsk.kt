@@ -15,7 +15,7 @@ class PageParserMsk : PageParser {
         TODO("Not yet implemented")
     }
 
-    override suspend fun fillCase(case: Case, court: Court): Case {
+    override suspend fun fetchCase(case: Case): Case {
         TODO("Not yet implemented")
     }
 

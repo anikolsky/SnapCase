@@ -6,7 +6,7 @@ import javax.inject.Inject
 class ClearRecentCases @Inject constructor(
     private val repository: Repository
 ) {
-    suspend operator fun invoke() {
-        repository.clearRecentCases()
-    }
+//    suspend operator fun invoke() {
+//        repository.clearRecentCases()
+//    }
 }

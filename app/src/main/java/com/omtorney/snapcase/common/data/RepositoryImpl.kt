@@ -25,13 +25,13 @@ class RepositoryImpl @Inject constructor(
         localDataSource.deleteFavorite(case)
     }
 
-    override suspend fun checkCase(uid: String): Int {
-        return localDataSource.checkCase(uid)
+    override suspend fun checkCase(number: String): Int {
+        return localDataSource.checkCase(number)
     }
 
-    override suspend fun clearRecentCases() {
-        localDataSource.clearRecentCases()
-    }
+//    override suspend fun clearRecentCases() {
+//        localDataSource.clearRecentCases()
+//    }
 
     override suspend fun getCaseByNumber(number: String): Case? {
         return localDataSource.getCaseByNumber(number)
@@ -41,7 +41,7 @@ class RepositoryImpl @Inject constructor(
         return localDataSource.getFavoriteCases()
     }
 
-    override fun getRecentCases(): Flow<List<Case>> {
-        return localDataSource.getRecentCases()
-    }
+//    override fun getRecentCases(): Flow<List<Case>> {
+//        return localDataSource.getRecentCases()
+//    }
 }

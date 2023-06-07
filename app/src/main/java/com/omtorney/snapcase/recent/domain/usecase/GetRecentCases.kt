@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetRecentCases @Inject constructor(
     private val repository: Repository
 ) {
-    operator fun invoke(): Flow<List<Case>> {
-        return repository.getRecentCases()
-    }
+//    operator fun invoke(): Flow<List<Case>> {
+//        return repository.getRecentCases()
+//    }
 }

@@ -1,5 +1,6 @@
 package com.omtorney.snapcase.detail.presentation
 
+import android.net.Uri
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -7,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.snapcase.common.domain.court.Courts
 import com.omtorney.snapcase.common.domain.model.Case
-import com.omtorney.snapcase.common.domain.model.ProcessStep
 import com.omtorney.snapcase.common.domain.usecase.CaseUseCases
 import com.omtorney.snapcase.common.presentation.components.UiEvent
 import com.omtorney.snapcase.common.util.Resource
@@ -30,54 +30,76 @@ class DetailViewModel @Inject constructor(
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
-        savedStateHandle.get<String>("caseNumber")?.let { caseNumber ->
-            val caseNumberParam = caseNumber.replace("+", "/")
-            viewModelScope.launch {
-                _state.value = DetailState(case = caseUseCases.getCaseByNumber(caseNumberParam) ?: Case())
-                onEvent(DetailEvent.Fill)
-            }
-        }
+        val url = Uri.decode(savedStateHandle.get<String>("url"))
+        val number = Uri.decode(savedStateHandle.get<String>("number"))
+        val hearingDateTime = savedStateHandle.get<String>("hearingDateTime") ?: ""
+        val actDateForce = savedStateHandle.get<String>("actDateForce") ?: ""
+        val actTextUrl = Uri.decode(savedStateHandle.get<String>("actTextUrl"))
+        val courtTitle = savedStateHandle.get<String>("courtTitle") ?: ""
+        _state.value = DetailState(
+            case = Case(
+                url = url,
+                number = number,
+                hearingDateTime = hearingDateTime,
+                actDateForce = actDateForce,
+                actTextUrl = actTextUrl,
+                courtTitle = courtTitle
+            )
+        )
+        onEvent(DetailEvent.Load(Courts.getCourt(courtTitle)))
+        checkFavorite()
     }
 
     fun onEvent(event: DetailEvent) {
         when (event) {
             is DetailEvent.Save -> {
                 viewModelScope.launch {
-                    val case = event.case.copy(isFavorite = true)
-                    caseUseCases.saveCase(case)
+                    caseUseCases.saveCase(event.case)
+                    checkFavorite()
                     _eventFlow.emit(UiEvent.Save)
                 }
             }
+
             is DetailEvent.Delete -> {
                 viewModelScope.launch {
                     caseUseCases.deleteCase(event.case)
+                    checkFavorite()
                     _eventFlow.emit(UiEvent.Delete)
                 }
             }
-            is DetailEvent.Fill -> {
+
+            is DetailEvent.Load -> {
                 viewModelScope.launch {
-                    caseUseCases.fillCase(state.value.case, Courts.Dmitrov).collect { result ->
+                    caseUseCases.fetchCase(state.value.case, event.court).collect { result ->
                         when (result) {
                             is Resource.Loading -> {
                                 _state.value = state.value.copy(isLoading = true)
                             }
+
                             is Resource.Success -> {
-                                _state.value = state.value.copy(case = result.data ?: Case(), isLoading = false)
+                                _state.value = state.value.copy(
+                                    case = result.data ?: Case(),
+                                    isLoading = false
+                                )
                             }
+
                             is Resource.Error -> {
-                                _state.value =
-                                    state.value.copy(
-                                        error = result.message ?: "Unexpected error",
-                                        isLoading = false
-                                    )
+                                _state.value = state.value.copy(
+                                    error = result.message ?: "Unexpected error",
+                                    isLoading = false
+                                )
                             }
                         }
                     }
-//                    if (caseUseCases.checkCase(event.case.uid)) {
-//                        caseUseCases.updateCase(event.case)
-//                    }
                 }
             }
+        }
+    }
+
+    private fun checkFavorite() {
+        viewModelScope.launch {
+            val isFavorite = caseUseCases.checkCase(state.value.case.number)
+            _state.value = state.value.copy(isFavorite = isFavorite)
         }
     }
 }

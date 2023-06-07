@@ -34,13 +34,7 @@ class SearchViewModel @Inject constructor(
     }
 
     fun onEvent(event: SearchEvent) {
-        when (event) {
-            is SearchEvent.CacheCase -> {
-                viewModelScope.launch {
-                    caseUseCases.saveCase(event.case)
-                }
-            }
-        }
+
     }
 
     private fun searchCase(courtTitle: String, caseType: CaseType, input: String) {
@@ -50,9 +44,11 @@ class SearchViewModel @Inject constructor(
                     is Resource.Loading -> {
                         _state.value = SearchState(isLoading = true)
                     }
+
                     is Resource.Success -> {
                         _state.value = SearchState(cases = result.data ?: emptyList())
                     }
+
                     is Resource.Error -> {
                         _state.value = SearchState(error = result.message ?: "Unexpected error")
                         logd("error: ${result.message}")

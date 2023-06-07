@@ -17,7 +17,7 @@ class ShowSchedule @Inject constructor(
     suspend operator fun invoke(courtTitle: String, date: String): Flow<Resource<List<Case>>> = flow {
         try {
             emit(Resource.Loading())
-            val court = Courts.getCourtList().find { it.title == courtTitle } ?: Courts.Dmitrov
+            val court = Courts.getCourt(courtTitle)
             val document = repository.getJsoupDocument(court.getScheduleQuery(date))
             val page = PageParserFactory(repository).create(court)
             val cases = page.extractSchedule(document!!, court)

@@ -7,7 +7,7 @@ import com.omtorney.snapcase.common.domain.usecase.CheckCase
 import com.omtorney.snapcase.common.domain.usecase.DeleteCase
 import com.omtorney.snapcase.detail.domain.usecase.GetCaseByNumber
 import com.omtorney.snapcase.common.domain.usecase.SaveCase
-import com.omtorney.snapcase.common.domain.usecase.FillCase
+import com.omtorney.snapcase.common.domain.usecase.FetchCase
 import com.omtorney.snapcase.favorites.domain.usecase.GetFavoriteCases
 import com.omtorney.snapcase.recent.domain.usecase.ClearRecentCases
 import com.omtorney.snapcase.recent.domain.usecase.GetRecentCases
@@ -30,7 +30,7 @@ object DomainModule {
             checkCase = CheckCase(repository),
             clearRecentCases = ClearRecentCases(repository),
             deleteCase = DeleteCase(repository),
-            fillCase = FillCase(repository),
+            fetchCase = FetchCase(repository),
             getCaseByNumber = GetCaseByNumber(repository),
             getFavoriteCases = GetFavoriteCases(repository),
             getRecentCases = GetRecentCases(repository),

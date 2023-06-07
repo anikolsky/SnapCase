@@ -65,19 +65,22 @@ fun CaseCard(
                     bottom = 0.dp
                 )
             ) {
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(20.dp)
+                        .height(25.dp)
                 ) {
-                    Row {
-                        TextBlock(
-                            title = "Номер дела: ",
-                            text = case.number
-                        )
-                    }
+                    Text(
+                        text = "${case.courtTitle} суд",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = accentColor.copy(alpha = 0.5f),
+                        modifier = Modifier
+                            .padding(vertical = 0.dp)
+                            .weight(1f)
+                    )
                     IconButton(onClick = { expanded = !expanded }) {
                         Icon(
                             painter = if (expanded)
@@ -87,6 +90,12 @@ fun CaseCard(
                             contentDescription = if (expanded) "Показать" else "Скрыть"
                         )
                     }
+                }
+                Row {
+                    TextBlock(
+                        title = "Номер дела: ",
+                        text = case.number
+                    )
                 }
                 if (case.hearingDateTime.isNotEmpty()) {
                     Row {
@@ -175,7 +184,7 @@ fun TextBlock(
         text = text,
         color = color,
         style = style,
-        maxLines = if (title == "Судья: " || title == "Категория: ") 1 else 5,
+        maxLines = if (title == "Судья: " || title == "Категория: ") 1 else 10,
         overflow = TextOverflow.Ellipsis
     )
 }
@@ -212,5 +221,5 @@ private fun TextBlockPreview() {
 private val testCase = Case(
     "1", "", "", "2-2222/2022", "",
     "ИСТЕЦ: Иванов Иван Иванович ОТВЕТЧИК: Петров Петр Петрович",
-    "Судья", "", "", "", "", "", mutableListOf(), mutableMapOf(), "", false
+    "Судья", "", "", "", "", "", "", mutableListOf(), mutableMapOf(), "Дмитровский городской", ""
 )

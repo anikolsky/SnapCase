@@ -4,7 +4,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.omtorney.snapcase.common.domain.court.Courts
 import com.omtorney.snapcase.common.domain.usecase.CaseUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -44,7 +43,7 @@ class FavoritesViewModel @Inject constructor(
 //            is FavoritesEvent.Refresh -> {
 //                viewModelScope.launch {
 //                    event.cases.forEach { case ->
-//                        caseUseCases.fillCase(case, case.court) // add new field?
+//                        caseUseCases.fetchCase(case, case.court) // add new field?
 //                    }
 //                }
 //            }

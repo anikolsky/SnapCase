@@ -1,11 +1,11 @@
 package com.omtorney.snapcase.search.domain.usecase
 
-import android.util.Log
 import com.omtorney.snapcase.common.domain.Repository
 import com.omtorney.snapcase.common.domain.court.CaseType
 import com.omtorney.snapcase.common.domain.court.Courts
 import com.omtorney.snapcase.common.domain.model.Case
 import com.omtorney.snapcase.common.domain.parser.PageParserFactory
+import com.omtorney.snapcase.common.presentation.logd
 import com.omtorney.snapcase.common.util.Resource
 import com.omtorney.snapcase.common.util.handleException
 import kotlinx.coroutines.Dispatchers
@@ -31,8 +31,7 @@ class SearchCase @Inject constructor(
                 sideName = query
             else
                 caseNumber = query
-            val court = Courts.getCourtList().find { it.title == courtTitle } ?: Courts.Dmitrov
-//            Log.d("TESTLOG", "[SearchCase] val sideName: \"$sideName\", val caseNumber: \"$caseNumber\", court.title: \"${court.title}\"")
+            val court = Courts.getCourt(courtTitle)
             val searchUrl = withContext(Dispatchers.IO) {
                 court.getSearchQuery(
                     caseType,
@@ -40,17 +39,12 @@ class SearchCase @Inject constructor(
                     URLEncoder.encode(caseNumber, "cp1251")
                 )
             }
-//            Log.d("TESTLOG", "[SearchCase] val searchUrl: $searchUrl")
             val document = repository.getJsoupDocument(searchUrl)
-//            Log.d("TESTLOG", "[SearchCase] val document: ${document!!.select("div[id=content]")}")
-//            Log.d("TESTLOG", "[SearchCase] fetching pageParser...")
             val pageParser = PageParserFactory(repository).create(court)
-//            Log.d("TESTLOG", "[SearchCase] fetching List<Case>...")
             val caseList = pageParser.extractSearchResult(document!!, court)
-//            Log.d("TESTLOG", "[SearchCase] caseList: $caseList")
             emit(Resource.Success(data = caseList))
         } catch (e: Throwable) {
-            Log.d("TESTLOG", "[SearchCase] exception: ${e.localizedMessage}")
+            logd("SearchCase error: ${e.localizedMessage}")
             emit(Resource.Error(message = handleException(e)))
         }
     }

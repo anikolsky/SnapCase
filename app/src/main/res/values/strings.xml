@@ -4,6 +4,7 @@
     <string name="app_title">Картотека судебных дел</string>
     <string name="schedule">Расписание</string>
     <string name="search">Поиск</string>
+    <string name="result">Результаты</string>
     <string name="detail">Детали</string>
     <string name="favorites">Избранное</string>
     <string name="recent">Недавнее</string>

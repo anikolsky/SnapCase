@@ -2,26 +2,32 @@ package com.omtorney.snapcase.common.presentation.components
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.contentColorFor
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.omtorney.snapcase.R
+import com.omtorney.snapcase.common.presentation.theme.SnapCaseTheme
 
 @Composable
 fun TopBar(
@@ -70,13 +76,25 @@ fun TopBarTitle(
 }
 
 @Composable
-fun MoreButton(accentColor: Long) {
-    IconButton(onClick = {}) {
-        Icon(
-            imageVector = Icons.Rounded.MoreVert,
-            contentDescription = "",
-            tint = contentColorFor(backgroundColor = Color(accentColor))
-        )
+fun FilterButton(
+    onClick: () -> Unit,
+    title: @Composable (() -> Unit)? = null
+) {
+    TextButton(
+        onClick = onClick,
+        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onBackground)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_round_filter_list),
+                contentDescription = "Filter"
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            title?.invoke()
+        }
     }
 }
 
@@ -88,15 +106,23 @@ fun SettingsButton(
     IconButton(onClick = onSettingsClick) {
         Icon(
             imageVector = Icons.Rounded.Settings,
-            contentDescription = "SettingsStore",
+            contentDescription = "Settings",
 //            tint = Color(accentColor)
         )
     }
 }
 
-@Preview(showSystemUi = true)
-@Preview(showSystemUi = true, uiMode = UI_MODE_NIGHT_YES)
+@Preview
+@Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun TopBarPreview() {
-    TopBar(content = {})
+    SnapCaseTheme {
+        Surface {
+            TopBar(content = {
+                FilterButton(onClick = {}) {
+                    Text(text = "Text")
+                }
+            })
+        }
+    }
 }

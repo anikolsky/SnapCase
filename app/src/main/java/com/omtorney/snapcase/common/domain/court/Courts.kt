@@ -87,6 +87,9 @@ sealed class Courts(val title: String) {
                 Himki
             )
         }
+        fun getCourt(title: String): Court {
+            return getCourtList().find { it.title == title }!!
+        }
     }
 }
 

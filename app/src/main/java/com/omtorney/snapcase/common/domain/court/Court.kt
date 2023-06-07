@@ -6,6 +6,7 @@ interface Court {
     val title: String
     val type: PageType
     val baseUrl: String
+
     fun getScheduleQuery(date: String): String {
         return when (this.type) {
             PageType.NoMsk -> getScheduleQueryNoMsk(this.baseUrl, date)

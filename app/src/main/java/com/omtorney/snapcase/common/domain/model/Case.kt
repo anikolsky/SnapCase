@@ -2,7 +2,6 @@ package com.omtorney.snapcase.common.domain.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import com.google.gson.Gson
@@ -17,6 +16,7 @@ data class Case(
     @ColumnInfo(name = "hearing_date_time")
     var hearingDateTime: String = "",
     var category: String = "",
+    var type: String = "", // KAS, GK etc
     var participants: String = "",
     var judge: String = "",
     @ColumnInfo(name = "act_date_time")
@@ -30,9 +30,8 @@ data class Case(
     var actTextUrl: String = "",
     var process: MutableList<ProcessStep> = mutableListOf(),
     var appeal: MutableMap<String, String> = mutableMapOf(),
-    var notes: String = "",
-    @ColumnInfo(name = "is_favorite")
-    val isFavorite: Boolean = false
+    var courtTitle: String = "",
+    var notes: String = ""
 ) {
     override fun toString() = "url=$url" +
             ", number=$number" +
@@ -56,17 +55,21 @@ data class Case(
         return output
     }
 
-    fun doesJudgeMatchQuery(query: String): Boolean = judge.contains(query)
+    fun doesFieldMatchQuery(query: String, field: String): Boolean {
+        return when (field) {
+            "judge" -> judge.lowercase().contains(query)
+            else -> participants.lowercase().contains(query)
+        }
+    }
 }
 
 data class ProcessStep(
-    var event: String,
-    var date: String,
-    var time: String,
-    var result: String,
-    var cause: String,
-    var dateOfPublishing: String,
-//    val isNew: Boolean
+    val event: String,
+    val date: String,
+    val time: String,
+    val result: String,
+    val cause: String,
+    val dateOfPublishing: String
 ) {
     override fun toString(): String {
         var output = "$date в $time\n$event"
@@ -76,6 +79,19 @@ data class ProcessStep(
         return output
     }
 }
+
+data class Appeal(
+    val receiptDate: String,
+    val appealType: String,
+    val appealDecisionDate: String,
+    val appealDecision: String,
+    val deadlineDefectElimination: String,
+    val deadlineFilingObjections: String,
+    val upperCourt: String,
+    val upperCourtSendDate: String,
+    val upperCourtHearingDate: String,
+    val upperCourtHearingTime: String
+)
 
 object CaseConverters {
     @TypeConverter

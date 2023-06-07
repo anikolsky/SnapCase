@@ -1,5 +1,6 @@
 package com.omtorney.snapcase.common.presentation
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -21,8 +22,6 @@ import com.omtorney.snapcase.favorites.presentation.FavoritesScreen
 import com.omtorney.snapcase.favorites.presentation.FavoritesViewModel
 import com.omtorney.snapcase.home.presentation.HomeScreen
 import com.omtorney.snapcase.home.presentation.HomeViewModel
-import com.omtorney.snapcase.recent.presentation.RecentScreen
-import com.omtorney.snapcase.recent.presentation.RecentViewModel
 import com.omtorney.snapcase.schedule.presentation.ScheduleScreen
 import com.omtorney.snapcase.schedule.presentation.ScheduleViewModel
 import com.omtorney.snapcase.search.presentation.SearchScreen
@@ -53,7 +52,12 @@ fun AppNavHost(
                 onEvent = viewModel::onEvent,
                 accentColor = Color(accentColor),
                 onSearchClick = { caseType, courtTitle, searchInput ->
-                    navController.navigate(Screen.Search.route + "?caseType=$caseType&courtTitle=$courtTitle&searchInput=$searchInput") {
+                    navController.navigate(
+                        Screen.Search.route +
+                                "?caseType=$caseType" +
+                                "&courtTitle=$courtTitle" +
+                                "&searchInput=$searchInput"
+                    ) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
@@ -62,7 +66,11 @@ fun AppNavHost(
                     }
                 },
                 onScheduleClick = { scheduleDate, courtTitle ->
-                    navController.navigate(Screen.Schedule.route + "?scheduleDate=$scheduleDate&courtTitle=$courtTitle") {
+                    navController.navigate(
+                        Screen.Schedule.route +
+                                "?scheduleDate=$scheduleDate" +
+                                "&courtTitle=$courtTitle"
+                    ) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
@@ -75,7 +83,10 @@ fun AppNavHost(
         }
 
         composable(
-            route = Screen.Search.route + "?caseType={caseType}&courtTitle={courtTitle}&searchInput={searchInput}",
+            route = Screen.Search.route +
+                    "?caseType={caseType}" +
+                    "&courtTitle={courtTitle}" +
+                    "&searchInput={searchInput}",
             arguments = listOf(
                 navArgument(name = "caseType") { NavType.StringType },
                 navArgument(name = "courtTitle") { NavType.StringType },
@@ -86,15 +97,27 @@ fun AppNavHost(
             val state = viewModel.state.value
             SearchScreen(
                 state = state,
-                onEvent = viewModel::onEvent,
                 accentColor = Color(accentColor),
-                onCardClick = { goToCaseDetail(it.number, Screen.Search, navController) },
+                onCardClick = { case ->
+                    goToCaseDetail(
+                        url = case.url,
+                        number = case.number,
+                        hearingDateTime = "",
+                        actDateForce = case.actDateForce,
+                        actTextUrl = case.actTextUrl,
+                        courtTitle = case.courtTitle,
+                        screen = Screen.Search,
+                        navController = navController,
+                    )
+                },
                 onActTextClick = { goToActText(it, navController) }
             )
         }
 
         composable(
-            route = Screen.Schedule.route + "?scheduleDate={scheduleDate}&courtTitle={courtTitle}",
+            route = Screen.Schedule.route +
+                    "?scheduleDate={scheduleDate}" +
+                    "&courtTitle={courtTitle}",
             arguments = listOf(
                 navArgument(name = "scheduleDate") { NavType.StringType },
                 navArgument(name = "courtTitle") { NavType.StringType }
@@ -106,14 +129,38 @@ fun AppNavHost(
                 state = state,
                 onEvent = viewModel::onEvent,
                 accentColor = Color(accentColor),
-                onCardClick = { goToCaseDetail(it.number, Screen.Schedule, navController) },
-                onActTextClick = { goToActText(it, navController) }
+                onActTextClick = { goToActText(it, navController) },
+                onCardClick = { case ->
+                    goToCaseDetail(
+                        url = case.url,
+                        number = case.number,
+                        hearingDateTime = case.hearingDateTime,
+                        actDateForce = "",
+                        actTextUrl = case.actTextUrl,
+                        courtTitle = case.courtTitle,
+                        screen = Screen.Schedule,
+                        navController = navController,
+                    )
+                }
             )
         }
 
         composable(
-            route = Screen.Detail.route + "/{caseNumber}",
-            arguments = listOf(navArgument(name = "caseNumber") { NavType.StringType })
+            route = Screen.Detail.route +
+                    "?url={url}" +
+                    "&number={number}" +
+                    "&hearingDateTime={hearingDateTime}" +
+                    "&actDateForce={actDateForce}" +
+                    "&actTextUrl={actTextUrl}" +
+                    "&courtTitle={courtTitle}",
+            arguments = listOf(
+                navArgument(name = "url") { NavType.StringType },
+                navArgument(name = "number") { NavType.StringType },
+                navArgument(name = "hearingDateTime") { NavType.StringType },
+                navArgument(name = "actDateForce") { NavType.StringType },
+                navArgument(name = "actTextUrl") { NavType.StringType },
+                navArgument(name = "courtTitle") { NavType.StringType }
+            )
         ) {
             val viewModel: DetailViewModel = hiltViewModel()
             val state = viewModel.state.value
@@ -127,8 +174,8 @@ fun AppNavHost(
         }
 
         composable(
-            route = Screen.Act.route + "/{caseActUrl}",
-            arguments = listOf(navArgument(name = "caseActUrl") { NavType.StringType })
+            route = Screen.Act.route + "?url={url}",
+            arguments = listOf(navArgument(name = "url") { NavType.StringType })
         ) {
             val viewModel: ActViewModel = hiltViewModel()
             val state = viewModel.state.value
@@ -144,27 +191,23 @@ fun AppNavHost(
             FavoritesScreen(
                 navController = navController,
                 state = state,
-                onEvent = viewModel::onEvent,
+//                onEvent = viewModel::onEvent,
                 accentColor = Color(accentColor),
                 onSettingsClick = { goToSettings(navController) },
-                onBackClick = { navController.popBackStack() },
-                onCardClick = { goToCaseDetail(it.number, Screen.Favorites, navController) },
-                onActTextClick = { goToActText(it, navController) }
-            )
-        }
-
-        composable(route = Screen.Recent.route) {
-            val viewModel: RecentViewModel = hiltViewModel()
-            val state = viewModel.state.value
-            RecentScreen(
-                navController = navController,
-                state = state,
-                onEvent = viewModel::onEvent,
-                accentColor = Color(accentColor),
-                onSettingsClick = { goToSettings(navController) },
-                onBackClick = { navController.popBackStack() },
-                onCardClick = { goToCaseDetail(it.number, Screen.Recent, navController) },
-                onActTextClick = { goToActText(it, navController) }
+//                onBackClick = { navController.popBackStack() },
+                onActTextClick = { goToActText(it, navController) },
+                onCardClick = { case ->
+                    goToCaseDetail(
+                        url = case.url,
+                        number = case.number,
+                        hearingDateTime = case.hearingDateTime,
+                        actDateForce = case.actDateForce,
+                        actTextUrl = case.actTextUrl,
+                        courtTitle = case.courtTitle,
+                        screen = Screen.Favorites,
+                        navController = navController,
+                    )
+                }
             )
         }
 
@@ -184,18 +227,26 @@ fun AppNavHost(
     }
 }
 
-private fun goToCaseDetail(number: String, screen: Screen, navController: NavController) {
-    val caseNumberParam = number.replace("/", "+")
-    navController.navigate(Screen.Detail.route + "/$caseNumberParam") {
-        popUpTo(
-            when (screen) {
-                Screen.Search -> Screen.Search.route
-                Screen.Schedule -> Screen.Schedule.route
-                Screen.Favorites -> Screen.Favorites.route
-                Screen.Recent -> Screen.Recent.route
-                else -> ""
-            }
-        ) {
+private fun goToCaseDetail(
+    url: String,
+    number: String,
+    hearingDateTime: String,
+    actDateForce: String,
+    actTextUrl: String,
+    courtTitle: String,
+    screen: Screen,
+    navController: NavController
+) {
+    navController.navigate(
+        Screen.Detail.route +
+                "?url=${Uri.encode(url)}" +
+                "&number=${Uri.encode(number)}" +
+                "&hearingDateTime=$hearingDateTime" +
+                "&actDateForce=$actDateForce" +
+                "&actTextUrl=${Uri.encode(actTextUrl)}" +
+                "&courtTitle=$courtTitle"
+    ) {
+        popUpTo(screen.route) {
             saveState = true
         }
         launchSingleTop = true
@@ -203,9 +254,11 @@ private fun goToCaseDetail(number: String, screen: Screen, navController: NavCon
     }
 }
 
-private fun goToActText(url: String, navController: NavController) {
-    val caseActUrlParam = url.replace("/", "+").replace("?", "!")
-    navController.navigate(Screen.Act.route + "/$caseActUrlParam") {
+private fun goToActText(
+    url: String,
+    navController: NavController
+) {
+    navController.navigate(Screen.Act.route + "?url=${Uri.encode(url)}") {
         popUpTo(navController.graph.findStartDestination().id) {
             saveState = true
         }

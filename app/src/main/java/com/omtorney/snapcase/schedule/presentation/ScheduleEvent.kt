@@ -1,9 +1,9 @@
 package com.omtorney.snapcase.schedule.presentation
 
-import com.omtorney.snapcase.common.domain.model.Case
-
 sealed class ScheduleEvent {
-    data class CacheCase(val case: Case) : ScheduleEvent()
-    data class SelectJudge(val judge: String) : ScheduleEvent()
+    data class SelectJudge(val query: String) : ScheduleEvent()
+    data class FilterByParticipant(val query: String) : ScheduleEvent()
+    object ToggleSearchSection : ScheduleEvent()
     object ResetJudge : ScheduleEvent()
+    object ResetParticipant : ScheduleEvent()
 }
