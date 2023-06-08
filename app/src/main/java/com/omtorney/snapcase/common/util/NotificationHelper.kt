@@ -33,7 +33,7 @@ class NotificationHelper(
     }
 
     @SuppressLint("MissingPermission")
-    fun createNotification(title: String, message: String) {
+    fun createNotification(title: String, message: String, notificationId: Int) {
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
@@ -54,6 +54,6 @@ class NotificationHelper(
 
         NotificationManagerCompat
             .from(context)
-            .notify(Random.nextInt(), notification) // Constants.NOTIFICATION_ID overwrites notifications
+            .notify(notificationId, notification) // Constants.NOTIFICATION_ID overwrites notifications
     }
 }

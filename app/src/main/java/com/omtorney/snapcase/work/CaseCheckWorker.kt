@@ -51,7 +51,7 @@ class CaseCheckWorker @AssistedInject constructor(
                 logd("saved process last: ${savedCase.process.last()}")
                 if (processSteps.last() != savedCase.process.last()) {
                     logd("Process has changed, sending notification...")
-                    sendNotification(savedCase, CaseEvent.Process)
+                    sendNotification(processSteps, savedCase.number, CaseEvent.Process)
                 }
 
                 val appealRows = appealElement?.select("tr")?.drop(2)
@@ -66,7 +66,7 @@ class CaseCheckWorker @AssistedInject constructor(
                 logd("saved appeal: ${savedCase.appeal}")
                 if (appeal != savedCase.appeal) {
                     logd("Appeal has changed, sending notification...")
-                    sendNotification(savedCase, CaseEvent.Appeal)
+                    sendNotification(emptyList(), savedCase.number, CaseEvent.Appeal)
                 }
             }
             logd("No updates")
@@ -77,18 +77,20 @@ class CaseCheckWorker @AssistedInject constructor(
         }
     }
 
-    private fun sendNotification(case: Case, event: CaseEvent) {
+    private fun sendNotification(processSteps: List<ProcessStep>, number: String, event: CaseEvent) {
         when (event) {
             CaseEvent.Process -> {
                 NotificationHelper(context).createNotification(
-                    title = "Обновление по делу № ${case.number}",
-                    message = "${case.process.last().event} ${case.process.last().date}"
+                    title = "Обновление по делу № $number",
+                    message = "${processSteps.last().event} ${processSteps.last().date}",
+                    notificationId = number.hashCode(),
                 )
             }
             CaseEvent.Appeal -> {
                 NotificationHelper(context).createNotification(
-                    title = "Обновление по делу № ${case.number}",
-                    message = "Подана жалоба!"
+                    title = "Обновление по делу № $number",
+                    message = "Подана жалоба!",
+                    notificationId = number.hashCode(),
                 )
             }
         }
