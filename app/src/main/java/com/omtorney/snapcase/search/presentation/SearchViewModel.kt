@@ -6,7 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.snapcase.common.domain.court.CaseType
-import com.omtorney.snapcase.common.domain.usecase.CaseUseCases
+import com.omtorney.snapcase.common.domain.usecase.UseCases
 import com.omtorney.snapcase.common.presentation.logd
 import com.omtorney.snapcase.common.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val caseUseCases: CaseUseCases,
+    private val useCases: UseCases,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -39,7 +39,7 @@ class SearchViewModel @Inject constructor(
 
     private fun searchCase(courtTitle: String, caseType: CaseType, input: String) {
         viewModelScope.launch {
-            caseUseCases.searchCase(courtTitle, caseType, input).collect { result ->
+            useCases.searchCase(courtTitle, caseType, input).collect { result ->
                 when (result) {
                     is Resource.Loading -> {
                         _state.value = SearchState(isLoading = true)
@@ -51,7 +51,7 @@ class SearchViewModel @Inject constructor(
 
                     is Resource.Error -> {
                         _state.value = SearchState(error = result.message ?: "Unexpected error")
-                        logd("error: ${result.message}")
+                        logd("SearchViewModel error: ${result.message}")
                     }
                 }
             }

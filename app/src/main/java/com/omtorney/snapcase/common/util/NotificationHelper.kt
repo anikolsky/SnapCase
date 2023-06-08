@@ -11,6 +11,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.omtorney.snapcase.R
 import com.omtorney.snapcase.common.presentation.MainActivity
+import kotlin.random.Random
 
 class NotificationHelper(
     private val context: Context
@@ -53,6 +54,6 @@ class NotificationHelper(
 
         NotificationManagerCompat
             .from(context)
-            .notify(Constants.NOTIFICATION_ID, notification)
+            .notify(Random.nextInt(), notification) // Constants.NOTIFICATION_ID overwrites notifications
     }
 }

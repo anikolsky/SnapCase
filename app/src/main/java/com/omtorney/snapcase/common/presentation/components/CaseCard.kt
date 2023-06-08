@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.omtorney.snapcase.R
 import com.omtorney.snapcase.common.domain.model.Case
 import com.omtorney.snapcase.common.presentation.theme.SnapCaseTheme
+import com.omtorney.snapcase.common.util.Constants
 
 @Composable
 fun CaseCard(
@@ -44,7 +45,7 @@ fun CaseCard(
 
     Card(
         shape = MaterialTheme.shapes.extraSmall,
-        colors = CardDefaults.cardColors(accentColor.copy(alpha = 0.2f)),
+        colors = CardDefaults.cardColors(accentColor.copy(alpha = 0.15f)),
         modifier = modifier
             .fillMaxWidth()
             .clickable { onCardClick(case) }
@@ -65,7 +66,6 @@ fun CaseCard(
                     bottom = 0.dp
                 )
             ) {
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -94,7 +94,8 @@ fun CaseCard(
                 Row {
                     TextBlock(
                         title = "Номер дела: ",
-                        text = case.number
+                        text = case.number,
+                        titleColor = accentColor
                     )
                 }
                 if (case.hearingDateTime.isNotEmpty()) {
@@ -102,14 +103,16 @@ fun CaseCard(
                         TextBlock(
                             title = "Время заседания: ",
                             text = case.hearingDateTime,
-                            color = accentColor
+                            titleColor = accentColor,
+                            textColor = accentColor
                         )
                     }
                 }
                 Column {
                     TextBlock(
                         title = "Участники: ",
-                        text = case.participants
+                        text = case.participants,
+                        titleColor = accentColor
                     )
                 }
             }
@@ -121,13 +124,15 @@ fun CaseCard(
                     Row {
                         TextBlock(
                             title = "Судья: ",
-                            text = case.judge
+                            text = case.judge,
+                            titleColor = accentColor
                         )
                     }
                     Row {
                         TextBlock(
                             title = "Категория: ",
-                            text = case.category
+                            text = case.category,
+                            titleColor = accentColor
                         )
                     }
                     if (case.result.isNotEmpty())
@@ -135,14 +140,16 @@ fun CaseCard(
                             TextBlock(
                                 title = "Решение: ",
                                 text = case.result,
-                                color = accentColor
+                                titleColor = accentColor,
+                                textColor = accentColor
                             )
                         }
                     if (case.actDateTime.isNotEmpty())
                         Row {
                             TextBlock(
                                 title = "Дата решения: ",
-                                text = case.actDateTime
+                                text = case.actDateTime,
+                                titleColor = accentColor
                             )
                         }
                 }
@@ -171,18 +178,19 @@ fun CaseCard(
 fun TextBlock(
     title: String,
     text: String,
-    color: Color = LocalContentColor.current,
+    titleColor: Color = LocalContentColor.current,
+    textColor: Color = LocalContentColor.current,
     style: TextStyle = MaterialTheme.typography.bodyLarge
 ) {
     Text(
         text = title,
-        color = color,
+        color = titleColor,
         style = style,
         fontWeight = FontWeight.Bold
     )
     Text(
         text = text,
-        color = color,
+        color = textColor,
         style = style,
         maxLines = if (title == "Судья: " || title == "Категория: ") 1 else 10,
         overflow = TextOverflow.Ellipsis
@@ -198,7 +206,7 @@ private fun CaseCardPreview() {
             CaseCard(
                 case = testCase,
                 isExpanded = true,
-                accentColor = Color.Gray,
+                accentColor = Color(Constants.INITIAL_COLOR),
                 onCardClick = {},
                 onActTextClick = {}
             )
@@ -206,20 +214,9 @@ private fun CaseCardPreview() {
     }
 }
 
-@Preview(showBackground = true)
-@Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
-@Composable
-private fun TextBlockPreview() {
-    SnapCaseTheme {
-        TextBlock(
-            title = "Категория",
-            text = "Споры о правах на недвижимость"
-        )
-    }
-}
-
 private val testCase = Case(
-    "1", "", "", "2-2222/2022", "",
+    "2-22/2022", "", "", "09:00", "Споры о правах на недвижимость",
     "ИСТЕЦ: Иванов Иван Иванович ОТВЕТЧИК: Петров Петр Петрович",
-    "Судья", "", "", "", "", "", "", mutableListOf(), mutableMapOf(), "Дмитровский городской", ""
+    "Истец И.И, Ответчик О.О.", "Иванова И.И.", "01.01.2022", "01.01.2022", "",
+    "01.01.2022", "", mutableListOf(), mutableMapOf(), "Дмитровский городской", ""
 )

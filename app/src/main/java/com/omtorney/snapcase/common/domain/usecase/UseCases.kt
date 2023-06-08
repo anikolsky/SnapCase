@@ -8,7 +8,7 @@ import com.omtorney.snapcase.recent.domain.usecase.GetRecentCases
 import com.omtorney.snapcase.schedule.domain.usecase.ShowSchedule
 import com.omtorney.snapcase.search.domain.usecase.SearchCase
 
-data class CaseUseCases(
+data class UseCases(
     val checkCase: CheckCase,
     val clearRecentCases: ClearRecentCases,
     val deleteCase: DeleteCase,

@@ -43,8 +43,8 @@ class SearchCase @Inject constructor(
             val pageParser = PageParserFactory(repository).create(court)
             val caseList = pageParser.extractSearchResult(document!!, court)
             emit(Resource.Success(data = caseList))
-        } catch (e: Throwable) {
-            logd("SearchCase error: ${e.localizedMessage}")
+        } catch (e: Exception) {
+            logd("SearchCase error: ${e.message}")
             emit(Resource.Error(message = handleException(e)))
         }
     }

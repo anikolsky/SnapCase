@@ -3,7 +3,7 @@ package com.omtorney.snapcase.common.util
 object Constants {
 
     const val DATA_STORE_NAME = "SnapCase_Preferences_DataStore"
-    const val INITIAL_COLOR = 0xFF6892B0
+    const val INITIAL_COLOR = 0xFF5C91B0
 
     const val NOTIFICATION_CHANNEL_ID = "snapcase_channel_id"
     const val NOTIFICATION_CHANNEL_NAME = "snapcase_channel"

@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.snapcase.common.domain.court.Courts
 import com.omtorney.snapcase.common.domain.model.Case
-import com.omtorney.snapcase.common.domain.usecase.CaseUseCases
+import com.omtorney.snapcase.common.domain.usecase.UseCases
 import com.omtorney.snapcase.common.presentation.components.UiEvent
 import com.omtorney.snapcase.common.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
-    private val caseUseCases: CaseUseCases,
+    private val useCases: UseCases,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -54,7 +54,7 @@ class DetailViewModel @Inject constructor(
         when (event) {
             is DetailEvent.Save -> {
                 viewModelScope.launch {
-                    caseUseCases.saveCase(event.case)
+                    useCases.saveCase(event.case)
                     checkFavorite()
                     _eventFlow.emit(UiEvent.Save)
                 }
@@ -62,7 +62,7 @@ class DetailViewModel @Inject constructor(
 
             is DetailEvent.Delete -> {
                 viewModelScope.launch {
-                    caseUseCases.deleteCase(event.case)
+                    useCases.deleteCase(event.case)
                     checkFavorite()
                     _eventFlow.emit(UiEvent.Delete)
                 }
@@ -70,7 +70,7 @@ class DetailViewModel @Inject constructor(
 
             is DetailEvent.Load -> {
                 viewModelScope.launch {
-                    caseUseCases.fetchCase(state.value.case, event.court).collect { result ->
+                    useCases.fetchCase(state.value.case, event.court).collect { result ->
                         when (result) {
                             is Resource.Loading -> {
                                 _state.value = state.value.copy(isLoading = true)
@@ -81,6 +81,9 @@ class DetailViewModel @Inject constructor(
                                     case = result.data ?: Case(),
                                     isLoading = false
                                 )
+                                if (state.value.isFavorite) {
+                                    useCases.saveCase(state.value.case)
+                                }
                             }
 
                             is Resource.Error -> {
@@ -98,7 +101,7 @@ class DetailViewModel @Inject constructor(
 
     private fun checkFavorite() {
         viewModelScope.launch {
-            val isFavorite = caseUseCases.checkCase(state.value.case.number)
+            val isFavorite = useCases.checkCase(state.value.case.number)
             _state.value = state.value.copy(isFavorite = isFavorite)
         }
     }

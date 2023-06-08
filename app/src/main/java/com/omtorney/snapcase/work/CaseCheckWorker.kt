@@ -4,12 +4,12 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.omtorney.snapcase.common.domain.court.Courts
+import com.omtorney.snapcase.common.domain.Repository
 import com.omtorney.snapcase.common.domain.model.Case
-import com.omtorney.snapcase.common.domain.usecase.CaseUseCases
+import com.omtorney.snapcase.common.domain.model.ProcessStep
+import com.omtorney.snapcase.common.domain.usecase.UseCases
 import com.omtorney.snapcase.common.presentation.logd
 import com.omtorney.snapcase.common.util.NotificationHelper
-import com.omtorney.snapcase.common.util.Resource
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
@@ -18,42 +18,58 @@ import kotlinx.coroutines.flow.first
 class CaseCheckWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val caseUseCases: CaseUseCases,
-//    private val repository: Repository
+    private val useCases: UseCases,
+    private val repository: Repository
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
-        logd("Starting work...")
+        logd("Starting work")
         return try {
-            val favorites = caseUseCases.getFavoriteCases().first()
-
-            logd("Iterating through favorites...")
+            val favorites = useCases.getFavoriteCases().first()
+            logd("Iterating through favorites (size is ${favorites.size})")
             favorites.forEach { savedCase ->
-                val court = Courts.getCourt(savedCase.courtTitle)
-                caseUseCases.fetchCase(savedCase, court).collect { result ->
-                    when (result) {
-                        is Resource.Loading -> {}
-                        is Resource.Success -> {
-                            logd("fetched process last: ${result.data?.process?.last()}")
-                            logd("saved process last: ${savedCase.process.last()}")
-                            if (result.data?.process?.last() != savedCase.process.last()) {
-                                logd("Process has changed, sending notification...")
-                                sendNotification(savedCase, CaseEvent.Process)
-                            }
+                val document = repository.getJsoupDocument(savedCase.url)
+                val appeal = mutableMapOf<String, String>()
+                val processElement = document?.selectFirst("div#cont2 table#tablcont")
+                val appealElement = document?.selectFirst("div#cont4 table#tablcont")
 
-                            logd("fetched appeal: ${result.data?.appeal}")
-                            logd("saved appeal: ${savedCase.appeal}")
-                            if (result.data?.appeal != savedCase.appeal) {
-                                logd("Appeal has changed, sending notification...")
-                                sendNotification(savedCase, CaseEvent.Appeal)
-                            }
-                        }
-                        is Resource.Error -> {}
-                    }
+                val processSteps = processElement?.select("tr")
+                    ?.drop(2)
+                    ?.map { row ->
+                        val tdElements = row.select("td")
+                        ProcessStep(
+                            event = tdElements[0].ownText(),
+                            date = tdElements[1].ownText(),
+                            time = tdElements[2].ownText(),
+                            result = tdElements[4].ownText(),
+                            cause = tdElements[5].ownText(),
+                            dateOfPublishing = tdElements[7].ownText()
+                        )
+                    }?.toMutableList() ?: mutableListOf()
+
+                logd("fetched process last: ${processSteps.last()}")
+                logd("saved process last: ${savedCase.process.last()}")
+                if (processSteps.last() != savedCase.process.last()) {
+                    logd("Process has changed, sending notification...")
+                    sendNotification(savedCase, CaseEvent.Process)
+                }
+
+                val appealRows = appealElement?.select("tr")?.drop(2)
+                appealRows?.forEach { row ->
+                    val tdElements = row.select("td")
+                    val fieldName = tdElements[0].text().trim()
+                    val fieldValue = tdElements.last()?.text()?.trim() ?: ""
+                    appeal[fieldName] = fieldValue
+                }
+
+                logd("fetched appeal: $appeal")
+                logd("saved appeal: ${savedCase.appeal}")
+                if (appeal != savedCase.appeal) {
+                    logd("Appeal has changed, sending notification...")
+                    sendNotification(savedCase, CaseEvent.Appeal)
                 }
             }
-            logd("Result.success without result")
-            sendNotification(Case(), CaseEvent.NoEvent) // TODO remove test
+            logd("No updates")
             Result.success()
         } catch (e: Exception) {
             logd("Work exception: ${e.localizedMessage}")
@@ -65,20 +81,14 @@ class CaseCheckWorker @AssistedInject constructor(
         when (event) {
             CaseEvent.Process -> {
                 NotificationHelper(context).createNotification(
-                    title = "Обновление информации по делу",
-                    message = "Движение дела № ${case.number}\n${case.participants}"
+                    title = "Обновление по делу № ${case.number}",
+                    message = "${case.process.last().event} ${case.process.last().date}"
                 )
             }
             CaseEvent.Appeal -> {
                 NotificationHelper(context).createNotification(
-                    title = "Обновление информации по делу",
-                    message = "Обжалование по делу № ${case.number}\n${case.participants}"
-                )
-            }
-            CaseEvent.NoEvent -> {
-                NotificationHelper(context).createNotification(
-                    title = "Проведена проверка",
-                    message = "Обновления отсутствуют"
+                    title = "Обновление по делу № ${case.number}",
+                    message = "Подана жалоба!"
                 )
             }
         }
@@ -88,5 +98,4 @@ class CaseCheckWorker @AssistedInject constructor(
 sealed class CaseEvent {
     object Process : CaseEvent()
     object Appeal : CaseEvent()
-    object NoEvent : CaseEvent()
 }

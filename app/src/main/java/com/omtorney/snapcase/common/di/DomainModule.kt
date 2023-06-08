@@ -2,7 +2,7 @@ package com.omtorney.snapcase.common.di
 
 import com.omtorney.snapcase.act.domain.usecase.LoadActText
 import com.omtorney.snapcase.common.domain.Repository
-import com.omtorney.snapcase.common.domain.usecase.CaseUseCases
+import com.omtorney.snapcase.common.domain.usecase.UseCases
 import com.omtorney.snapcase.common.domain.usecase.CheckCase
 import com.omtorney.snapcase.common.domain.usecase.DeleteCase
 import com.omtorney.snapcase.detail.domain.usecase.GetCaseByNumber
@@ -25,8 +25,8 @@ object DomainModule {
 
     @Provides
     @Singleton
-    fun provideCaseUseCases(repository: Repository): CaseUseCases {
-        return CaseUseCases(
+    fun provideCaseUseCases(repository: Repository): UseCases {
+        return UseCases(
             checkCase = CheckCase(repository),
             clearRecentCases = ClearRecentCases(repository),
             deleteCase = DeleteCase(repository),

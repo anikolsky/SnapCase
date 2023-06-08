@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.omtorney.snapcase.common.domain.model.Case
 import com.omtorney.snapcase.common.presentation.theme.SnapCaseTheme
+import com.omtorney.snapcase.common.util.Constants
 
 @Composable
 fun CaseColumn(
@@ -50,6 +51,7 @@ fun CaseColumn(
     }
 }
 
+@Preview(showSystemUi = true)
 @Preview(uiMode = UI_MODE_NIGHT_YES, showSystemUi = true)
 @Composable
 fun CaseColumnPreview() {
@@ -57,7 +59,7 @@ fun CaseColumnPreview() {
         Surface {
             CaseColumn(
                 items = listOf(testCase, testCase),
-                accentColor = Color.Gray,
+                accentColor = Color(Constants.INITIAL_COLOR),
                 onCardClick = {},
                 onActTextClick = {}
             )
@@ -66,7 +68,8 @@ fun CaseColumnPreview() {
 }
 
 private val testCase = Case(
-    "1", "", "", "2-2222/2022", "",
+    "2-22/2022", "", "", "09:00", "Споры о правах на недвижимость",
     "ИСТЕЦ: Иванов Иван Иванович ОТВЕТЧИК: Петров Петр Петрович",
-    "Судья", "", "", "", "", "", "", mutableListOf(), mutableMapOf(), "", ""
+    "Истец И.И, Ответчик О.О.", "Иванова И.И.", "01.01.2022", "01.01.2022", "",
+    "01.01.2022", "", mutableListOf(), mutableMapOf(), "Дмитровский городской", ""
 )

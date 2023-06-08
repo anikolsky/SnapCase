@@ -1,10 +1,10 @@
 package com.omtorney.snapcase.schedule.domain.usecase
 
-import android.util.Log
 import com.omtorney.snapcase.common.domain.Repository
 import com.omtorney.snapcase.common.domain.court.Courts
 import com.omtorney.snapcase.common.domain.model.Case
 import com.omtorney.snapcase.common.domain.parser.PageParserFactory
+import com.omtorney.snapcase.common.presentation.logd
 import com.omtorney.snapcase.common.util.Resource
 import com.omtorney.snapcase.common.util.handleException
 import kotlinx.coroutines.flow.Flow
@@ -22,9 +22,9 @@ class ShowSchedule @Inject constructor(
             val page = PageParserFactory(repository).create(court)
             val cases = page.extractSchedule(document!!, court)
             emit(Resource.Success(data = cases))
-        } catch (e: Throwable) {
+        } catch (e: Exception) {
             emit(Resource.Error(message = handleException(e)))
-            Log.d("TESTLOG", "[ShowSchedule] exception: ${e.localizedMessage}")
+            logd("ShowSchedule exception: ${e.localizedMessage}")
         }
     }
 }

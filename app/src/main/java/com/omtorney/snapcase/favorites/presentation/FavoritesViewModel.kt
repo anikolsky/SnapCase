@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.omtorney.snapcase.common.domain.usecase.CaseUseCases
+import com.omtorney.snapcase.common.domain.usecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    private val caseUseCases: CaseUseCases
+    private val useCases: UseCases
 ) : ViewModel() {
 
     private val _state = mutableStateOf(FavoritesState())
@@ -28,7 +28,7 @@ class FavoritesViewModel @Inject constructor(
 
     private fun getFavoriteCases() {
         getFavoriteCasesJob?.cancel()
-        getFavoriteCasesJob = caseUseCases.getFavoriteCases().onEach { cases ->
+        getFavoriteCasesJob = useCases.getFavoriteCases().onEach { cases ->
             _state.value = state.value.copy(cases = cases)
         }.launchIn(viewModelScope)
     }
@@ -37,13 +37,13 @@ class FavoritesViewModel @Inject constructor(
         when (event) {
             is FavoritesEvent.Delete -> {
                 viewModelScope.launch {
-                    caseUseCases.deleteCase(event.case)
+                    useCases.deleteCase(event.case)
                 }
             }
 //            is FavoritesEvent.Refresh -> {
 //                viewModelScope.launch {
 //                    event.cases.forEach { case ->
-//                        caseUseCases.fetchCase(case, case.court) // add new field?
+//                        useCases.fetchCase(case, case.court) // add new field?
 //                    }
 //                }
 //            }

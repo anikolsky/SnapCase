@@ -6,5 +6,7 @@ enum class CheckPeriod(
 ) {
     FIFTEEN_MINUTES(15L,"15 мин."),
     ONE_HOUR(60L, "1 час"),
-    SIX_HOURS(180L, "3 часа")
+    THREE_HOURS(180L, "3 часа"),
+    SIX_HOURS(360L, "6 часов"),
+    TWELVE_HOURS(720, "12 часов")
 }

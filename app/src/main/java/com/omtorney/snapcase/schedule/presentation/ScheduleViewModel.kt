@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.omtorney.snapcase.common.domain.usecase.CaseUseCases
+import com.omtorney.snapcase.common.domain.usecase.UseCases
 import com.omtorney.snapcase.common.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
-    private val caseUseCases: CaseUseCases,
+    private val useCases: UseCases,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -70,7 +70,7 @@ class ScheduleViewModel @Inject constructor(
     }
 
     private fun showSchedule(courtTitle: String, date: String) = viewModelScope.launch {
-        caseUseCases.showSchedule(courtTitle, date).collect { result ->
+        useCases.showSchedule(courtTitle, date).collect { result ->
             when (result) {
                 is Resource.Loading -> {
                     _state.value = state.value.copy(

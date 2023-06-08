@@ -7,7 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.snapcase.common.domain.court.Courts
-import com.omtorney.snapcase.common.domain.usecase.CaseUseCases
+import com.omtorney.snapcase.common.domain.usecase.UseCases
 import com.omtorney.snapcase.common.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ActViewModel @Inject constructor(
-    private val caseUseCases: CaseUseCases,
+    private val useCases: UseCases,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -29,7 +29,7 @@ class ActViewModel @Inject constructor(
     }
 
     private fun loadAct(url: String) = viewModelScope.launch {
-        caseUseCases.loadActText(Courts.Dmitrov, url).collect { result ->
+        useCases.loadActText(Courts.Dmitrov, url).collect { result ->
             when (result) {
                 is Resource.Loading -> {
                     _state.value = ActState(isLoading = true)
