@@ -37,7 +37,7 @@ fun ScheduleScreen(
     onEvent: (ScheduleEvent) -> Unit,
     accentColor: Color,
     onCardClick: (Case) -> Unit,
-    onActTextClick: (String) -> Unit
+    onActTextClick: (Case) -> Unit
 ) {
     val judgeList = state.cases.map { it.judge }.distinct()
     val selectedJudge = state.selectedJudge
@@ -47,10 +47,14 @@ fun ScheduleScreen(
     Scaffold(topBar = {
         TopBar {
             TopBarTitle(
-                title = R.string.result,
+                title = R.string.schedule,
                 modifier = Modifier.weight(1f)
             )
-            FilterButton(onClick = { onEvent(ScheduleEvent.ToggleSearchSection) }) {
+            FilterButton(
+                accentColor = accentColor,
+                checked = state.isSearchSectionVisible,
+                onClick = { onEvent(ScheduleEvent.ToggleSearchSection) }
+            ) {
                 Text(text = "Фильтрация")
             }
         }

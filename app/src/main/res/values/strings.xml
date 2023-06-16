@@ -14,6 +14,8 @@
     <string name="dismiss">Закрыть</string>
     <string name="select">Выбрать</string>
     <string name="send">Отправить</string>
+    <string name="send_link">Отправить ссылку</string>
+    <string name="send_text">Отправить текст</string>
     <string name="add_favorites">Добавить в избранное</string>
     <string name="delete_favorite">Удалить из избранного</string>
     <string name="recent_list_empty">Список недавних дел пуст</string>

@@ -82,7 +82,7 @@ dependencies {
     val hiltVersion = "2.46.1"
     val hiltWork = "1.0.0"
     val lifecycleVersion = "2.6.1"
-    val navVersion = "2.5.3"
+    val navVersion = "2.6.0"
     val roomVersion = "2.5.1"
 
     implementation("androidx.core:core-ktx:1.10.1")
@@ -91,12 +91,12 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:$composeUiVersion")
     implementation("androidx.compose.material3:material3:1.1.0")
 
-    implementation("androidx.compose.runtime:runtime-livedata:1.5.0-beta01")
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.0-beta02")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 //    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("org.jsoup:jsoup:1.16.1")
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.airbnb.android:lottie-compose:6.0.0")
+    implementation("com.airbnb.android:lottie-compose:6.0.1")
 
     // Lifecycle
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")

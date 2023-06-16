@@ -95,11 +95,13 @@ fun JudgeFilter(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_round_restart_alt),
-                    contentDescription = "Reset judges"
+                    contentDescription = "Reset judges",
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                     text = "Сброс",
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }

@@ -17,7 +17,7 @@ fun SearchScreen(
     state: SearchState,
     accentColor: Color,
     onCardClick: (Case) -> Unit,
-    onActTextClick: (String) -> Unit
+    onActTextClick: (Case) -> Unit
 ) {
     Scaffold { paddingValues ->
         Box(

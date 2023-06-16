@@ -79,11 +79,13 @@ fun ParticipantFilter(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_round_restart_alt),
-                    contentDescription = "Reset participant"
+                    contentDescription = "Reset participant",
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                     text = "Сброс",
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }

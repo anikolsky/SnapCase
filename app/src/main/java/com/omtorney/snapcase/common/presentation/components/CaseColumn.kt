@@ -25,7 +25,7 @@ fun CaseColumn(
     items: List<Case>,
     accentColor: Color,
     onCardClick: (Case) -> Unit,
-    onActTextClick: (String) -> Unit
+    onActTextClick: (Case) -> Unit
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(4.dp),

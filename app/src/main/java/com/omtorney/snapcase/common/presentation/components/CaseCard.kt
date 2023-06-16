@@ -39,7 +39,7 @@ fun CaseCard(
     isExpanded: Boolean,
     accentColor: Color,
     onCardClick: (Case) -> Unit,
-    onActTextClick: (String) -> Unit
+    onActTextClick: (Case) -> Unit
 ) {
     var expanded by remember { mutableStateOf(isExpanded) }
 
@@ -166,7 +166,7 @@ fun CaseCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
-                            .clickable { onActTextClick(case.actTextUrl) }
+                            .clickable { onActTextClick(case) }
                     )
                 }
             }

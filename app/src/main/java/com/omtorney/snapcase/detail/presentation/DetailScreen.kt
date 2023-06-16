@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.omtorney.snapcase.R
+import com.omtorney.snapcase.common.domain.model.Case
 import com.omtorney.snapcase.common.presentation.components.CaseCard
 import com.omtorney.snapcase.common.presentation.components.ErrorMessage
 import com.omtorney.snapcase.common.presentation.components.LoadingIndicator
@@ -36,7 +37,7 @@ fun DetailScreen(
     state: DetailState,
     accentColor: Color,
     onEvent: (DetailEvent) -> Unit,
-    onActTextClick: (String) -> Unit,
+    onActTextClick: (Case) -> Unit,
     onDismiss: () -> Unit
 ) {
 //    LaunchedEffect(key1 = true) {

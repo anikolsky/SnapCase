@@ -110,7 +110,9 @@ fun AppNavHost(
                         navController = navController,
                     )
                 },
-                onActTextClick = { goToActText(it, navController) }
+                onActTextClick = { case ->
+                    goToActText(case.courtTitle, case.actTextUrl, navController)
+                }
             )
         }
 
@@ -129,7 +131,9 @@ fun AppNavHost(
                 state = state,
                 onEvent = viewModel::onEvent,
                 accentColor = Color(accentColor),
-                onActTextClick = { goToActText(it, navController) },
+                onActTextClick = { case ->
+                    goToActText(case.courtTitle, case.actTextUrl, navController)
+                },
                 onCardClick = { case ->
                     goToCaseDetail(
                         url = case.url,
@@ -168,14 +172,21 @@ fun AppNavHost(
                 accentColor = Color(accentColor),
                 state = state,
                 onEvent = viewModel::onEvent,
-                onActTextClick = { goToActText(it, navController) },
+                onActTextClick = { case ->
+                    goToActText(case.courtTitle, case.actTextUrl, navController)
+                },
                 onDismiss = { navController.popBackStack() }
             )
         }
 
         composable(
-            route = Screen.Act.route + "?url={url}",
-            arguments = listOf(navArgument(name = "url") { NavType.StringType })
+            route = Screen.Act.route +
+                    "?courtTitle={courtTitle}" +
+                    "&url={url}",
+            arguments = listOf(
+                navArgument(name = "courtTitle") { NavType.StringType },
+                navArgument(name = "url") { NavType.StringType }
+            )
         ) {
             val viewModel: ActViewModel = hiltViewModel()
             val state = viewModel.state.value
@@ -195,7 +206,9 @@ fun AppNavHost(
                 accentColor = Color(accentColor),
                 onSettingsClick = { goToSettings(navController) },
 //                onBackClick = { navController.popBackStack() },
-                onActTextClick = { goToActText(it, navController) },
+                onActTextClick = { case ->
+                    goToActText(case.courtTitle, case.actTextUrl, navController)
+                },
                 onCardClick = { case ->
                     goToCaseDetail(
                         url = case.url,
@@ -255,10 +268,14 @@ private fun goToCaseDetail(
 }
 
 private fun goToActText(
+    courtTitle: String,
     url: String,
     navController: NavController
 ) {
-    navController.navigate(Screen.Act.route + "?url=${Uri.encode(url)}") {
+    navController.navigate(Screen.Act.route +
+            "?courtTitle=${courtTitle}" +
+            "&url=${Uri.encode(url)}"
+    ) {
         popUpTo(navController.graph.findStartDestination().id) {
             saveState = true
         }

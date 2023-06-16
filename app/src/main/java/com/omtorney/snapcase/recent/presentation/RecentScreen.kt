@@ -33,7 +33,7 @@ fun RecentScreen(
     onSettingsClick: () -> Unit,
     onBackClick: () -> Unit,
     onCardClick: (Case) -> Unit,
-    onActTextClick: (String) -> Unit
+    onActTextClick: (Case) -> Unit
 ) {
     Scaffold(
         topBar = {
