@@ -16,11 +16,13 @@ interface PageParser {
     suspend fun extractActText(url: String): String
 
 
-    fun getPlaintiff(info: String): String
+    fun getAdministrativeInfo(info: String, case: Case): Case
 
-    fun getDefendant(info: String): String
+    fun getCivilInfo(info: String, case: Case): Case
 
-    fun getCaseCategory(info: String): String
+    fun getOtherInfo(info: String, case: Case): Case
+
+    fun getCategory(info: String): String
 
     fun getCaseNumber(numberString: String): String
 

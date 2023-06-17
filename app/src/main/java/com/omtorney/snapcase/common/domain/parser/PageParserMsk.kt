@@ -23,15 +23,19 @@ class PageParserMsk : PageParser {
         TODO("Not yet implemented")
     }
 
-    override fun getPlaintiff(info: String): String {
+    override fun getAdministrativeInfo(info: String, case: Case): Case {
         TODO("Not yet implemented")
     }
 
-    override fun getDefendant(info: String): String {
+    override fun getCivilInfo(info: String, case: Case): Case {
         TODO("Not yet implemented")
     }
 
-    override fun getCaseCategory(info: String): String {
+    override fun getOtherInfo(info: String, case: Case): Case {
+        TODO("Not yet implemented")
+    }
+
+    override fun getCategory(info: String): String {
         TODO("Not yet implemented")
     }
 

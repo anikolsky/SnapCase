@@ -20,13 +20,16 @@ class PageParserNoMsk @Inject constructor(
             val rowColumns = row.select("td")
             if (rowColumns.size == 8) {
                 // If it's a case row
+                var case = Case()
+                val number = getCaseNumber(rowColumns[1].text())
                 val info = rowColumns[4].text()
-                val case = Case(
+                case = defineBasicData(info, case)
+                case = case.copy(
                     url = court.baseUrl + rowColumns[1].child(0).attr("href"),
-                    number = getCaseNumber(rowColumns[1].text()),
+                    number = number,
                     hearingDateTime = rowColumns[2].text(),
-                    category = getCaseCategory(info),
-                    participants = "${getPlaintiff(info)}\n${getDefendant(info)}",
+//                    category = getCaseCategory(info),
+//                    participants = "${getPlaintiff(info)}\n${getDefendant(info)}",
                     judge = rowColumns[5].text(),
                     result = rowColumns[6].text(),
                     actTextUrl = getCaseActUrl(rowColumns[7], court),
@@ -48,13 +51,16 @@ class PageParserNoMsk @Inject constructor(
         val caseRows = document.select("#tablcont tr[valign=top]")
         return caseRows.map { element ->
             val rowColumns = element.select("td")
+            var case = Case()
+            val number = getCaseNumber(rowColumns[0].text())
             val info = rowColumns[2].text()
-            Case(
+            case = defineBasicData(info, case)
+            case.copy(
                 url = court.baseUrl + rowColumns.first()?.child(0)?.attr("href"),
-                number = getCaseNumber(rowColumns[0].text()),
+                number = number,
                 receiptDate = rowColumns[1].text(),
-                category = getCaseCategory(info),
-                participants = "${getPlaintiff(info)}\n${getDefendant(info)}",
+//                category = getCaseCategory(info),
+//                participants = "${getPlaintiff(info)}\n${getDefendant(info)}",
                 judge = rowColumns[3].text(),
                 actDateTime = rowColumns[4].text(),
                 result = rowColumns[5].text(),
@@ -74,6 +80,8 @@ class PageParserNoMsk @Inject constructor(
         val processElement = document?.selectFirst("div#cont2 table#tablcont")
         val participantsElement = document?.selectFirst("div#cont3 table#tablcont")
         val appealElement = document?.selectFirst("div#cont4 table#tablcont")
+        // 3 и 4 вкладки могут быть разными, определять содержание по тексту:
+        // "ОБЖАЛОВАНИЕ ПРИГОВОРОВ ОПРЕДЕЛЕНИЙ (ПОСТ.)", "СТОРОНЫ" и т.д.
 
         participantsElement?.select("tr")
             ?.drop(2)
@@ -132,45 +140,94 @@ class PageParserNoMsk @Inject constructor(
     override suspend fun extractActText(url: String): String {
         val act = arrayListOf<String>()
         val page = repository.getJsoupDocument(url)
-        val mainSection = page?.getElementById("modSdpContent")
-        val paragraph = mainSection?.getElementsByTag("p")
-        paragraph?.forEach { act.add(it.text()) }
+        val paragraphs = page?.getElementsByTag("p")
+        paragraphs?.forEach { act.add(it.text()) }
         return act.joinToString("\n\n")
     }
 
-    override fun getPlaintiff(info: String): String {
-        return if (info.contains("АДМ. ИСТЕЦ") && !info.contains("ОТВЕТЧИК"))
+    private fun defineBasicData(info: String, case: Case): Case {
+        return if (info.contains("АДМ. ИСТЕЦ")) {
+            getAdministrativeInfo(info, case)
+        } else if (info.contains("ИСТЕЦ(ЗАЯВИТЕЛЬ)")) {
+            getCivilInfo(info, case)
+        } else if (info.contains("КоАП РФ") || info.contains("УК РФ")) {
+            getOtherInfo(info, case)
+        } else if (!(info.contains("ИСТЕЦ")) || info.contains("ОТВЕТЧИК") && info.contains("КАТЕГОРИЯ")) {
+            case.copy(category = info.substringAfter("КАТЕГОРИЯ: "))
+        } else {
+            case.copy(participants = info)
+        }
+    }
+
+    override fun getAdministrativeInfo(info: String, case: Case): Case {
+        val plaintiff = if (info.contains("АДМ. ИСТЕЦ") && !info.contains("АДМ. ОТВЕТЧИК")) {
             info.substring(info.indexOf("АДМ. ИСТЕЦ"))
-        else if (info.contains("АДМ. ИСТЕЦ"))
+        } else if (info.contains("АДМ. ИСТЕЦ")) {
             info.substring(info.indexOf("АДМ. ИСТЕЦ"), info.indexOf("АДМ. ОТВЕТЧИК") - 1)
-        else if (info.contains("ИСТЕЦ") && !info.contains("ОТВЕТЧИК"))
-            info.substring(info.indexOf("ИСТЕЦ"))
-        else if (info.contains("ИСТЕЦ"))
-            info.substring(info.indexOf("ИСТЕЦ"), info.indexOf("ОТВЕТЧИК") - 1)
-        else ""
-    }
-
-    override fun getDefendant(info: String): String {
-        return if (info.contains("АДМ. ОТВЕТЧИК")) {
+        } else {
+            ""
+        }
+        val defendant = if (info.contains("АДМ. ОТВЕТЧИК")) {
             info.substring(info.indexOf("АДМ. ОТВЕТЧИК"))
-        } else if (info.contains("ОТВЕТЧИК")) {
-            info.substring(info.indexOf("ОТВЕТЧИК"))
-        } else if (info.contains("ПРАВОНАРУШЕНИЕ")) {
-            if (info.contains("-")) {
-                info.substring(info.indexOf(":") + 1, info.indexOfLast { it == '-' } - 1)
-            } else info.substring(info.indexOf(":") + 1)
-        } else info
+        } else if (info.contains("АДМ. ОТВЕТЧИК")) {
+            info.substring(info.indexOf("АДМ. ОТВЕТЧИК"))
+        } else {
+            ""
+        }
+        val category = getCategory(info)
+        return case.copy(
+            participants = "$plaintiff\n$defendant",
+            category = category
+        )
     }
 
-    override fun getCaseCategory(info: String): String {
-        return if (info.contains("КАТЕГОРИЯ") && !info.contains("ИСТЕЦ"))
+    override fun getCivilInfo(info: String, case: Case): Case {
+        val plaintiff = if (info.contains("ИСТЕЦ") && !info.contains("ОТВЕТЧИК")) {
+            info.substring(info.indexOf("ИСТЕЦ"))
+        } else if (info.contains("ИСТЕЦ")) {
+            info.substring(info.indexOf("ИСТЕЦ"), info.indexOf("ОТВЕТЧИК") - 1)
+        } else {
+            ""
+        }
+        val defendant = if (info.contains("ОТВЕТЧИК")) {
+            info.substring(info.indexOf("ОТВЕТЧИК"))
+        } else {
+            ""
+        }
+        val category = getCategory(info)
+        return case.copy(
+            participants = "$plaintiff\n$defendant",
+            category = category
+        )
+    }
+
+    override fun getOtherInfo(info: String, case: Case): Case {
+        val participants = if (info.contains("ПРАВОНАРУШЕНИЕ")) {
+            info.substring(info.indexOf("ПРАВОНАРУШЕНИЕ") + 16, info.indexOf("ст.") - 3)
+        } else {
+            info.substring(0, info.indexOf("ст.") - 3)
+        }
+        val category = getCategory(info)
+        return case.copy(
+            participants = participants,
+            category = category
+        )
+    }
+
+    override fun getCategory(info: String): String {
+        return if (info.contains("КАТЕГОРИЯ") && !(info.contains("АДМ. ИСТЕЦ") || info.contains("ИСТЕЦ"))) {
             info.substring(info.indexOf("КАТЕГОРИЯ"))
-        else if (info.contains("КАТЕГОРИЯ"))
+        } else if (info.contains("КАТЕГОРИЯ") && info.contains("АДМ. ИСТЕЦ")) {
+            info.substring(info.indexOf("КАТЕГОРИЯ") + 11, info.indexOf("АДМ. ИСТЕЦ"))
+        } else if (info.contains("КАТЕГОРИЯ") && info.contains("ИСТЕЦ")) {
             info.substring(info.indexOf("КАТЕГОРИЯ") + 11, info.indexOf("ИСТЕЦ"))
-        else if (info.contains("ПРАВОНАРУШЕНИЕ"))
-            info.substring(info.indexOf("ПРАВОНАРУШЕНИЕ"), info.indexOf(":")) +
-                    ": " + info.substring(info.indexOfLast { it == '-' } + 1)
-        else ""
+        } else if (info.contains("КоАП РФ")) {
+            "ПРАВОНАРУШЕНИЕ - ${info.substring(info.indexOf("ст."))}"
+        } else if (info.contains("УК РФ")) {
+            "ПРЕСТУПЛЕНИЕ - ${info.substring(info.indexOf("ст."))}"
+        } else {
+            ""
+        }
     }
 
     override fun getCaseNumber(numberString: String): String {
@@ -182,8 +239,7 @@ class PageParserNoMsk @Inject constructor(
 
     override fun getCaseActUrl(element: Element, court: Court): String {
         val linkToAct = element.selectFirst("a")?.attr("href") ?: ""
-        return if (linkToAct.isNotEmpty())
-            court.baseUrl + linkToAct
+        return if (linkToAct.isNotEmpty()) court.baseUrl + linkToAct
         else linkToAct
     }
 
