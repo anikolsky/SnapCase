@@ -74,7 +74,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavHost(onGoToAppSettingsClick = ::openAppSettings)
+                    AppNavHost(onAppSettingsClick = ::openAppSettings)
                     if (openDialog && downloadProgress != 1f) {
                         UpdateDialog(
                             downloadProgress = downloadProgress,

@@ -12,7 +12,7 @@ fun PermissionDialog(
     isPermanentlyDeclined: Boolean,
     onDismiss: () -> Unit,
     onOkClick: () -> Unit,
-    onGoToAppSettingsClick: () -> Unit,
+    onAppSettingsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     AlertDialog(
@@ -30,7 +30,7 @@ fun PermissionDialog(
         confirmButton = {
             Button(onClick = {
                 if (isPermanentlyDeclined) {
-                    onGoToAppSettingsClick()
+                    onAppSettingsClick()
                 } else {
                     onOkClick()
                 }

@@ -7,6 +7,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
@@ -31,7 +32,7 @@ import com.omtorney.snapcase.settings.presentation.SettingsViewModel
 
 @Composable
 fun AppNavHost(
-    onGoToAppSettingsClick: () -> Unit
+    onAppSettingsClick: () -> Unit
 ) {
     val navController = rememberNavController()
     val mainViewModel: MainViewModel = hiltViewModel()
@@ -43,7 +44,7 @@ fun AppNavHost(
         startDestination = Screen.Home.route
     ) {
 
-        composable(route = Screen.Home.route) {
+        composable(route = Screen.Home.route) { backStackEntry ->
             val viewModel: HomeViewModel = hiltViewModel()
             val state by viewModel.state
             HomeScreen(
@@ -78,7 +79,7 @@ fun AppNavHost(
                         restoreState = true
                     }
                 },
-                onSettingsClick = { goToSettings(navController) }
+                onSettingsClick = { navigateToSettings(backStackEntry, navController) }
             )
         }
 
@@ -92,26 +93,26 @@ fun AppNavHost(
                 navArgument(name = "courtTitle") { NavType.StringType },
                 navArgument(name = "searchInput") { NavType.StringType }
             )
-        ) {
+        ) { backStackEntry ->
             val viewModel: SearchViewModel = hiltViewModel()
             val state = viewModel.state.value
             SearchScreen(
                 state = state,
                 accentColor = Color(accentColor),
                 onCardClick = { case ->
-                    goToCaseDetail(
+                    navigateToDetail(
                         url = case.url,
                         number = case.number,
                         hearingDateTime = "",
                         actDateForce = case.actDateForce,
                         actTextUrl = case.actTextUrl,
                         courtTitle = case.courtTitle,
-                        screen = Screen.Search,
+                        currentScreen = backStackEntry,
                         navController = navController,
                     )
                 },
                 onActTextClick = { case ->
-                    goToActText(case.courtTitle, case.actTextUrl, navController)
+                    navigateToActText(case.courtTitle, case.actTextUrl, backStackEntry, navController)
                 }
             )
         }
@@ -124,7 +125,7 @@ fun AppNavHost(
                 navArgument(name = "scheduleDate") { NavType.StringType },
                 navArgument(name = "courtTitle") { NavType.StringType }
             )
-        ) {
+        ) { backStackEntry ->
             val viewModel: ScheduleViewModel = hiltViewModel()
             val state = viewModel.state.value
             ScheduleScreen(
@@ -132,17 +133,17 @@ fun AppNavHost(
                 onEvent = viewModel::onEvent,
                 accentColor = Color(accentColor),
                 onActTextClick = { case ->
-                    goToActText(case.courtTitle, case.actTextUrl, navController)
+                    navigateToActText(case.courtTitle, case.actTextUrl, backStackEntry, navController)
                 },
                 onCardClick = { case ->
-                    goToCaseDetail(
+                    navigateToDetail(
                         url = case.url,
                         number = case.number,
                         hearingDateTime = case.hearingDateTime,
                         actDateForce = "",
                         actTextUrl = case.actTextUrl,
                         courtTitle = case.courtTitle,
-                        screen = Screen.Schedule,
+                        currentScreen = backStackEntry,
                         navController = navController,
                     )
                 }
@@ -165,7 +166,7 @@ fun AppNavHost(
                 navArgument(name = "actTextUrl") { NavType.StringType },
                 navArgument(name = "courtTitle") { NavType.StringType }
             )
-        ) {
+        ) { backStackEntry ->
             val viewModel: DetailViewModel = hiltViewModel()
             val state = viewModel.state.value
             DetailScreen(
@@ -173,7 +174,7 @@ fun AppNavHost(
                 state = state,
                 onEvent = viewModel::onEvent,
                 onActTextClick = { case ->
-                    goToActText(case.courtTitle, case.actTextUrl, navController)
+                    navigateToActText(case.courtTitle, case.actTextUrl, backStackEntry, navController)
                 },
                 onDismiss = { navController.popBackStack() }
             )
@@ -196,7 +197,7 @@ fun AppNavHost(
             )
         }
 
-        composable(route = Screen.Favorites.route) {
+        composable(route = Screen.Favorites.route) { backStackEntry ->
             val viewModel: FavoritesViewModel = hiltViewModel()
             val state = viewModel.state.value
             FavoritesScreen(
@@ -204,20 +205,20 @@ fun AppNavHost(
                 state = state,
 //                onEvent = viewModel::onEvent,
                 accentColor = Color(accentColor),
-                onSettingsClick = { goToSettings(navController) },
+                onSettingsClick = { navigateToSettings(backStackEntry, navController) },
 //                onBackClick = { navController.popBackStack() },
                 onActTextClick = { case ->
-                    goToActText(case.courtTitle, case.actTextUrl, navController)
+                    navigateToActText(case.courtTitle, case.actTextUrl, backStackEntry, navController)
                 },
                 onCardClick = { case ->
-                    goToCaseDetail(
+                    navigateToDetail(
                         url = case.url,
                         number = case.number,
                         hearingDateTime = case.hearingDateTime,
                         actDateForce = case.actDateForce,
                         actTextUrl = case.actTextUrl,
                         courtTitle = case.courtTitle,
-                        screen = Screen.Favorites,
+                        currentScreen = backStackEntry,
                         navController = navController,
                     )
                 }
@@ -234,22 +235,24 @@ fun AppNavHost(
                 onEvent = viewModel::onEvent,
                 accentColor = Color(accentColor),
                 onBackClick = { navController.popBackStack() },
-                onGoToAppSettingsClick = onGoToAppSettingsClick
+                onAppSettingsClick = onAppSettingsClick
             )
         }
     }
 }
 
-private fun goToCaseDetail(
+private fun navigateToDetail(
     url: String,
     number: String,
     hearingDateTime: String,
     actDateForce: String,
     actTextUrl: String,
     courtTitle: String,
-    screen: Screen,
+    currentScreen: NavBackStackEntry,
     navController: NavController
 ) {
+    val destinationRoute = currentScreen.destination.route!!
+
     navController.navigate(
         Screen.Detail.route +
                 "?url=${Uri.encode(url)}" +
@@ -259,7 +262,7 @@ private fun goToCaseDetail(
                 "&actTextUrl=${Uri.encode(actTextUrl)}" +
                 "&courtTitle=$courtTitle"
     ) {
-        popUpTo(screen.route) {
+        popUpTo(destinationRoute) {
             saveState = true
         }
         launchSingleTop = true
@@ -267,16 +270,19 @@ private fun goToCaseDetail(
     }
 }
 
-private fun goToActText(
+private fun navigateToActText(
     courtTitle: String,
     url: String,
+    currentScreen: NavBackStackEntry,
     navController: NavController
 ) {
+    val destinationRoute = currentScreen.destination.route!!
+
     navController.navigate(Screen.Act.route +
             "?courtTitle=${courtTitle}" +
             "&url=${Uri.encode(url)}"
     ) {
-        popUpTo(navController.graph.findStartDestination().id) {
+        popUpTo(destinationRoute) {
             saveState = true
         }
         launchSingleTop = true
@@ -284,9 +290,14 @@ private fun goToActText(
     }
 }
 
-private fun goToSettings(navController: NavController) {
+private fun navigateToSettings(
+    currentScreen: NavBackStackEntry,
+    navController: NavController
+) {
+    val destinationRoute = currentScreen.destination.route!!
+
     navController.navigate(Screen.Settings.route) {
-        popUpTo(navController.graph.findStartDestination().id) {
+        popUpTo(destinationRoute) {
             saveState = true
         }
         launchSingleTop = true

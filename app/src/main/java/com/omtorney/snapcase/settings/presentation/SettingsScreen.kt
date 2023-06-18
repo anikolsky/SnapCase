@@ -47,7 +47,7 @@ fun SettingsScreen(
     onEvent: (SettingsEvent) -> Unit,
     accentColor: Color,
     onBackClick: () -> Unit,
-    onGoToAppSettingsClick: () -> Unit
+    onAppSettingsClick: () -> Unit
 ) {
     val context = LocalContext.current
     val activity = context as Activity
@@ -168,7 +168,7 @@ fun SettingsScreen(
                 isPermanentlyDeclined = !activity.shouldShowRequestPermissionRationale(permission),
                 onDismiss = { onEvent(SettingsEvent.DismissDialog) },
                 onOkClick = { onEvent(SettingsEvent.DismissDialog) },
-                onGoToAppSettingsClick = onGoToAppSettingsClick
+                onAppSettingsClick = onAppSettingsClick
             )
         }
 }
