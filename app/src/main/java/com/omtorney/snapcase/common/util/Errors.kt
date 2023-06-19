@@ -12,7 +12,7 @@ sealed class CustomError(message: String) : Exception(message) {
 fun handleException(e: Exception): String {
     return when (e) {
         is CustomError -> e.message!!
-        is SocketTimeoutException -> "Socket timeout exception: ${e.localizedMessage}"
+        is SocketTimeoutException -> "Сайт недоступен\n\n(Socket timeout exception: ${e.localizedMessage})"
         is IOException -> "IOException: ${e.localizedMessage}"
 //        is HttpException -> "Http error ${e.code()}"
         else -> "Unexpected error: ${e.localizedMessage}"

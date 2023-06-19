@@ -30,7 +30,7 @@ class SettingsStore @Inject constructor(
     }
 
     val getSelectedCourt: Flow<String> = dataStore.data
-        .map { it[SELECTED_COURT] ?: Courts.Dmitrov.title }
+        .map { it[SELECTED_COURT] ?: "Дмитровский городской" }
 
     suspend fun setSelectedCourt(courtTitle: String) {
         dataStore.edit { it[SELECTED_COURT] = courtTitle }

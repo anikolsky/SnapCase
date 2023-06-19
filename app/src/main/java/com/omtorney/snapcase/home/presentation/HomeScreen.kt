@@ -24,8 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import com.omtorney.snapcase.R
-import com.omtorney.snapcase.common.domain.court.CaseType
 import com.omtorney.snapcase.common.domain.court.Courts
+import com.omtorney.snapcase.common.domain.model.CaseType
 import com.omtorney.snapcase.common.presentation.components.BottomBar
 import com.omtorney.snapcase.common.presentation.components.SettingsButton
 import com.omtorney.snapcase.common.presentation.components.TopBar

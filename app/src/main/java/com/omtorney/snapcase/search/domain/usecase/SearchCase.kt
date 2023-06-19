@@ -1,9 +1,9 @@
 package com.omtorney.snapcase.search.domain.usecase
 
 import com.omtorney.snapcase.common.domain.Repository
-import com.omtorney.snapcase.common.domain.court.CaseType
 import com.omtorney.snapcase.common.domain.court.Courts
 import com.omtorney.snapcase.common.domain.model.Case
+import com.omtorney.snapcase.common.domain.model.CaseType
 import com.omtorney.snapcase.common.domain.parser.PageParserFactory
 import com.omtorney.snapcase.common.presentation.logd
 import com.omtorney.snapcase.common.util.Resource
