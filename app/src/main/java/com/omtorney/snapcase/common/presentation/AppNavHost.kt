@@ -10,13 +10,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.omtorney.snapcase.act.presentation.ActScreen
 import com.omtorney.snapcase.act.presentation.ActViewModel
+import com.omtorney.snapcase.common.util.Constants.DEEPLINK_URI
+import com.omtorney.snapcase.detail.presentation.DetailNotificationScreen
 import com.omtorney.snapcase.detail.presentation.DetailScreen
 import com.omtorney.snapcase.detail.presentation.DetailViewModel
 import com.omtorney.snapcase.favorites.presentation.FavoritesScreen
@@ -32,11 +35,10 @@ import com.omtorney.snapcase.settings.presentation.SettingsViewModel
 
 @Composable
 fun AppNavHost(
+    navController: NavHostController,
     onAppSettingsClick: () -> Unit
 ) {
-    val navController = rememberNavController()
     val mainViewModel: MainViewModel = hiltViewModel()
-
     val accentColor by mainViewModel.accentColor.collectAsStateWithLifecycle()
 
     NavHost(
@@ -108,7 +110,7 @@ fun AppNavHost(
                         actTextUrl = case.actTextUrl,
                         courtTitle = case.courtTitle,
                         currentScreen = backStackEntry,
-                        navController = navController,
+                        navController = navController
                     )
                 },
                 onActTextClick = { case ->
@@ -144,7 +146,7 @@ fun AppNavHost(
                         actTextUrl = case.actTextUrl,
                         courtTitle = case.courtTitle,
                         currentScreen = backStackEntry,
-                        navController = navController,
+                        navController = navController
                     )
                 }
             )
@@ -177,6 +179,60 @@ fun AppNavHost(
                     navigateToActText(case.courtTitle, case.actTextUrl, backStackEntry, navController)
                 },
                 onDismiss = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = Screen.DetailNotification.route,
+            arguments = listOf(
+                navArgument("courtTitle") { type = NavType.StringType },
+                navArgument("number") { type = NavType.StringType },
+                navArgument("event") { type = NavType.StringType },
+                navArgument("participants") { type = NavType.StringType },
+                navArgument("url") { type = NavType.StringType },
+                navArgument("hearingDateTime") { type = NavType.StringType },
+                navArgument("actDateForce") { type = NavType.StringType },
+                navArgument("actTextUrl") { type = NavType.StringType }
+            ),
+            deepLinks = listOf(navDeepLink { uriPattern = DEEPLINK_URI +
+                    "?courtTitle={courtTitle}" +
+                    "&number={number}" +
+                    "&event={event}" +
+                    "&participants={participants}" +
+                    "&url={url}" +
+                    "&hearingDateTime={hearingDateTime}" +
+                    "&actDateForce={actDateForce}" +
+                    "&actTextUrl={actTextUrl}"
+                }
+            )
+        ) { backStackEntry ->
+            val courtTitle = backStackEntry.arguments?.getString("courtTitle") ?: ""
+            val number = backStackEntry.arguments?.getString("number") ?: ""
+            val event = backStackEntry.arguments?.getString("event") ?: ""
+            val participants = backStackEntry.arguments?.getString("participants") ?: ""
+            val url = backStackEntry.arguments?.getString("url") ?: ""
+            val hearingDateTime = backStackEntry.arguments?.getString("hearingDateTime") ?: ""
+            val actDateForce = backStackEntry.arguments?.getString("actDateForce") ?: ""
+            val actTextUrl = backStackEntry.arguments?.getString("actTextUrl") ?: ""
+
+            DetailNotificationScreen(
+                accentColor = Color(accentColor),
+                courtTitle = courtTitle,
+                number = number,
+                event = event,
+                participants = participants,
+                onClick = {
+                    navigateToDetail(
+                        url = url,
+                        number = number,
+                        hearingDateTime = hearingDateTime,
+                        actDateForce = actDateForce,
+                        actTextUrl = actTextUrl,
+                        courtTitle = courtTitle,
+                        currentScreen = backStackEntry,
+                        navController = navController
+                    )
+                }
             )
         }
 
@@ -219,7 +275,7 @@ fun AppNavHost(
                         actTextUrl = case.actTextUrl,
                         courtTitle = case.courtTitle,
                         currentScreen = backStackEntry,
-                        navController = navController,
+                        navController = navController
                     )
                 }
             )

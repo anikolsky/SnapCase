@@ -1,12 +1,14 @@
 package com.omtorney.snapcase.settings.data
 
+import android.content.res.Configuration
+import android.content.res.Resources
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.omtorney.snapcase.common.domain.court.Courts
 import com.omtorney.snapcase.common.util.Constants
 import com.omtorney.snapcase.settings.presentation.CheckPeriod
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +20,7 @@ class SettingsStore @Inject constructor(
 ) {
     private companion object {
         val ACCENT_COLOR = longPreferencesKey("accent_color")
+        val DARK_THEME = booleanPreferencesKey("dark_theme")
         val SELECTED_COURT = stringPreferencesKey("selected_court")
         val BACKGROUND_CHECK_PERIOD_KEY = intPreferencesKey("background_check_period")
     }
@@ -29,14 +32,28 @@ class SettingsStore @Inject constructor(
         dataStore.edit { it[ACCENT_COLOR] = color }
     }
 
-    val getSelectedCourt: Flow<String> = dataStore.data
+    private val systemTheme =
+        when (Resources.getSystem().configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_YES -> { true }
+            Configuration.UI_MODE_NIGHT_NO -> { false }
+            else -> { false }
+        }
+
+    suspend fun enableDarkTheme(enabled: Boolean) {
+        dataStore.edit { it[DARK_THEME] = enabled }
+    }
+
+    val darkThemeEnabled: Flow<Boolean> = dataStore.data
+        .map { it[DARK_THEME] ?: systemTheme }
+
+    val selectedCourt: Flow<String> = dataStore.data
         .map { it[SELECTED_COURT] ?: "Дмитровский городской" }
 
     suspend fun setSelectedCourt(courtTitle: String) {
         dataStore.edit { it[SELECTED_COURT] = courtTitle }
     }
 
-    val getCaseCheckPeriod: Flow<CheckPeriod> = dataStore.data
+    val caseCheckPeriod: Flow<CheckPeriod> = dataStore.data
         .map { it[BACKGROUND_CHECK_PERIOD_KEY] ?: CheckPeriod.ONE_HOUR.ordinal }
         .map { CheckPeriod.values()[it] }
 

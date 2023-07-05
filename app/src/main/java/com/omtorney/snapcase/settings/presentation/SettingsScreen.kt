@@ -9,9 +9,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -52,6 +54,7 @@ fun SettingsScreen(
     val context = LocalContext.current
     val activity = context as Activity
 //    val workInfo = state.workInfo?.observeAsState()?.value
+    var darkThemeState by remember { mutableStateOf(state.isDarkThemeEnabled) }
     var workState by remember { mutableStateOf(workInfo?.state == WorkInfo.State.ENQUEUED) }
     val dialogQueue = state.visiblePermissionDialogQueue
     var backgroundCheckMenuExpanded by remember { mutableStateOf(false) }
@@ -97,10 +100,7 @@ fun SettingsScreen(
             state = workState,
             onCheckedChange = { checked ->
                 workState = checked
-                if (ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.POST_NOTIFICATIONS
-                    )
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
                     == PackageManager.PERMISSION_GRANTED
                 ) {
                     if (workState) {
@@ -133,6 +133,24 @@ fun SettingsScreen(
             },
             onClick = { backgroundCheckMenuExpanded = true },
             onDismissRequest = { backgroundCheckMenuExpanded = false }
+        )
+        MenuSwitcher(
+            accentColor = accentColor,
+            icon = {
+               Icon(
+                   painter = painterResource(R.drawable.ic_round_invert_colors),
+                   contentDescription = "Dark mode"
+               )
+            },
+            title = {
+                Text(text = "Темный режим")
+            },
+            subtitle = "Включить темный режим приложения",
+            state = darkThemeState,
+            onCheckedChange = {  checked ->
+                onEvent(SettingsEvent.EnableDarkTheme(checked))
+                darkThemeState = checked
+            }
         )
         Box(
             modifier = Modifier

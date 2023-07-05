@@ -132,7 +132,8 @@ fun HomeScreen(
                 shape = shape,
                 onSearchClick = { query ->
                     onSearchClick(caseType, selectedCourt, query)
-                })
+                }
+            )
         }
     }
 

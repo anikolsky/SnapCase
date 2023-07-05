@@ -4,14 +4,18 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.net.toUri
 import com.omtorney.snapcase.R
+import com.omtorney.snapcase.common.domain.model.Case
 import com.omtorney.snapcase.common.presentation.MainActivity
-import kotlin.random.Random
+import com.omtorney.snapcase.common.util.Constants.DEEPLINK_URI
 
 class NotificationHelper(
     private val context: Context
@@ -33,22 +37,52 @@ class NotificationHelper(
     }
 
     @SuppressLint("MissingPermission")
-    fun createNotification(title: String, message: String, notificationId: Int) {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    fun createNotification(
+        title: String,
+        eventMessage: String,
+        case: Case,
+        notificationId: Int
+    ) {
+        val courtTitle = case.courtTitle
+        val number = Uri.encode(case.number)
+        val event = Uri.encode(eventMessage)
+        val participants = Uri.encode(case.participants)
+        val url = Uri.encode(case.url)
+        val hearingDateTime = Uri.encode(case.hearingDateTime)
+        val actDateForce = Uri.encode(case.actDateForce)
+        val actTextUrl = Uri.encode(case.actTextUrl)
+
+        val clickIntent = Intent(
+            Intent.ACTION_VIEW,
+            (DEEPLINK_URI +
+                    "?courtTitle=$courtTitle" +
+                    "&number=$number" +
+                    "&event=$event" +
+                    "&participants=$participants" +
+                    "&url=$url" +
+                    "&hearingDateTime=$hearingDateTime" +
+                    "&actDateForce=$actDateForce" +
+                    "&actTextUrl=$actTextUrl").toUri(),
+            context,
+            MainActivity::class.java
+        )
+
+        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.FLAG_IMMUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
         }
 
-        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-        } else {
-            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val clickPendingIntent = TaskStackBuilder.create(context).run {
+            addNextIntentWithParentStack(clickIntent)
+            getPendingIntent(0, flag)
         }
 
         val notification = NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_round_case)
             .setContentTitle(title)
-            .setContentText(message)
-            .setContentIntent(pendingIntent)
+            .setContentText(eventMessage)
+            .setContentIntent(clickPendingIntent)
             .setAutoCancel(true)
             .build()
 

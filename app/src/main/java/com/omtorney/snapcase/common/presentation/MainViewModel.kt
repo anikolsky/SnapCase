@@ -20,4 +20,10 @@ class MainViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000L),
         initialValue = Constants.INITIAL_COLOR
     )
+
+    val isDarkThemeEnabled: StateFlow<Boolean> = settings.darkThemeEnabled.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = false
+    )
 }

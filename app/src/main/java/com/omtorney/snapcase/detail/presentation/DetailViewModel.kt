@@ -30,11 +30,11 @@ class DetailViewModel @Inject constructor(
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
-        val url = Uri.decode(savedStateHandle.get<String>("url"))
-        val number = Uri.decode(savedStateHandle.get<String>("number"))
+        val url = Uri.decode(savedStateHandle.get<String>("url")) ?: ""
+        val number = Uri.decode(savedStateHandle.get<String>("number")) ?: ""
         val hearingDateTime = savedStateHandle.get<String>("hearingDateTime") ?: ""
         val actDateForce = savedStateHandle.get<String>("actDateForce") ?: ""
-        val actTextUrl = Uri.decode(savedStateHandle.get<String>("actTextUrl"))
+        val actTextUrl = Uri.decode(savedStateHandle.get<String>("actTextUrl")) ?: ""
         val courtTitle = savedStateHandle.get<String>("courtTitle") ?: ""
         _state.value = DetailState(
             case = Case(

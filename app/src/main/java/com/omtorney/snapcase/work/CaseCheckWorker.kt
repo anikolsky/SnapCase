@@ -51,7 +51,11 @@ class CaseCheckWorker @AssistedInject constructor(
                 logd("saved process last: ${savedCase.process.last()}")
                 if (processSteps.last() != savedCase.process.last()) {
                     logd("Process has changed, sending notification...")
-                    sendNotification(processSteps, savedCase.number, CaseEvent.Process)
+                    sendNotification(
+                        processSteps,
+                        savedCase,
+                        CaseEvent.Process
+                    )
                 }
 
                 val appealRows = appealElement?.select("tr")?.drop(2)
@@ -66,7 +70,11 @@ class CaseCheckWorker @AssistedInject constructor(
                 logd("saved appeal: ${savedCase.appeal}")
                 if (appeal != savedCase.appeal) {
                     logd("Appeal has changed, sending notification...")
-                    sendNotification(emptyList(), savedCase.number, CaseEvent.Appeal)
+                    sendNotification(
+                        emptyList(),
+                        savedCase,
+                        CaseEvent.Appeal
+                    )
                 }
             }
             logd("No updates")
@@ -77,23 +85,23 @@ class CaseCheckWorker @AssistedInject constructor(
         }
     }
 
-    private fun sendNotification(processSteps: List<ProcessStep>, number: String, event: CaseEvent) {
-        when (event) {
-            CaseEvent.Process -> {
-                NotificationHelper(context).createNotification(
-                    title = "Обновление по делу № $number",
-                    message = "${processSteps.last().event} ${processSteps.last().date}",
-                    notificationId = number.hashCode(),
-                )
-            }
-            CaseEvent.Appeal -> {
-                NotificationHelper(context).createNotification(
-                    title = "Обновление по делу № $number",
-                    message = "Подана жалоба!",
-                    notificationId = number.hashCode(),
-                )
-            }
-        }
+    private fun sendNotification(
+        processSteps: List<ProcessStep>,
+        case: Case,
+        event: CaseEvent
+    ) {
+        val notificationHelper = NotificationHelper(context)
+        val title = "Обновление по делу № ${case.number}"
+
+        notificationHelper.createNotification(
+            title = title,
+            eventMessage = when (event) {
+                CaseEvent.Process -> "${processSteps.last().event} ${processSteps.last().date}"
+                CaseEvent.Appeal -> "Подана жалоба"
+            },
+            case = case,
+            notificationId = case.number.hashCode()
+        )
     }
 }
 

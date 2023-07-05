@@ -17,6 +17,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.azhon.appupdate.listener.OnDownloadListenerAdapter
 import com.azhon.appupdate.manager.DownloadManager
 import com.omtorney.snapcase.BuildConfig
@@ -44,6 +46,9 @@ class MainActivity : ComponentActivity() {
     private var downloadProgress by mutableFloatStateOf(0f)
     private var openDialog by mutableStateOf(false)
 
+    private lateinit var navController: NavHostController
+    private var isIntentHandled = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -52,7 +57,7 @@ class MainActivity : ComponentActivity() {
 
         lifecycleScope.launch {
             versionResult = withContext(Dispatchers.IO) {
-                 fetchRemoteVersionCode()
+                fetchRemoteVersionCode()
             }
             when (versionResult) {
                 is Resource.Success -> {
@@ -61,9 +66,11 @@ class MainActivity : ComponentActivity() {
                         logd("Версия приложения на сервере: ${versionResult.data}")
                     }
                 }
+
                 is Resource.Error -> {
                     logd("Ошибка при проверке наличия обновления: ${versionResult.message}")
                 }
+
                 else -> {}
             }
         }
@@ -74,7 +81,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavHost(onAppSettingsClick = ::openAppSettings)
+                    navController = rememberNavController()
+                    AppNavHost(
+                        navController = navController,
+                        onAppSettingsClick = ::openAppSettings
+                    )
                     if (openDialog && downloadProgress != 1f) {
                         UpdateDialog(
                             downloadProgress = downloadProgress,
@@ -85,6 +96,19 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!isIntentHandled && ::navController.isInitialized) {
+            handleNotificationIntent(intent)
+            isIntentHandled = true
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        handleNotificationIntent(intent)
     }
 
     private fun fetchRemoteVersionCode(): Resource<String> {
@@ -116,6 +140,46 @@ class MainActivity : ComponentActivity() {
             .build()
         downloadManager?.download()
     }
+
+    private fun handleNotificationIntent(intent: Intent?) {
+        if (intent?.hasExtra("url") == true) {
+            val url = intent.getStringExtra("url")
+            val number = intent.getStringExtra("number")
+            val hearingDateTime = intent.getStringExtra("hearingDateTime")
+            val actDateForce = intent.getStringExtra("actDateForce")
+            val actTextUrl = intent.getStringExtra("actTextUrl")
+            val courtTitle = intent.getStringExtra("courtTitle")
+
+            val detailScreenRoute = Screen.Detail.route +
+                            "?url=${Uri.encode(url)}" +
+                            "&number=${Uri.encode(number)}" +
+                            "&hearingDateTime=${Uri.encode(hearingDateTime)}" +
+                            "&actDateForce=${Uri.encode(actDateForce)}" +
+                            "&actTextUrl=${Uri.encode(actTextUrl)}" +
+                            "&courtTitle=${Uri.encode(courtTitle)}"
+
+            val detailScreenIntent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                putExtra("route", detailScreenRoute)
+            }
+            startActivity(detailScreenIntent)
+            finish()
+
+//            navController.currentBackStackEntry?.let { currentScreen ->
+//                navController.navigate(
+//                    Screen.Detail.route +
+//                            "?url=${Uri.encode(url)}" +
+//                            "&number=${Uri.encode(number)}" +
+//                            "&hearingDateTime=${Uri.encode(hearingDateTime)}" +
+//                            "&actDateForce=${Uri.encode(actDateForce)}" +
+//                            "&actTextUrl=${Uri.encode(actTextUrl)}" +
+//                            "&courtTitle=${Uri.encode(courtTitle)}"
+//                ) {
+//                    popUpTo(currentScreen.id) { inclusive = true }
+//                }
+//            }
+        }
+    }
 }
 
 fun Activity.openAppSettings() {
@@ -126,5 +190,8 @@ fun Activity.openAppSettings() {
 }
 
 fun Any.logd(message: String) {
-    Log.d("TESTLOG", "[${this.javaClass.simpleName}] ${Thread.currentThread().stackTrace[3].methodName}: $message")
+    val tag = "TESTLOG"
+    val className = "[${this.javaClass.simpleName}]"
+    val methodName = Thread.currentThread().stackTrace[3].methodName
+    Log.d(tag, "$className $methodName: $message")
 }

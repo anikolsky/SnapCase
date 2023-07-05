@@ -14,14 +14,14 @@ plugins {
 
 android {
     namespace = "com.omtorney.snapcase"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.omtorney.snapcase"
         minSdk = 26
-        targetSdk = 33
-        versionCode = 6
-        versionName = "0.6"
+        targetSdk = 34
+        versionCode = 7
+        versionName = "0.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -66,7 +66,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.6"
+        kotlinCompilerExtensionVersion = "1.4.8"
     }
     packaging {
         resources {
@@ -83,15 +83,15 @@ dependencies {
     val hiltWork = "1.0.0"
     val lifecycleVersion = "2.6.1"
     val navVersion = "2.6.0"
-    val roomVersion = "2.5.1"
+    val roomVersion = "2.5.2"
 
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation("androidx.compose.ui:ui:$composeUiVersion")
     implementation("androidx.compose.ui:ui-tooling-preview:$composeUiVersion")
-    implementation("androidx.compose.material3:material3:1.1.0")
+    implementation("androidx.compose.material3:material3:1.1.1")
 
-    implementation("androidx.compose.runtime:runtime-livedata:1.5.0-beta02")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.0-alpha01")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 //    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("org.jsoup:jsoup:1.16.1")

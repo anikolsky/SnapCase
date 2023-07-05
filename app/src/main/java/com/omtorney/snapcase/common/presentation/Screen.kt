@@ -9,6 +9,7 @@ sealed class Screen(val route: String, @StringRes val title: Int, @DrawableRes v
     object Schedule : Screen("schedule_screen", R.string.schedule, null)
     object Search : Screen("search_screen", R.string.search, null)
     object Detail : Screen("detail_screen", R.string.detail, null)
+    object DetailNotification : Screen("detail_notification_screen", R.string.detail, null)
     object Favorites : Screen("favorites_screen", R.string.favorites, R.drawable.ic_round_case)
     object Recent : Screen("recent_screen", R.string.recent, R.drawable.ic_round_history)
     object Act : Screen("act_screen", R.string.act, null)

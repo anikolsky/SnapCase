@@ -37,7 +37,7 @@ class SettingsViewModel @Inject constructor(
                 workInfos.firstOrNull()
             }
 
-    private val backgroundCheckPeriodState: StateFlow<CheckPeriod> = settings.getCaseCheckPeriod.stateIn(
+    private val backgroundCheckPeriodState: StateFlow<CheckPeriod> = settings.caseCheckPeriod.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
         initialValue = CheckPeriod.ONE_HOUR
@@ -45,8 +45,12 @@ class SettingsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val savedBackgroundCheckPeriod = settings.getCaseCheckPeriod.first()
-            _state.value = state.value.copy(backgroundCheckPeriod = savedBackgroundCheckPeriod)
+            val savedBackgroundCheckPeriod = settings.caseCheckPeriod.first()
+            val isDarkThemeEnabled = settings.darkThemeEnabled.first()
+            _state.value = state.value.copy(
+                backgroundCheckPeriod = savedBackgroundCheckPeriod,
+                isDarkThemeEnabled = isDarkThemeEnabled
+            )
         }
     }
 
@@ -71,6 +75,13 @@ class SettingsViewModel @Inject constructor(
                     _state.value = state.value.copy(
                         visiblePermissionDialogQueue = state.value.visiblePermissionDialogQueue + event.permission
                     )
+                }
+            }
+
+            is SettingsEvent.EnableDarkTheme -> {
+                viewModelScope.launch {
+                    settings.enableDarkTheme(event.enabled)
+                    _state.value = state.value.copy(isDarkThemeEnabled = settings.darkThemeEnabled.first())
                 }
             }
 

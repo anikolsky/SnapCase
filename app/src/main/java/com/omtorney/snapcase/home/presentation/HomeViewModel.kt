@@ -19,7 +19,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            settings.getSelectedCourt.collect { courtTitle ->
+            settings.selectedCourt.collect { courtTitle ->
                 _state.value = state.value.copy(selectedCourt = courtTitle)
             }
         }

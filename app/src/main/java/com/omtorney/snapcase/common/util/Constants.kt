@@ -16,4 +16,6 @@ object Constants {
     const val WORKER_ERROR_MSG_KEY = "error_message"
     const val WORK_ONETIME_INTERVAL = 3L
     const val WORK_REPEAT_INTERVAL = 60L
+
+    const val DEEPLINK_URI = "app://com.omtorney.snapcase"
 }
