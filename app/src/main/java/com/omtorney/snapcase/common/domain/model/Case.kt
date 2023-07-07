@@ -10,28 +10,28 @@ import com.google.gson.reflect.TypeToken
 @Entity(tableName = "cases")
 data class Case(
     @PrimaryKey
-    var number: String = "",
-    var uid: String = "",
-    var url: String = "",
-    @ColumnInfo(name = "hearing_date_time")
-    var hearingDateTime: String = "",
-    var category: String = "",
-    var type: String = "", // KAS, GK etc
-    var participants: String = "",
-    var judge: String = "",
-    @ColumnInfo(name = "act_date_time")
-    var actDateTime: String = "",
+    var number: String,
+    var uid: String,
+    var url: String,
+    var courtTitle: String,
+    var type: String, // KAS, GK etc
+    var category: String,
+    var judge: String,
+    var participants: String,
     @ColumnInfo(name = "receipt_date")
-    var receiptDate: String = "",
-    var result: String = "",
+    var receiptDate: String,
+    @ColumnInfo(name = "hearing_date_time")
+    var hearingDateTime: String,
+    var result: String,
+    @ColumnInfo(name = "act_date_time")
+    var actDateTime: String,
     @ColumnInfo(name = "act_date_force")
-    var actDateForce: String = "",
+    var actDateForce: String,
     @ColumnInfo(name = "act_text_url")
-    var actTextUrl: String = "",
+    var actTextUrl: String,
+    var notes: String,
     var process: MutableList<ProcessStep> = mutableListOf(),
-    var appeal: MutableMap<String, String> = mutableMapOf(),
-    var courtTitle: String = "",
-    var notes: String = ""
+    var appeal: MutableMap<String, String> = mutableMapOf()
 ) {
     override fun toString() = "url=$url" +
             ", number=$number" +

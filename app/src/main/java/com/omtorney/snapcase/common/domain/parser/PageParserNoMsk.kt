@@ -20,7 +20,7 @@ class PageParserNoMsk @Inject constructor(
             val rowColumns = row.select("td")
             if (rowColumns.size == 8) {
                 // If it's a case row
-                var case = Case()
+                var case = Case("", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
                 val number = getCaseNumber(rowColumns[1].text())
                 val info = rowColumns[4].text()
                 case = defineBasicData(info, case)
@@ -51,7 +51,7 @@ class PageParserNoMsk @Inject constructor(
         val caseRows = document.select("#tablcont tr[valign=top]")
         return caseRows.map { element ->
             val rowColumns = element.select("td")
-            var case = Case()
+            var case = Case("", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
             val number = getCaseNumber(rowColumns[0].text())
             val info = rowColumns[2].text()
             case = defineBasicData(info, case)
@@ -73,9 +73,6 @@ class PageParserNoMsk @Inject constructor(
 
     override suspend fun fetchCase(case: Case): Case {
         val document = repository.getJsoupDocument(case.url)
-        val participants = mutableListOf<String>()
-        val appeal = mutableMapOf<String, String>()
-
         val caseElement = document?.selectFirst("div#cont1 table#tablcont")
         val processElement = document?.selectFirst("div#cont2 table#tablcont")
         val participantsElement = document?.selectFirst("div#cont3 table#tablcont")
@@ -83,18 +80,34 @@ class PageParserNoMsk @Inject constructor(
         // 3 и 4 вкладки могут быть разными, определять содержание по тексту:
         // "ОБЖАЛОВАНИЕ ПРИГОВОРОВ ОПРЕДЕЛЕНИЙ (ПОСТ.)", "СТОРОНЫ" и т.д.
 
-        participantsElement?.select("tr")
-            ?.drop(2)
-            ?.forEach { row ->
-                val columns = row.select("td")
-                val type = columns[0].text().trim()
-                val name = columns[1].text().trim()
-                if (type.isNotEmpty() && name.isNotEmpty()) {
-                    participants.add("$type: $name")
-                }
-            }
+        val participants = fetchParticipants(participantsElement)
+        val processSteps = fetchProcess(processElement)
+        val appeal = fetchAppeal(appealElement)
+        case.process.clear()
 
-        val processSteps = processElement?.select("tr")
+        return Case(
+            url = case.url, // caseElement?.getUrl()  ?: "",
+            uid = caseElement?.getContent("a") ?: "",
+            number = case.number,
+            hearingDateTime = case.hearingDateTime,
+            category = caseElement?.getContentOfTd("Категория дела") ?: "",
+            type = "",
+            participants = participants.sorted().joinToString("\n"),
+            judge = caseElement?.getContentOfTd("Судья") ?: "",
+            receiptDate = caseElement?.getContentOfTd("Дата поступления") ?: "",
+            result = caseElement?.getContentOfTd("Результат рассмотрения") ?: "",
+            actDateTime = caseElement?.getContentOfTd("Дата рассмотрения") ?: "",
+            actDateForce = case.actDateForce,
+            actTextUrl = case.actTextUrl,
+            courtTitle = case.courtTitle,
+            notes = "",
+            process = processSteps,
+            appeal = appeal
+        )
+    }
+
+    override fun fetchProcess(element: Element?): MutableList<ProcessStep> {
+        return element?.select("tr")
             ?.drop(2)
             ?.map { row ->
                 val tdElements = row.select("td")
@@ -107,34 +120,33 @@ class PageParserNoMsk @Inject constructor(
                     dateOfPublishing = tdElements[7].ownText()
                 )
             }?.toMutableList() ?: mutableListOf()
+    }
 
-        case.process.clear()
-
-        val appealRows = appealElement?.select("tr")?.drop(2)
+    override fun fetchAppeal(element: Element?): MutableMap<String, String> {
+        val appeal = mutableMapOf<String, String>()
+        val appealRows = element?.select("tr")?.drop(2)
         appealRows?.forEach { row ->
             val tdElements = row.select("td")
             val fieldName = tdElements[0].text().trim()
             val fieldValue = tdElements.last()?.text()?.trim() ?: ""
             appeal[fieldName] = fieldValue
         }
+        return appeal
+    }
 
-        return Case(
-            url = case.url, // caseElement?.getUrl()  ?: "",
-            uid = caseElement?.getContent("a") ?: "",
-            number = case.number,
-            hearingDateTime = case.hearingDateTime,
-            category = caseElement?.getContentOfTd("Категория дела") ?: "",
-            participants = participants.sorted().joinToString("\n"),
-            judge = caseElement?.getContentOfTd("Судья") ?: "",
-            receiptDate = caseElement?.getContentOfTd("Дата поступления") ?: "",
-            result = caseElement?.getContentOfTd("Результат рассмотрения") ?: "",
-            actDateTime = caseElement?.getContentOfTd("Дата рассмотрения") ?: "",
-            actDateForce = case.actDateForce,
-            actTextUrl = case.actTextUrl,
-            process = processSteps,
-            appeal = appeal,
-            courtTitle = case.courtTitle
-        )
+    override fun fetchParticipants(element: Element?): MutableList<String> {
+        val participants = mutableListOf<String>()
+        element?.select("tr")
+            ?.drop(2)
+            ?.forEach { row ->
+                val columns = row.select("td")
+                val type = columns[0].text().trim()
+                val name = columns[1].text().trim()
+                if (type.isNotEmpty() && name.isNotEmpty()) {
+                    participants.add("$type: $name")
+                }
+            }
+        return participants
     }
 
     override suspend fun extractActText(url: String): String {

@@ -2,6 +2,7 @@ package com.omtorney.snapcase.common.domain.parser
 
 import com.omtorney.snapcase.common.domain.court.Court
 import com.omtorney.snapcase.common.domain.model.Case
+import com.omtorney.snapcase.common.domain.model.ProcessStep
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
@@ -16,6 +17,18 @@ class PageParserMsk : PageParser {
     }
 
     override suspend fun fetchCase(case: Case): Case {
+        TODO("Not yet implemented")
+    }
+
+    override fun fetchProcess(element: Element?): MutableList<ProcessStep> {
+        TODO("Not yet implemented")
+    }
+
+    override fun fetchAppeal(element: Element?): MutableMap<String, String> {
+        TODO("Not yet implemented")
+    }
+
+    override fun fetchParticipants(element: Element?): MutableList<String> {
         TODO("Not yet implemented")
     }
 

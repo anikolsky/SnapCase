@@ -38,12 +38,21 @@ class DetailViewModel @Inject constructor(
         val courtTitle = savedStateHandle.get<String>("courtTitle") ?: ""
         _state.value = DetailState(
             case = Case(
-                url = url,
                 number = number,
+                uid = "",
+                url = url,
+                courtTitle = courtTitle,
+                type = "",
+                category = "",
+                judge = "",
+                participants = "",
+                receiptDate = "",
                 hearingDateTime = hearingDateTime,
+                result = "",
+                actDateTime = "",
                 actDateForce = actDateForce,
                 actTextUrl = actTextUrl,
-                courtTitle = courtTitle
+                notes = ""
             )
         )
         onEvent(DetailEvent.Load(Courts.getCourt(courtTitle)))
@@ -78,7 +87,7 @@ class DetailViewModel @Inject constructor(
 
                             is Resource.Success -> {
                                 _state.value = state.value.copy(
-                                    case = result.data ?: Case(),
+                                    case = result.data ?: Case("", "", "", "", "", "", "", "", "", "", "", "", "", "", ""),
                                     isLoading = false
                                 )
                                 if (state.value.isFavorite) {

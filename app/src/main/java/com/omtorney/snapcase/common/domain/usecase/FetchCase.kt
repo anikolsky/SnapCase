@@ -22,8 +22,8 @@ class FetchCase @Inject constructor(
             } else {
                 emit(Resource.Loading())
             }
-            val page = PageParserFactory(repository).create(court)
-            val fetchedCase = page.fetchCase(case)
+            val parser = PageParserFactory(repository).create(court)
+            val fetchedCase = parser.fetchCase(case)
 //            repository.saveCase(case = fetchedCase)
             emit(Resource.Success(data = fetchedCase))
         } catch (e: Exception) {

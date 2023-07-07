@@ -27,7 +27,7 @@ abstract class CourtNoMsk(
                     "&g1_case__JUDICIAL_UIDSS=" +
                     "&delo_table=g1_case" +
                     "&g1_case__ENTRY_DATE1D=" +
-                    "&g1_case__ENTRY_DATE2D=" + getSearchQueryCommonUrlPart(caseType)
+                    "&g1_case__ENTRY_DATE2D=" + getSearchQueryCommonUrl(caseType)
 
             CaseType.KAS -> baseUrl +
                     "/modules.php?name=sud_delo" +
@@ -44,11 +44,11 @@ abstract class CourtNoMsk(
                     "&p1_case__ENTRY_DATE2D=" +
                     "&P1_CASE__PREV_CASE_NUMBERSS=" +
                     "&P1_CASE__MASTER_CASE_NUMBERSS=" +
-                    "&P1_CASE__ESSENCE=" + getSearchQueryCommonUrlPart(caseType)
+                    "&P1_CASE__ESSENCE=" + getSearchQueryCommonUrl(caseType)
         }
     }
 
-    private fun getSearchQueryCommonUrlPart(caseType: CaseType): String {
+    private fun getSearchQueryCommonUrl(caseType: CaseType): String {
         val key1 = when (caseType) {
             CaseType.GPK -> "G1"
             CaseType.KAS -> "P1"
