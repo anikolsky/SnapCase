@@ -10,6 +10,7 @@ import androidx.work.WorkManager
 import com.omtorney.snapcase.common.data.database.AppDatabase
 import com.omtorney.snapcase.common.data.database.CaseDao
 import com.omtorney.snapcase.common.util.Constants.DATA_STORE_NAME
+import com.omtorney.snapcase.network.NetworkStateManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,5 +49,11 @@ object AppModule {
     @Singleton
     fun provideWorkManager(@ApplicationContext appContext: Context): WorkManager {
         return WorkManager.getInstance(appContext)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNetworkStateManager(@ApplicationContext appContext: Context): NetworkStateManager {
+        return NetworkStateManager(appContext)
     }
 }

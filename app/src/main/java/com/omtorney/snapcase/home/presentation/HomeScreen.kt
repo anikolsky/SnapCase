@@ -2,6 +2,7 @@ package com.omtorney.snapcase.home.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -30,9 +31,11 @@ import com.omtorney.snapcase.common.presentation.components.BottomBar
 import com.omtorney.snapcase.common.presentation.components.SettingsButton
 import com.omtorney.snapcase.common.presentation.components.TopBar
 import com.omtorney.snapcase.common.presentation.components.TopBarTitle
+import com.omtorney.snapcase.home.presentation.components.NetworkStateNotification
 import com.omtorney.snapcase.home.presentation.components.ScheduleBlock
 import com.omtorney.snapcase.home.presentation.components.SearchBlock
 import com.omtorney.snapcase.home.presentation.components.SpinnerBlock
+import com.omtorney.snapcase.network.NetworkState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -134,6 +137,8 @@ fun HomeScreen(
                     onSearchClick(caseType, selectedCourt, query)
                 }
             )
+            Spacer(modifier = Modifier.weight(1f))
+            NetworkStateNotification(state)
         }
     }
 
