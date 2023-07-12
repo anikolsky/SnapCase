@@ -14,7 +14,11 @@ import javax.inject.Inject
 class FetchCase @Inject constructor(
     private val repository: Repository
 ) {
-    suspend operator fun invoke(case: Case, court: Court): Flow<Resource<Case>> = flow {
+    suspend operator fun invoke(
+        case: Case,
+        court: Court,
+        isFavorite: Boolean
+    ): Flow<Resource<Case>> = flow {
         try {
             val savedCase = repository.getCaseByNumber(case.number)
             if (savedCase != null) {
@@ -23,7 +27,7 @@ class FetchCase @Inject constructor(
                 emit(Resource.Loading())
             }
             val parser = PageParserFactory(repository).create(court)
-            val fetchedCase = parser.fetchCase(case)
+            val fetchedCase = parser.fetchCase(case, isFavorite)
 //            repository.saveCase(case = fetchedCase)
             emit(Resource.Success(data = fetchedCase))
         } catch (e: Exception) {

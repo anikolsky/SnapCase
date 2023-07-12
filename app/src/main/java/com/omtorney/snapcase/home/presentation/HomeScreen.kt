@@ -1,8 +1,8 @@
 package com.omtorney.snapcase.home.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -20,7 +20,9 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
@@ -35,7 +37,6 @@ import com.omtorney.snapcase.home.presentation.components.NetworkStateNotificati
 import com.omtorney.snapcase.home.presentation.components.ScheduleBlock
 import com.omtorney.snapcase.home.presentation.components.SearchBlock
 import com.omtorney.snapcase.home.presentation.components.SpinnerBlock
-import com.omtorney.snapcase.network.NetworkState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -52,7 +53,7 @@ fun HomeScreen(
 ) {
     var datePickerOpened by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
-    var caseType by remember { mutableStateOf(CaseType.GPK.title) }
+    var caseType by rememberSaveable { mutableStateOf(CaseType.GPK.title) }
     var pickedDate by remember { mutableStateOf(LocalDate.now()) }
     val selectedCourt = state.selectedCourt
     val shape = MaterialTheme.shapes.extraSmall
@@ -80,7 +81,6 @@ fun HomeScreen(
 //        }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
         topBar = {
             TopBar {
                 TopBarTitle(
@@ -94,51 +94,58 @@ fun HomeScreen(
         },
         bottomBar = { BottomBar(navController = navController) }
     ) { paddingValues ->
-        Column(
+        Box(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .verticalScroll(scrollState),
-            verticalArrangement = Arrangement.Center
         ) {
-            SpinnerBlock(
-                title = "Выберите суд",
-                items = Courts.getCourtList().map { it.title },
-                selectedItem = selectedCourt,
-                accentColor = accentColor,
-                shape = shape,
-                onItemSelected = { courtTitle -> onEvent(HomeEvent.SetSelectedCourt(courtTitle)) }
+            Column(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .verticalScroll(scrollState),
+                verticalArrangement = Arrangement.Center
+            ) {
+                SpinnerBlock(
+                    title = "Выберите суд",
+                    items = Courts.getCourtList().map { it.title },
+                    selectedItem = selectedCourt,
+                    accentColor = accentColor,
+                    shape = shape,
+                    onItemSelected = { courtTitle -> onEvent(HomeEvent.SetSelectedCourt(courtTitle)) }
+                )
+                ScheduleBlock(
+                    date = formattedDate,
+                    court = selectedCourt,
+                    accentColor = accentColor,
+                    shape = shape,
+                    onOpenClick = { datePickerOpened = true },
+                    onScheduleClick = { date, court ->
+                        onScheduleClick(date, court)
+                    }
+                )
+                SpinnerBlock(
+                    title = "Выберите вид производства",
+                    items = listOf(
+                        CaseType.GPK.title,
+                        CaseType.KAS.title
+                    ),
+                    selectedItem = caseType,
+                    accentColor = accentColor,
+                    shape = shape,
+                    onItemSelected = { caseType = it }
+                )
+                SearchBlock(
+                    accentColor = accentColor,
+                    shape = shape,
+                    onSearchClick = { query ->
+                        onSearchClick(caseType, selectedCourt, query)
+                    }
+                )
+            }
+            NetworkStateNotification(
+                state = state,
+                modifier = Modifier.align(Alignment.BottomCenter)
             )
-            ScheduleBlock(
-                date = formattedDate,
-                court = selectedCourt,
-                accentColor = accentColor,
-                shape = shape,
-                onOpenClick = { datePickerOpened = true },
-                onScheduleClick = { date, court ->
-                    onScheduleClick(date, court)
-                }
-            )
-            SpinnerBlock(
-                title = "Выберите вид производства",
-                items = listOf(
-                    CaseType.GPK.title,
-                    CaseType.KAS.title
-                ),
-                selectedItem = caseType,
-                accentColor = accentColor,
-                shape = shape,
-                onItemSelected = { caseType = it }
-            )
-            SearchBlock(
-                accentColor = accentColor,
-                shape = shape,
-                onSearchClick = { query ->
-                    onSearchClick(caseType, selectedCourt, query)
-                }
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            NetworkStateNotification(state)
         }
     }
 

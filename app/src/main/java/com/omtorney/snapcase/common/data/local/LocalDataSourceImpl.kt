@@ -10,20 +10,16 @@ class LocalDataSourceImpl @Inject constructor(
 ) : LocalDataSource {
 
     override suspend fun saveCase(case: Case) {
-        caseDao.insert(case)
+        caseDao.upsert(case)
     }
 
     override suspend fun deleteFavorite(case: Case) {
         caseDao.delete(case)
     }
 
-    override suspend fun checkCase(number: String): Int {
-        return caseDao.checkCase(number)
+    override suspend fun checkCase(uid: String): Int {
+        return caseDao.checkCase(uid)
     }
-
-//    override suspend fun clearRecentCases() {
-//        caseDao.deleteRecentCases()
-//    }
 
     override suspend fun getCaseByNumber(number: String): Case? {
         return caseDao.getCaseByNumber(number)
@@ -32,8 +28,4 @@ class LocalDataSourceImpl @Inject constructor(
     override fun getFavoriteCases(): Flow<List<Case>> {
         return caseDao.getFavoriteCases()
     }
-
-//    override fun getRecentCases(): Flow<List<Case>> {
-//        return caseDao.getRecentCases()
-//    }
 }

@@ -10,20 +10,14 @@ interface CaseDao {
     @Query("SELECT * FROM cases")
     fun getFavoriteCases(): Flow<List<Case>>
 
-//    @Query("SELECT * FROM cases WHERE is_favorite = 0")
-//    fun getRecentCases(): Flow<List<Case>>
-
     @Query("SELECT * FROM cases WHERE number = :number")
     suspend fun getCaseByNumber(number: String): Case?
 
-    @Query("SELECT COUNT() FROM cases WHERE number = :number")
-    suspend fun checkCase(number: String): Int
+    @Query("SELECT COUNT() FROM cases WHERE uid = :uid")
+    suspend fun checkCase(uid: String): Int
 
-//    @Query("DELETE FROM cases WHERE is_favorite = 0")
-//    suspend fun deleteRecentCases()
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(case: Case)
+    @Upsert
+    suspend fun upsert(case: Case)
 
     @Delete
     suspend fun delete(case: Case)

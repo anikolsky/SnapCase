@@ -5,10 +5,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -69,14 +68,13 @@ fun ScheduleScreen(
                 enter = fadeIn() + slideInVertically(),
                 exit = fadeOut() + slideOutVertically()
             ) {
-                Column {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     JudgeFilter(
                         judgeList = judgeList,
                         selectedJudge = selectedJudge,
                         accentColor = accentColor,
                         onEvent = onEvent
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
                     ParticipantFilter(
                         query = participantQuery,
                         accentColor = accentColor,

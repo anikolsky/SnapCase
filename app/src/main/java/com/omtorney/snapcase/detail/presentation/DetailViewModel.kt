@@ -30,33 +30,34 @@ class DetailViewModel @Inject constructor(
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
-        val url = Uri.decode(savedStateHandle.get<String>("url")) ?: ""
-        val number = Uri.decode(savedStateHandle.get<String>("number")) ?: ""
-        val hearingDateTime = savedStateHandle.get<String>("hearingDateTime") ?: ""
-        val actDateForce = savedStateHandle.get<String>("actDateForce") ?: ""
-        val actTextUrl = Uri.decode(savedStateHandle.get<String>("actTextUrl")) ?: ""
-        val courtTitle = savedStateHandle.get<String>("courtTitle") ?: ""
-        _state.value = DetailState(
-            case = Case(
-                number = number,
-                uid = "",
-                url = url,
-                courtTitle = courtTitle,
-                type = "",
-                category = "",
-                judge = "",
-                participants = "",
-                receiptDate = "",
-                hearingDateTime = hearingDateTime,
-                result = "",
-                actDateTime = "",
-                actDateForce = actDateForce,
-                actTextUrl = actTextUrl,
-                notes = ""
-            )
+        fun dec(arg: String) = Uri.decode(savedStateHandle.get<String>(arg)) ?: ""
+
+        val case = Case(
+            number = dec("number"),
+            uid = dec("uid"),
+            url = dec("url"),
+            permanentUrl = dec("permanentUrl"),
+            courtTitle = dec("courtTitle"),
+            type = "",
+            category = "",
+            judge = "",
+            participants = "",
+            receiptDate = "",
+            hearingDateTime = dec("hearingDateTime"),
+            result = "",
+            actDateTime = "",
+            actDateForce = dec("actDateForce"),
+            actTextUrl = dec("actTextUrl"),
+            notes = ""
         )
-        onEvent(DetailEvent.Load(Courts.getCourt(courtTitle)))
-        checkFavorite()
+
+        if (case.uid.isNotEmpty()) {
+            _state.value = DetailState(case = case, isFavorite = true)
+        } else {
+            _state.value = DetailState(case = case)
+        }
+
+        onEvent(DetailEvent.Load(Courts.getCourt(case.courtTitle)))
     }
 
     fun onEvent(event: DetailEvent) {
@@ -64,7 +65,7 @@ class DetailViewModel @Inject constructor(
             is DetailEvent.Save -> {
                 viewModelScope.launch {
                     useCases.saveCase(event.case)
-                    checkFavorite()
+                    checkIsFavorite()
                     _eventFlow.emit(UiEvent.Save)
                 }
             }
@@ -72,14 +73,15 @@ class DetailViewModel @Inject constructor(
             is DetailEvent.Delete -> {
                 viewModelScope.launch {
                     useCases.deleteCase(event.case)
-                    checkFavorite()
+                    checkIsFavorite()
+                    _state.value = state.value.copy(isFavorite = false)
                     _eventFlow.emit(UiEvent.Delete)
                 }
             }
 
             is DetailEvent.Load -> {
                 viewModelScope.launch {
-                    useCases.fetchCase(state.value.case, event.court).collect { result ->
+                    useCases.fetchCase(state.value.case, event.court, state.value.isFavorite).collect { result ->
                         when (result) {
                             is Resource.Loading -> {
                                 _state.value = state.value.copy(isLoading = true)
@@ -87,7 +89,7 @@ class DetailViewModel @Inject constructor(
 
                             is Resource.Success -> {
                                 _state.value = state.value.copy(
-                                    case = result.data ?: Case("", "", "", "", "", "", "", "", "", "", "", "", "", "", ""),
+                                    case = result.data ?: Case("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""),
                                     isLoading = false
                                 )
                                 if (state.value.isFavorite) {
@@ -108,9 +110,9 @@ class DetailViewModel @Inject constructor(
         }
     }
 
-    private fun checkFavorite() {
+    private fun checkIsFavorite() {
         viewModelScope.launch {
-            val isFavorite = useCases.checkCase(state.value.case.number)
+            val isFavorite = useCases.checkCase(state.value.case.uid)
             _state.value = state.value.copy(isFavorite = isFavorite)
         }
     }

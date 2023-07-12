@@ -20,20 +20,20 @@ class PageParserNoMsk @Inject constructor(
             val rowColumns = row.select("td")
             if (rowColumns.size == 8) {
                 // If it's a case row
-                var case = Case("", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+                var case = Case("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
                 val number = getCaseNumber(rowColumns[1].text())
                 val info = rowColumns[4].text()
                 case = defineBasicData(info, case)
                 case = case.copy(
-                    url = court.baseUrl + rowColumns[1].child(0).attr("href"),
                     number = number,
-                    hearingDateTime = rowColumns[2].text(),
+                    url = court.baseUrl + rowColumns[1].child(0).attr("href"),
+                    courtTitle = court.title,
 //                    category = getCaseCategory(info),
-//                    participants = "${getPlaintiff(info)}\n${getDefendant(info)}",
                     judge = rowColumns[5].text(),
+//                    participants = "${getPlaintiff(info)}\n${getDefendant(info)}",
+                    hearingDateTime = rowColumns[2].text(),
                     result = rowColumns[6].text(),
-                    actTextUrl = getCaseActUrl(rowColumns[7], court),
-                    courtTitle = court.title
+                    actTextUrl = getCaseActUrl(rowColumns[7], court)
                 )
                 caseList.add(case)
             } else {
@@ -51,55 +51,66 @@ class PageParserNoMsk @Inject constructor(
         val caseRows = document.select("#tablcont tr[valign=top]")
         return caseRows.map { element ->
             val rowColumns = element.select("td")
-            var case = Case("", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+            var case = Case("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
             val number = getCaseNumber(rowColumns[0].text())
             val info = rowColumns[2].text()
             case = defineBasicData(info, case)
             case.copy(
-                url = court.baseUrl + rowColumns.first()?.child(0)?.attr("href"),
                 number = number,
-                receiptDate = rowColumns[1].text(),
+                url = court.baseUrl + rowColumns.first()?.child(0)?.attr("href"),
+                courtTitle = court.title,
 //                category = getCaseCategory(info),
-//                participants = "${getPlaintiff(info)}\n${getDefendant(info)}",
                 judge = rowColumns[3].text(),
-                actDateTime = rowColumns[4].text(),
+//                participants = "${getPlaintiff(info)}\n${getDefendant(info)}",
+                receiptDate = rowColumns[1].text(),
                 result = rowColumns[5].text(),
+                actDateTime = rowColumns[4].text(),
                 actDateForce = rowColumns[6].text(),
-                actTextUrl = getCaseActUrl(rowColumns[7], court),
-                courtTitle = court.title
+                actTextUrl = getCaseActUrl(rowColumns[7], court)
             )
         }
     }
 
-    override suspend fun fetchCase(case: Case): Case {
-        val document = repository.getJsoupDocument(case.url)
+    override suspend fun fetchCase(case: Case, isFavorite: Boolean): Case {
+        var actualUrl = case.url
+        var actualNumber = case.number
+
+        if (isFavorite) {
+            val uidCard = repository.getJsoupDocument(case.permanentUrl)
+            val uidElement = uidCard?.selectFirst("div#resultTable table#tablcont")
+            val lastUrl = uidElement?.select("a")?.last()
+            actualUrl = lastUrl?.absUrl("href") ?: case.url
+            actualNumber = lastUrl?.text() ?: case.number
+        }
+
+        val document = repository.getJsoupDocument(actualUrl)
         val caseElement = document?.selectFirst("div#cont1 table#tablcont")
         val processElement = document?.selectFirst("div#cont2 table#tablcont")
         val participantsElement = document?.selectFirst("div#cont3 table#tablcont")
         val appealElement = document?.selectFirst("div#cont4 table#tablcont")
-        // 3 и 4 вкладки могут быть разными, определять содержание по тексту:
-        // "ОБЖАЛОВАНИЕ ПРИГОВОРОВ ОПРЕДЕЛЕНИЙ (ПОСТ.)", "СТОРОНЫ" и т.д.
-
+        // TODO 3 и 4 вкладки могут быть разными, определять содержание по тексту:
+        //  "ОБЖАЛОВАНИЕ ПРИГОВОРОВ ОПРЕДЕЛЕНИЙ (ПОСТ.)", "СТОРОНЫ" и т.д.
         val participants = fetchParticipants(participantsElement)
         val processSteps = fetchProcess(processElement)
         val appeal = fetchAppeal(appealElement)
         case.process.clear()
 
         return Case(
-            url = case.url, // caseElement?.getUrl()  ?: "",
-            uid = caseElement?.getContent("a") ?: "",
-            number = case.number,
-            hearingDateTime = case.hearingDateTime,
-            category = caseElement?.getContentOfTd("Категория дела") ?: "",
+            number = getCaseNumber(actualNumber),
+            uid = caseElement?.selectFirst("a")?.text() ?: "",
+            url = actualUrl,
+            permanentUrl = case.permanentUrl.ifEmpty { caseElement?.getUrl() ?: "" },
+            courtTitle = case.courtTitle,
             type = "",
-            participants = participants.sorted().joinToString("\n"),
+            category = caseElement?.getContentOfTd("Категория дела") ?: "",
             judge = caseElement?.getContentOfTd("Судья") ?: "",
+            participants = participants.sorted().joinToString("\n"),
             receiptDate = caseElement?.getContentOfTd("Дата поступления") ?: "",
+            hearingDateTime = case.hearingDateTime,
             result = caseElement?.getContentOfTd("Результат рассмотрения") ?: "",
             actDateTime = caseElement?.getContentOfTd("Дата рассмотрения") ?: "",
             actDateForce = case.actDateForce,
             actTextUrl = case.actTextUrl,
-            courtTitle = case.courtTitle,
             notes = "",
             process = processSteps,
             appeal = appeal
@@ -242,11 +253,11 @@ class PageParserNoMsk @Inject constructor(
         }
     }
 
-    override fun getCaseNumber(numberString: String): String {
-        return if (numberString.contains("~"))
-            numberString.substring(0, numberString.indexOf("~") - 1)
+    override fun getCaseNumber(number: String): String {
+        return if (number.contains("~"))
+            number.substring(0, number.indexOf("~") - 1)
         else
-            numberString
+            number
     }
 
     override fun getCaseActUrl(element: Element, court: Court): String {
@@ -284,14 +295,10 @@ class PageParserNoMsk @Inject constructor(
     }
 }
 
-fun Element?.getContent(cssQuery: String): String {
-    return this?.selectFirst(cssQuery)?.ownText() ?: ""
-}
-
 fun Element?.getContentOfTd(query: String): String {
     return this?.selectFirst("td:contains($query) + td")?.ownText() ?: ""
 }
 
-//fun Element?.getUrl(): String {
-//    return this?.selectFirst("a")?.absUrl("href") ?: ""
-//}
+fun Element?.getUrl(): String {
+    return this?.selectFirst("a")?.absUrl("href") ?: ""
+}

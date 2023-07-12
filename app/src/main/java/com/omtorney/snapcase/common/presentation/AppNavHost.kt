@@ -103,12 +103,14 @@ fun AppNavHost(
                 accentColor = Color(accentColor),
                 onCardClick = { case ->
                     navigateToDetail(
-                        url = case.url,
                         number = case.number,
+                        uid = case.uid,
+                        url = case.url,
+                        permanentUrl = case.permanentUrl,
+                        courtTitle = case.courtTitle,
                         hearingDateTime = "",
                         actDateForce = case.actDateForce,
                         actTextUrl = case.actTextUrl,
-                        courtTitle = case.courtTitle,
                         currentScreen = backStackEntry,
                         navController = navController
                     )
@@ -139,12 +141,14 @@ fun AppNavHost(
                 },
                 onCardClick = { case ->
                     navigateToDetail(
-                        url = case.url,
                         number = case.number,
+                        uid = case.uid,
+                        url = case.url,
+                        permanentUrl = case.permanentUrl,
+                        courtTitle = case.courtTitle,
                         hearingDateTime = case.hearingDateTime,
                         actDateForce = "",
                         actTextUrl = case.actTextUrl,
-                        courtTitle = case.courtTitle,
                         currentScreen = backStackEntry,
                         navController = navController
                     )
@@ -154,19 +158,23 @@ fun AppNavHost(
 
         composable(
             route = Screen.Detail.route +
-                    "?url={url}" +
-                    "&number={number}" +
+                    "?number={number}" +
+                    "&uid={uid}" +
+                    "&url={url}" +
+                    "&permanentUrl={permanentUrl}" +
+                    "&courtTitle={courtTitle}" +
                     "&hearingDateTime={hearingDateTime}" +
                     "&actDateForce={actDateForce}" +
-                    "&actTextUrl={actTextUrl}" +
-                    "&courtTitle={courtTitle}",
+                    "&actTextUrl={actTextUrl}",
             arguments = listOf(
-                navArgument(name = "url") { NavType.StringType },
                 navArgument(name = "number") { NavType.StringType },
+                navArgument(name = "uid") { NavType.StringType },
+                navArgument(name = "url") { NavType.StringType },
+                navArgument(name = "permanentUrl") { NavType.StringType },
+                navArgument(name = "courtTitle") { NavType.StringType },
                 navArgument(name = "hearingDateTime") { NavType.StringType },
                 navArgument(name = "actDateForce") { NavType.StringType },
-                navArgument(name = "actTextUrl") { NavType.StringType },
-                navArgument(name = "courtTitle") { NavType.StringType }
+                navArgument(name = "actTextUrl") { NavType.StringType }
             )
         ) { backStackEntry ->
             val viewModel: DetailViewModel = hiltViewModel()
@@ -185,35 +193,43 @@ fun AppNavHost(
         composable(
             route = Screen.DetailNotification.route,
             arguments = listOf(
-                navArgument("courtTitle") { type = NavType.StringType },
-                navArgument("number") { type = NavType.StringType },
                 navArgument("event") { type = NavType.StringType },
-                navArgument("participants") { type = NavType.StringType },
+                navArgument("number") { type = NavType.StringType },
+                navArgument("uid") { type = NavType.StringType },
                 navArgument("url") { type = NavType.StringType },
+                navArgument("permanentUrl") { type = NavType.StringType },
+                navArgument("courtTitle") { type = NavType.StringType },
+                navArgument("participants") { type = NavType.StringType },
                 navArgument("hearingDateTime") { type = NavType.StringType },
                 navArgument("actDateForce") { type = NavType.StringType },
                 navArgument("actTextUrl") { type = NavType.StringType }
             ),
             deepLinks = listOf(navDeepLink { uriPattern = DEEPLINK_URI +
-                    "?courtTitle={courtTitle}" +
+                    "?event={event}" +
                     "&number={number}" +
-                    "&event={event}" +
-                    "&participants={participants}" +
+                    "&uid={uid}" +
                     "&url={url}" +
+                    "&permanentUrl={permanentUrl}" +
+                    "&courtTitle={courtTitle}" +
+                    "&participants={participants}" +
                     "&hearingDateTime={hearingDateTime}" +
                     "&actDateForce={actDateForce}" +
                     "&actTextUrl={actTextUrl}"
                 }
             )
         ) { backStackEntry ->
-            val courtTitle = backStackEntry.arguments?.getString("courtTitle") ?: ""
-            val number = backStackEntry.arguments?.getString("number") ?: ""
-            val event = backStackEntry.arguments?.getString("event") ?: ""
-            val participants = backStackEntry.arguments?.getString("participants") ?: ""
-            val url = backStackEntry.arguments?.getString("url") ?: ""
-            val hearingDateTime = backStackEntry.arguments?.getString("hearingDateTime") ?: ""
-            val actDateForce = backStackEntry.arguments?.getString("actDateForce") ?: ""
-            val actTextUrl = backStackEntry.arguments?.getString("actTextUrl") ?: ""
+            fun getArg(arg: String): String = backStackEntry.arguments?.getString(arg) ?: ""
+
+            val event = getArg("event")
+            val number = getArg("number")
+            val uid = getArg("uid")
+            val url = getArg("url")
+            val permanentUrl = getArg("permanentUrl")
+            val courtTitle = getArg("courtTitle")
+            val participants = getArg("participants")
+            val hearingDateTime = getArg("hearingDateTime")
+            val actDateForce = getArg("actDateForce")
+            val actTextUrl = getArg("actTextUrl")
 
             DetailNotificationScreen(
                 accentColor = Color(accentColor),
@@ -223,12 +239,14 @@ fun AppNavHost(
                 participants = participants,
                 onClick = {
                     navigateToDetail(
-                        url = url,
                         number = number,
+                        uid = uid,
+                        url = url,
+                        permanentUrl = permanentUrl,
+                        courtTitle = courtTitle,
                         hearingDateTime = hearingDateTime,
                         actDateForce = actDateForce,
                         actTextUrl = actTextUrl,
-                        courtTitle = courtTitle,
                         currentScreen = backStackEntry,
                         navController = navController
                     )
@@ -268,12 +286,14 @@ fun AppNavHost(
                 },
                 onCardClick = { case ->
                     navigateToDetail(
-                        url = case.url,
                         number = case.number,
+                        uid = case.uid,
+                        url = case.url,
+                        permanentUrl = case.permanentUrl,
+                        courtTitle = case.courtTitle,
                         hearingDateTime = case.hearingDateTime,
                         actDateForce = case.actDateForce,
                         actTextUrl = case.actTextUrl,
-                        courtTitle = case.courtTitle,
                         currentScreen = backStackEntry,
                         navController = navController
                     )
@@ -298,25 +318,31 @@ fun AppNavHost(
 }
 
 private fun navigateToDetail(
-    url: String,
     number: String,
+    uid: String,
+    url: String,
+    permanentUrl: String,
+    courtTitle: String,
     hearingDateTime: String,
     actDateForce: String,
     actTextUrl: String,
-    courtTitle: String,
     currentScreen: NavBackStackEntry,
     navController: NavController
 ) {
     val destinationRoute = currentScreen.destination.route!!
 
+    fun enc(arg: String) = Uri.encode(arg)
+
     navController.navigate(
         Screen.Detail.route +
-                "?url=${Uri.encode(url)}" +
-                "&number=${Uri.encode(number)}" +
-                "&hearingDateTime=$hearingDateTime" +
-                "&actDateForce=$actDateForce" +
-                "&actTextUrl=${Uri.encode(actTextUrl)}" +
-                "&courtTitle=$courtTitle"
+                "?number=${enc(number)}" +
+                "&uid=${enc(uid)}" +
+                "&url=${enc(url)}" +
+                "&permanentUrl=${enc(permanentUrl)}" +
+                "&courtTitle=${enc(courtTitle)}" +
+                "&hearingDateTime=${enc(hearingDateTime)}" +
+                "&actDateForce=${enc(actDateForce)}" +
+                "&actTextUrl=${enc(actTextUrl)}"
     ) {
         popUpTo(destinationRoute) {
             saveState = true

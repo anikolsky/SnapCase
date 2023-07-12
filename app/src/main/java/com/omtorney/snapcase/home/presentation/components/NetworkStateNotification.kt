@@ -23,6 +23,7 @@ import com.omtorney.snapcase.network.NetworkState
 
 @Composable
 fun NetworkStateNotification(
+    modifier: Modifier = Modifier,
     state: HomeState
 ) {
     var networkStateText by remember { mutableStateOf("") }
@@ -42,7 +43,8 @@ fun NetworkStateNotification(
         exit = slideOutVertically(
             targetOffsetY = { fullHeight -> fullHeight },
             animationSpec = tween(durationMillis = 500)
-        )
+        ),
+        modifier = modifier
     ) {
         Box(
             modifier = Modifier
@@ -61,14 +63,13 @@ fun NetworkStateNotification(
                 text = if (state.networkState == NetworkState.Lost ||
                     state.networkState == NetworkState.Unavailable
                 ) {
-                    "Соединение с сетью потеряно (статус: $networkStateText)"
+                    "Соединение с сетью потеряно (state: $networkStateText)"
                 } else {
                     "Соединение восстановлено"
                 },
                 modifier = Modifier
                     .padding(horizontal = 4.dp, vertical = 2.dp)
-                    .fillMaxWidth()
-                ,
+                    .fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
         }

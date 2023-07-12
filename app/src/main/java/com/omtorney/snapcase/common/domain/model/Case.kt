@@ -3,45 +3,47 @@ package com.omtorney.snapcase.common.domain.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverter
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 
 @Entity(tableName = "cases")
 data class Case(
-    @PrimaryKey
     var number: String,
-    var uid: String,
+    @PrimaryKey
+    val uid: String,
     var url: String,
+    val permanentUrl: String,
     var courtTitle: String,
-    var type: String, // KAS, GK etc
-    var category: String,
+    val type: String, // KAS, GK etc
+    val category: String,
     var judge: String,
     var participants: String,
     @ColumnInfo(name = "receipt_date")
-    var receiptDate: String,
+    val receiptDate: String,
     @ColumnInfo(name = "hearing_date_time")
     var hearingDateTime: String,
     var result: String,
     @ColumnInfo(name = "act_date_time")
-    var actDateTime: String,
+    val actDateTime: String,
     @ColumnInfo(name = "act_date_force")
-    var actDateForce: String,
+    val actDateForce: String,
     @ColumnInfo(name = "act_text_url")
     var actTextUrl: String,
     var notes: String,
     var process: MutableList<ProcessStep> = mutableListOf(),
     var appeal: MutableMap<String, String> = mutableMapOf()
 ) {
-    override fun toString() = "url=$url" +
-            ", number=$number" +
+    override fun toString() = "number=$number" +
+            ", uid=$uid" +
+            ", url=$url" +
+            ", permanentUrl=$permanentUrl" +
+            ", courtTitle=$courtTitle" +
+            ", type=$type" +
+            ", category=$category" +
+            ", judge=$judge" +
+            ", participants=$participants" +
             ", receiptDate=$receiptDate" +
             ", hearingDateTime=$hearingDateTime" +
-            ", category=$category" +
-            ", participants=$participants" +
-            ", judge=$judge" +
-            ", actDate=$actDateTime" +
             ", result=$result" +
+            ", actDateTime=$actDateTime" +
             ", actDateForce=$actDateForce" +
             ", actTextUrl=$actTextUrl" +
             ", notes=$notes"
@@ -49,17 +51,23 @@ data class Case(
     fun appealToString(): String {
         var output = ""
         appeal.keys.map {
-            if (appeal[it]!!.isNotEmpty())
+            if (appeal[it]!!.isNotEmpty()) {
                 output += "$it: ${appeal[it]}\n"
+            }
         }
         return output
     }
 
-    fun doesFieldMatchQuery(query: String, field: String): Boolean {
-        return when (field) {
-            "judge" -> judge.lowercase().contains(query)
-            else -> participants.lowercase().contains(query)
+    fun doesFieldMatchQuery(query: String, type: FilterType): Boolean {
+        return when (type) {
+            FilterType.JUDGE -> judge.lowercase().contains(query)
+            FilterType.PARTICIPANT -> participants.lowercase().contains(query)
         }
+    }
+
+    enum class FilterType {
+        JUDGE,
+        PARTICIPANT
     }
 }
 
@@ -80,38 +88,15 @@ data class ProcessStep(
     }
 }
 
-data class Appeal(
-    val receiptDate: String,
-    val appealType: String,
-    val appealDecisionDate: String,
-    val appealDecision: String,
-    val deadlineDefectElimination: String,
-    val deadlineFilingObjections: String,
-    val upperCourt: String,
-    val upperCourtSendDate: String,
-    val upperCourtHearingDate: String,
-    val upperCourtHearingTime: String
-)
-
-object CaseConverters {
-    @TypeConverter
-    fun fromProcessJson(json: String): List<ProcessStep> {
-        return Gson().fromJson(json, object : TypeToken<MutableList<ProcessStep>>() {}.type)
-    }
-
-    @TypeConverter
-    fun toProcessJson(process: List<ProcessStep>): String {
-        return Gson().toJson(process)
-    }
-
-    @TypeConverter
-    fun fromAppealJson(json: String): Map<String, String> {
-        val type = object : TypeToken<Map<String, String>>() {}.type
-        return Gson().fromJson(json, type)
-    }
-
-    @TypeConverter
-    fun toAppealJson(appeal: Map<String, String>): String {
-        return Gson().toJson(appeal)
-    }
-}
+//data class Appeal(
+//    val receiptDate: String,
+//    val appealType: String,
+//    val appealDecisionDate: String,
+//    val appealDecision: String,
+//    val deadlineDefectElimination: String,
+//    val deadlineFilingObjections: String,
+//    val upperCourt: String,
+//    val upperCourtSendDate: String,
+//    val upperCourtHearingDate: String,
+//    val upperCourtHearingTime: String
+//)

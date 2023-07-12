@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.omtorney.snapcase.common.domain.model.Case.*
 import com.omtorney.snapcase.common.domain.usecase.UseCases
 import com.omtorney.snapcase.common.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,12 +46,12 @@ class ScheduleViewModel @Inject constructor(
         when (event) {
             is ScheduleEvent.SelectJudge -> {
                 _state.value = state.value.copy(selectedJudge = event.query)
-                updateFilteredCases(_state.value.selectedJudge, "judge") // TODO make enum
+                updateFilteredCases(_state.value.selectedJudge, FilterType.JUDGE)
             }
 
             is ScheduleEvent.FilterByParticipant -> {
                 _state.value = state.value.copy(participantQuery = event.query)
-                updateFilteredCases(_state.value.participantQuery, "participant") // TODO make enum
+                updateFilteredCases(_state.value.participantQuery, FilterType.PARTICIPANT)
             }
 
             ScheduleEvent.ToggleSearchSection -> {
@@ -59,12 +60,12 @@ class ScheduleViewModel @Inject constructor(
 
             ScheduleEvent.ResetJudge -> {
                 _state.value = state.value.copy(selectedJudge = "")
-                updateFilteredCases(_state.value.selectedJudge, "judge") // TODO make enum
+                updateFilteredCases(_state.value.selectedJudge, FilterType.JUDGE)
             }
 
             ScheduleEvent.ResetParticipant -> {
                 _state.value = state.value.copy(participantQuery = "")
-                updateFilteredCases(_state.value.participantQuery, "participant") // TODO make enum
+                updateFilteredCases(_state.value.participantQuery, FilterType.PARTICIPANT)
             }
         }
     }
@@ -97,7 +98,7 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
-    private fun updateFilteredCases(query: String, type: String) {
+    private fun updateFilteredCases(query: String, type: FilterType) {
         val currentCases = _state.value.cases
         val filteredCases = if (query.isBlank()) {
             currentCases

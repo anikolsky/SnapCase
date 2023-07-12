@@ -48,6 +48,8 @@ class NotificationHelper(
         val event = Uri.encode(eventMessage)
         val participants = Uri.encode(case.participants)
         val url = Uri.encode(case.url)
+        val permanentUrl = Uri.encode(case.permanentUrl)
+        val uid = case.uid
         val hearingDateTime = Uri.encode(case.hearingDateTime)
         val actDateForce = Uri.encode(case.actDateForce)
         val actTextUrl = Uri.encode(case.actTextUrl)
@@ -55,11 +57,13 @@ class NotificationHelper(
         val clickIntent = Intent(
             Intent.ACTION_VIEW,
             (DEEPLINK_URI +
-                    "?courtTitle=$courtTitle" +
+                    "?event=$event" +
                     "&number=$number" +
-                    "&event=$event" +
-                    "&participants=$participants" +
+                    "&uid=$uid" +
                     "&url=$url" +
+                    "&permanentUrl=$permanentUrl" +
+                    "&courtTitle=$courtTitle" +
+                    "&participants=$participants" +
                     "&hearingDateTime=$hearingDateTime" +
                     "&actDateForce=$actDateForce" +
                     "&actTextUrl=$actTextUrl").toUri(),

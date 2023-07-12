@@ -10,7 +10,7 @@ interface PageParser {
 
     fun extractSchedule(document: Document, court: Court): List<Case>
     fun extractSearchResult(document: Document, court: Court): List<Case>
-    suspend fun fetchCase(case: Case): Case
+    suspend fun fetchCase(case: Case, isFavorite: Boolean): Case
     fun fetchProcess(element: Element?): MutableList<ProcessStep>
     fun fetchAppeal(element: Element?): MutableMap<String, String>
     fun fetchParticipants(element: Element?): MutableList<String>

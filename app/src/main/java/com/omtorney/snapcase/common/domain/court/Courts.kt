@@ -15,11 +15,12 @@ object Courts {
         object : CourtNoMsk("Химкинский городской", "http://himki.mo.sudrf.ru") {}
 
 //    object : CourtMsk("Дорогомиловский районный", "http://mos-gorsud.ru/rs/dorogomilovskij") {}
-)
-        fun getCourtList() = courtList
+    )
 
-        fun getCourt(title: String): Court {
-            return courtList.find { it.title == title }
-                ?: throw NoSuchElementException("Court not found")
-        }
+    fun getCourtList() = courtList
+
+    fun getCourt(title: String): Court {
+        return courtList.find { it.title == title }
+            ?: throw NoSuchElementException("Court not found")
+    }
 }

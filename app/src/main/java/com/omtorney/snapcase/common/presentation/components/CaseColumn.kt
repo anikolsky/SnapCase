@@ -3,9 +3,7 @@ package com.omtorney.snapcase.common.presentation.components
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
@@ -28,11 +26,11 @@ fun CaseColumn(
     onActTextClick: (Case) -> Unit
 ) {
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 0.dp)
+            .padding(8.dp)
     ) {
         items.map { case ->
             item {
@@ -43,9 +41,6 @@ fun CaseColumn(
                     onCardClick = { onCardClick(it) },
                     onActTextClick = { onActTextClick(it) }
                 )
-            }
-            item {
-                Spacer(modifier = Modifier.height(0.dp))
             }
         }
     }
@@ -68,7 +63,7 @@ fun CaseColumnPreview() {
 }
 
 private val testCase = Case(
-    "2-22/2022", "", "", "09:00", "Споры о правах на недвижимость",
+    "2-22/2022", "", "", "", "09:00", "Споры о правах на недвижимость",
     "ИСТЕЦ: Иванов Иван Иванович ОТВЕТЧИК: Петров Петр Петрович",
     "Истец И.И, Ответчик О.О.", "Иванова И.И.", "01.01.2022", "01.01.2022", "",
     "01.01.2022", "", "Дмитровский городской", "", mutableListOf(), mutableMapOf()

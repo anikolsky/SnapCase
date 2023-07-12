@@ -37,14 +37,14 @@ class CaseCheckWorker @AssistedInject constructor(
                 val appealElement = document?.selectFirst("div#cont4 table#tablcont")
 
                 val processSteps = parser.fetchProcess(processElement)
-                logd("Process last\nfetched: ${processSteps.last()}\nsaved: ${savedCase.process.last()}")
+                logd("Process last\nfetched:\n${processSteps.last()}\nsaved:\n${savedCase.process.last()}")
                 if (processSteps.last() != savedCase.process.last()) {
                     logd("Process has changed, sending notification...")
                     sendNotification(processSteps, savedCase, CaseEvent.Process)
                 }
 
                 val appeal = parser.fetchAppeal(appealElement)
-                logd("Appeal\nfetched: $appeal\nsaved: ${savedCase.appeal}")
+                logd("Appeal\nfetched:\n$appeal\nsaved:\n${savedCase.appeal}")
                 if (appeal != savedCase.appeal) {
                     logd("Appeal has changed, sending notification...")
                     sendNotification(emptyList(), savedCase, CaseEvent.Appeal)
