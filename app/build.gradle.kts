@@ -1,7 +1,5 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
-//val localProperties = gradleLocalProperties(rootProject.projectDir)
-
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -11,6 +9,13 @@ plugins {
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
 }
+
+val localProperties = gradleLocalProperties(rootProject.projectDir)
+val serverAddressProperty: String = localProperties.getProperty("serverAddress")
+val versionFileProperty: String = localProperties.getProperty("appVersionFile")
+val apkUpdateFileProperty: String = localProperties.getProperty("apkUpdateFile")
+val apkDownloadedFileNameProperty: String = localProperties.getProperty("apkDownloadedFileName")
+val firestoreWebClientId: String = localProperties.getProperty("firestoreWebClientId")
 
 android {
     namespace = "com.omtorney.snapcase"
@@ -28,15 +33,11 @@ android {
             useSupportLibrary = true
         }
 
-        val localProperties = gradleLocalProperties(rootProject.projectDir)
-        val serverAddressProperty = localProperties.getProperty("serverAddress")
-        val versionFileProperty = localProperties.getProperty("appVersionFile")
-        val apkUpdateFileProperty = localProperties.getProperty("apkUpdateFile")
-        val apkDownloadedFileNameProperty = localProperties.getProperty("apkDownloadedFileName")
         buildConfigField("String", "SERVER_ADDRESS", "\"$serverAddressProperty\"")
         buildConfigField("String", "VERSION_FILE", "\"$versionFileProperty\"")
         buildConfigField("String", "APK_UPDATE", "\"$apkUpdateFileProperty\"")
         buildConfigField("String", "DOWNLOADED_UPDATE", "\"$apkDownloadedFileNameProperty\"")
+        buildConfigField("String", "FIRESTORE_CLIENT_ID", "\"$firestoreWebClientId\"")
     }
 
     buildTypes {
@@ -46,9 +47,6 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         getByName("debug") {
-//            val serverAddressProperty = localProperties.getProperty("serverAddress") ?: "empty"
-//            buildConfigField("String", "SERVER_ADDRESS", "\"$serverAddressProperty\"")
-
             isDebuggable = true
             isMinifyEnabled = false
             isShrinkResources = false
@@ -77,7 +75,8 @@ android {
 
 dependencies {
 
-    val composeUiVersion = "1.4.3"
+    val composeBomVersion = "2023.06.01"
+    val firebaseBomVersion = "32.1.1"
     val hiltComposeVersion = "1.0.0"
     val hiltVersion = "2.46.1"
     val hiltWork = "1.0.0"
@@ -87,13 +86,13 @@ dependencies {
 
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.activity:activity-compose:1.7.2")
-    implementation("androidx.compose.ui:ui:$composeUiVersion")
-    implementation("androidx.compose.ui:ui-tooling-preview:$composeUiVersion")
+    implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3:1.1.1")
 
     implementation("androidx.compose.runtime:runtime-livedata:1.6.0-alpha01")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
-//    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("org.jsoup:jsoup:1.16.1")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.airbnb.android:lottie-compose:6.0.1")
@@ -127,8 +126,12 @@ dependencies {
     implementation("io.github.azhon:appupdate:4.2.9")
 
     // Firebase
-    implementation("com.google.firebase:firebase-analytics-ktx:21.3.0")
-    implementation("com.google.firebase:firebase-crashlytics-ktx:18.3.7")
+    implementation(platform("com.google.firebase:firebase-bom:$firebaseBomVersion"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-crashlytics-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.android.gms:play-services-auth:20.6.0")
 
     // Unit tests
     testImplementation("junit:junit:4.13.2")
@@ -138,9 +141,10 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.test.ext:truth:1.5.0")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeUiVersion")
-    debugImplementation("androidx.compose.ui:ui-tooling:$composeUiVersion")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:$composeUiVersion")
+    androidTestImplementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 
 //    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.10")
 }

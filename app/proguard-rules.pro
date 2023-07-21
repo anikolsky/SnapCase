@@ -20,7 +20,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep public class com.omtorney.snapcase.common.domain.model.Case
+-keep public class com.omtorney.snapcase.domain.model.Case
 
 # For AppUpdate
 -keep public class * extends android.app.Activity
