@@ -11,15 +11,18 @@ class FirestoreDatabase@Inject constructor(
     private val firestoreReference: CollectionReference
 ) {
 
-    fun getFirestoreUser(userName: String): Flow<FirestoreResult<List<FirestoreUser>>> = callbackFlow {
+    fun getFirestoreUser(userName: String): Flow<FirestoreResult<FirestoreUser?>> = callbackFlow {
         trySend(FirestoreResult.Loading)
-        val listener = firestoreReference.whereEqualTo("name", userName).addSnapshotListener { value, error ->
-            if (error != null) trySend(FirestoreResult.Error(Throwable(error.message)))
+        val query = firestoreReference.whereEqualTo("name", userName)
+        val listener = query.addSnapshotListener { value, error ->
+            if (error != null) {
+                trySend(FirestoreResult.Error(Throwable(error.message)))
+            }
             if (value != null) {
                 val users = value.map { documentSnapshot ->
                     documentSnapshot.toObject<FirestoreUser>()
                 }
-                trySend(FirestoreResult.Success(users))
+                trySend(FirestoreResult.Success(users.firstOrNull()))
             }
         }
         awaitClose { listener.remove() }

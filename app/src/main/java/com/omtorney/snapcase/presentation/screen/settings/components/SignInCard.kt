@@ -4,8 +4,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -74,29 +72,25 @@ fun SignInCard(
                 )
             }
 
-            firestoreUserState.data.isNullOrEmpty() -> {
+            firestoreUserState.data == null -> {
                 Text(
                     text = "Empty",
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
                 )
             }
 
-            firestoreUserState.data.isNotEmpty() -> {
-                LazyColumn(modifier = Modifier.padding(horizontal = 14.dp, vertical = 0.dp)) {
-                    items(firestoreUserState.data) { item ->
-                        FirestoreListItem(
-                            userName = item?.name.toString(),
-                            userId = item?.id.toString(),
-                            userCases = item?.cases.toString(),
-                            onUpdateClick = { id, name ->
-                                onEvent(SettingsEvent.UpdateBackup(FirestoreUser(id, name), context))
-                            },
-                            onDeleteClick = { id, name ->
-                                onEvent(SettingsEvent.DeleteBackup(FirestoreUser(id, name), context))
-                            }
-                        )
+            firestoreUserState.data != null -> {
+                val user = firestoreUserState.data
+                FirestoreListItem(
+                    userName = user.name.toString(),
+                    userId = user.id.toString(),
+                    onUpdateClick = { id, name ->
+                        onEvent(SettingsEvent.UpdateBackup(FirestoreUser(id, name), context))
+                    },
+                    onDeleteClick = { id, name ->
+                        onEvent(SettingsEvent.DeleteBackup(FirestoreUser(id, name), context))
                     }
-                }
+                )
             }
         }
     }

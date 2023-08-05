@@ -83,13 +83,25 @@ class PageParserNoMsk @Inject constructor(
             actualNumber = lastUrl?.text() ?: case.number
         }
 
+        val tabElements = mutableMapOf<String, Element>()
+        val tabTitles = listOf(
+            Tab.Case.title,
+            Tab.Process.title,
+            Tab.Participants.title,
+            Tab.Appeal.title
+        )
+
         val document = repository.getJsoupDocument(actualUrl)
-        val caseElement = document?.selectFirst("div#cont1 table#tablcont")
-        val processElement = document?.selectFirst("div#cont2 table#tablcont")
-        val participantsElement = document?.selectFirst("div#cont3 table#tablcont")
-        val appealElement = document?.selectFirst("div#cont4 table#tablcont")
-        // TODO 3 и 4 вкладки могут быть разными, определять содержание по тексту:
-        //  "ОБЖАЛОВАНИЕ ПРИГОВОРОВ ОПРЕДЕЛЕНИЙ (ПОСТ.)", "СТОРОНЫ" и т.д.
+
+        tabTitles.forEach { title ->
+            val tabElement = document?.selectFirst("th:contains($title)")?.parent()?.parent()
+            tabElement?.let { tab -> tabElements[title] = tab }
+        }
+
+        val caseElement = tabElements[Tab.Case.title]
+        val processElement = tabElements[Tab.Process.title]
+        val participantsElement = tabElements[Tab.Participants.title]
+        val appealElement = tabElements[Tab.Appeal.title]
         val participants = fetchParticipants(participantsElement)
         val processSteps = fetchProcess(processElement)
         val appeal = fetchAppeal(appealElement)
@@ -301,4 +313,11 @@ fun Element?.getContentOfTd(query: String): String {
 
 fun Element?.getUrl(): String {
     return this?.selectFirst("a")?.absUrl("href") ?: ""
+}
+
+enum class Tab(val title: String) {
+    Case("ДЕЛО"),
+    Process("ДВИЖЕНИЕ ДЕЛА"),
+    Participants("СТОРОНЫ ПО ДЕЛУ (ТРЕТЬИ ЛИЦА)"),
+    Appeal("ОБЖАЛОВАНИЕ РЕШЕНИЙ, ОПРЕДЕЛЕНИЙ (ПОСТ.)")
 }

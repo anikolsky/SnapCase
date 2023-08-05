@@ -66,7 +66,7 @@ class RepositoryImpl @Inject constructor(
     }
 
 
-    override fun getFirestoreUser(userName: String): Flow<FirestoreResult<List<FirestoreUser?>>> {
+    override fun getFirestoreUser(userName: String): Flow<FirestoreResult<FirestoreUser?>> {
         return remoteDataSource.getFirestoreUser(userName)
     }
 

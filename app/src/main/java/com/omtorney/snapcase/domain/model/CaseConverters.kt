@@ -1,28 +1,20 @@
 package com.omtorney.snapcase.domain.model
 
 import androidx.room.TypeConverter
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 object CaseConverters {
     @TypeConverter
-    fun fromProcessJson(json: String): List<ProcessStep> {
-        return Gson().fromJson(json, object : TypeToken<MutableList<ProcessStep>>() {}.type)
-    }
+    fun processFormJson(json: String): List<ProcessStep> = Json.decodeFromString(json)
 
     @TypeConverter
-    fun toProcessJson(process: List<ProcessStep>): String {
-        return Gson().toJson(process)
-    }
+    fun jsonFromProcess(process: List<ProcessStep>): String = Json.encodeToString(process)
 
     @TypeConverter
-    fun fromAppealJson(json: String): Map<String, String> {
-        val type = object : TypeToken<Map<String, String>>() {}.type
-        return Gson().fromJson(json, type)
-    }
+    fun appealFromJson(json: String): Map<String, String> = Json.decodeFromString(json)
 
     @TypeConverter
-    fun toAppealJson(appeal: Map<String, String>): String {
-        return Gson().toJson(appeal)
-    }
+    fun jsonFromAppeal(appeal: Map<String, String>): String = Json.encodeToString(appeal)
 }

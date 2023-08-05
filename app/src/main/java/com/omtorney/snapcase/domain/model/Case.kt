@@ -3,6 +3,7 @@ package com.omtorney.snapcase.domain.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.serialization.Serializable
 
 @Entity(tableName = "cases")
 data class Case(
@@ -71,6 +72,7 @@ data class Case(
     }
 }
 
+@Serializable
 data class ProcessStep(
     val event: String,
     val date: String,

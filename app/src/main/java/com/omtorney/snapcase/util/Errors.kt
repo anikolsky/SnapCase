@@ -7,6 +7,7 @@ sealed class CustomError(message: String) : Exception(message) {
     class NoResultFound : CustomError("Результаты по запросу не найдены")
     class NoScheduledCases : CustomError("На выбранную дату дел не назначено")
     class SiteDataUnavailable : CustomError("Информация в данный момент недоступна по причине ошибки на сайте")
+    class BlockedAccess : CustomError("Доступ к сайту заблокирован (отключите VPN при наличии)")
 }
 
 fun handleException(e: Exception): String {

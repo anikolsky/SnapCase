@@ -186,8 +186,8 @@ fun SettingsScreen(
             },
             title = { Text(text = "Резервное копирование") },
             subtitle = "Сохранение избранных дел в личном аккаунте",
-            buttonText = if (firestoreUserState.data.isNullOrEmpty()) "Войти" else "Выйти",
-            onClick = if (firestoreUserState.data.isNullOrEmpty()) onSignInClick else onSignOutClick,
+            buttonText = if (firestoreUserState.data == null) "Войти" else "Выйти",
+            onClick = if (firestoreUserState.data == null) onSignInClick else onSignOutClick,
         )
         Text(text = "Is firestoreUserState.data null: ${firestoreUserState.data == null}")
         Button(onClick = onSignOutClick) { Text(text = "Logout") }

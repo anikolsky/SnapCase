@@ -26,7 +26,7 @@ interface Repository {
     val caseCheckPeriod: Flow<CheckPeriod>
     suspend fun setCaseCheckPeriod(period: CheckPeriod)
 
-    fun getFirestoreUser(userName: String): Flow<FirestoreResult<List<FirestoreUser?>>>
+    fun getFirestoreUser(userName: String): Flow<FirestoreResult<FirestoreUser?>>
     suspend fun createFirestoreBackup(firestoreUser: FirestoreUser): Flow<FirestoreResult<String>>
     suspend fun updateFirestoreBackup(firestoreUser: FirestoreUser): Flow<FirestoreResult<String>>
     suspend fun deleteFirestoreBackup(firestoreUser: FirestoreUser): Flow<FirestoreResult<String>>

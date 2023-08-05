@@ -30,13 +30,16 @@ class RemoteDataSourceImpl @Inject constructor(
             } else if (document.text().contains("дел не назначено")) {
                 logd("На выбранную дату дел не назначено")
                 throw CustomError.NoScheduledCases()
+            } else if (document.text().contains("Этот запрос заблокирован по соображениям безопасности")) {
+                logd("Этот запрос заблокирован по соображениям безопасности")
+                throw CustomError.BlockedAccess()
             } else {
                 document
             }
         }
     }
 
-    override fun getFirestoreUser(userName: String): Flow<FirestoreResult<List<FirestoreUser>>> {
+    override fun getFirestoreUser(userName: String): Flow<FirestoreResult<FirestoreUser?>> {
         return firestoreDatabase.getFirestoreUser(userName)
     }
 

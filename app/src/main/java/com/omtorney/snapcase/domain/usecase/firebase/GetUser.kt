@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetUser @Inject constructor(
     private val repository: Repository
 ) {
-    operator fun invoke(userName: String): Flow<FirestoreResult<List<FirestoreUser?>>> {
+    operator fun invoke(userName: String): Flow<FirestoreResult<FirestoreUser?>> {
         return repository.getFirestoreUser(userName)
     }
 }
