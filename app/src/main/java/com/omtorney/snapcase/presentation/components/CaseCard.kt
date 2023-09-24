@@ -4,9 +4,15 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FractionalThreshold
+import androidx.compose.material.rememberSwipeableState
+import androidx.compose.material.swipeable
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -18,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -26,12 +33,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.omtorney.snapcase.R
 import com.omtorney.snapcase.domain.model.Case
 import com.omtorney.snapcase.presentation.theme.SnapCaseTheme
 import com.omtorney.snapcase.util.Constants
+import kotlin.math.roundToInt
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CaseCard(
     modifier: Modifier = Modifier,
@@ -42,132 +52,166 @@ fun CaseCard(
     onActTextClick: (Case) -> Unit
 ) {
     var expanded by remember { mutableStateOf(isExpanded) }
+//    val swipeableState = rememberSwipeableState(0)
+//    val screenSizeDp = LocalConfiguration.current.screenWidthDp.dp
+//    val screenSizePx = with(LocalDensity.current) { screenSizeDp.toPx() }
+//    val anchors = mapOf(0f to 0, -screenSizePx to 1, screenSizePx to 2)
+    val anchors = mapOf(0f to 0, -250f to 1)
 
-    Card(
-        shape = MaterialTheme.shapes.extraSmall,
-        colors = CardDefaults.cardColors(accentColor.copy(alpha = 0.15f)),
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { onCardClick(case) }
+    Box(
+        modifier = Modifier
+//            .swipeable(
+//                state = swipeableState,
+//                anchors = anchors,
+//                orientation = Orientation.Horizontal,
+//                thresholds = { _, _ -> FractionalThreshold(0.2f) }
+//            )
     ) {
-        Column(
-            modifier = Modifier.animateContentSize(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
-            )
+//        Image(
+//            painter = painterResource(R.drawable.ic_round_delete),
+//            contentDescription = "Remove",
+//            modifier = Modifier.clickable {
+//
+//            }
+//        )
+        Card(
+            shape = MaterialTheme.shapes.extraSmall,
+            colors = CardDefaults.cardColors(accentColor.copy(alpha = 0.15f)),
+            modifier = modifier
+                .fillMaxWidth()
+                .clickable { onCardClick(case) }
+//                .offset { IntOffset(swipeableState.offset.value.roundToInt(), 0) }
+//                .shadow(
+//                    elevation = 8.dp,
+//                    shape = MaterialTheme.shapes.extraSmall,
+//                    spotColor = MaterialTheme.colorScheme.onBackground.copy(0.5f)
+//                )
         ) {
             Column(
-                modifier = Modifier.padding(
-                    start = 12.dp,
-                    end = 12.dp,
-                    top = 6.dp,
-                    bottom = 0.dp
+                modifier = Modifier.animateContentSize(
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
                 )
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(25.dp)
+                Column(
+                    modifier = Modifier.padding(
+                        start = 12.dp,
+                        end = 12.dp,
+                        top = 6.dp,
+                        bottom = 0.dp
+                    )
                 ) {
-                    Text(
-                        text = "${case.courtTitle} суд",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = accentColor.copy(alpha = 0.5f),
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
-                            .padding(vertical = 0.dp)
-                            .weight(1f)
-                    )
-                    IconButton(onClick = { expanded = !expanded }) {
-                        Icon(
-                            painter = if (expanded)
-                                painterResource(R.drawable.ic_round_expand_less)
-                            else
-                                painterResource(R.drawable.ic_round_expand_more),
-                            contentDescription = if (expanded) "Показать" else "Скрыть"
+                            .fillMaxWidth()
+                            .height(25.dp)
+                    ) {
+                        Text(
+                            text = "${case.courtTitle} суд",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = accentColor.copy(alpha = 0.5f),
+                            modifier = Modifier
+                                .padding(vertical = 0.dp)
+                                .weight(1f)
                         )
+                        IconButton(onClick = { expanded = !expanded }) {
+                            Icon(
+                                painter = if (expanded)
+                                    painterResource(R.drawable.ic_round_expand_less)
+                                else
+                                    painterResource(R.drawable.ic_round_expand_more),
+                                contentDescription = if (expanded) "Показать" else "Скрыть"
+                            )
+                        }
                     }
-                }
-                Row {
-                    TextBlock(
-                        title = "Номер дела: ",
-                        text = case.number,
-                        titleColor = accentColor
-                    )
-                }
-                if (case.hearingDateTime.isNotEmpty()) {
                     Row {
                         TextBlock(
-                            title = "Время заседания: ",
-                            text = case.hearingDateTime,
-                            titleColor = accentColor,
-                            textColor = accentColor
-                        )
-                    }
-                }
-                Column {
-                    TextBlock(
-                        title = "Участники: ",
-                        text = case.participants,
-                        titleColor = accentColor
-                    )
-                }
-            }
-            if (!expanded) {
-                Spacer(modifier = Modifier.padding(top = 8.dp))
-            }
-            if (expanded) {
-                Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 12.dp)) {
-                    Row {
-                        TextBlock(
-                            title = "Судья: ",
-                            text = case.judge,
+                            title = "Номер дела: ",
+                            text = case.number,
                             titleColor = accentColor
                         )
                     }
-                    Row {
-                        TextBlock(
-                            title = "Категория: ",
-                            text = case.category,
-                            titleColor = accentColor
-                        )
-                    }
-                    if (case.result.isNotEmpty())
-                        Column {
+                    if (case.hearingDateTime.isNotEmpty()) {
+                        Row {
                             TextBlock(
-                                title = "Решение: ",
-                                text = case.result,
+                                title = "Время заседания: ",
+                                text = case.hearingDateTime,
                                 titleColor = accentColor,
                                 textColor = accentColor
                             )
                         }
-                    if (case.actDateTime.isNotEmpty())
+                    }
+                    Column {
+                        TextBlock(
+                            title = "Участники: ",
+                            text = case.participants,
+                            titleColor = accentColor
+                        )
+                    }
+                }
+                if (!expanded) {
+                    Spacer(modifier = Modifier.padding(top = 8.dp))
+                }
+                if (expanded) {
+                    Column(
+                        modifier = Modifier.padding(
+                            start = 12.dp,
+                            end = 12.dp,
+                            bottom = 12.dp
+                        )
+                    ) {
                         Row {
                             TextBlock(
-                                title = "Дата решения: ",
-                                text = case.actDateTime,
+                                title = "Судья: ",
+                                text = case.judge,
                                 titleColor = accentColor
                             )
                         }
+                        Row {
+                            TextBlock(
+                                title = "Категория: ",
+                                text = case.category,
+                                titleColor = accentColor
+                            )
+                        }
+                        if (case.result.isNotEmpty())
+                            Column {
+                                TextBlock(
+                                    title = "Решение: ",
+                                    text = case.result,
+                                    titleColor = accentColor,
+                                    textColor = accentColor
+                                )
+                            }
+                        if (case.actDateTime.isNotEmpty())
+                            Row {
+                                TextBlock(
+                                    title = "Дата решения: ",
+                                    text = case.actDateTime,
+                                    titleColor = accentColor
+                                )
+                            }
+                    }
                 }
-            }
-            if (case.actTextUrl.isNotEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = accentColor.copy(alpha = 0.8f))
-                ) {
-                    Text(
-                        text = stringResource(R.string.show_act).uppercase(),
-                        textAlign = TextAlign.Center,
+                if (case.actTextUrl.isNotEmpty()) {
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp)
-                            .clickable { onActTextClick(case) }
-                    )
+                            .background(color = accentColor.copy(alpha = 0.8f))
+                    ) {
+                        Text(
+                            text = stringResource(R.string.show_act).uppercase(),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .clickable { onActTextClick(case) }
+                        )
+                    }
                 }
             }
         }
@@ -192,7 +236,7 @@ fun TextBlock(
         text = text,
         color = textColor,
         style = style,
-        maxLines = if (title == "Судья: " || title == "Категория: ") 1 else 10,
+        maxLines = if (title == "Судья: " || title == "Категория: ") 1 else 50,
         overflow = TextOverflow.Ellipsis
     )
 }

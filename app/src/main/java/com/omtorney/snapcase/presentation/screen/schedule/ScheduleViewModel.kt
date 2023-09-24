@@ -70,29 +70,31 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
-    private fun showSchedule(courtTitle: String, date: String) = viewModelScope.launch {
-        useCases.showSchedule(courtTitle, date).collect { result ->
-            when (result) {
-                is Resource.Loading -> {
-                    _state.value = state.value.copy(
-                        isLoading = true
-                    )
-                }
+    private fun showSchedule(courtTitle: String, date: String) {
+        viewModelScope.launch {
+            useCases.showSchedule(courtTitle, date).collect { result ->
+                when (result) {
+                    is Resource.Loading -> {
+                        _state.value = state.value.copy(
+                            isLoading = true
+                        )
+                    }
 
-                is Resource.Success -> {
-                    val cases = result.data ?: emptyList()
-                    _state.value = state.value.copy(
-                        cases = cases,
-                        filteredCases = cases,
-                        isLoading = false
-                    )
-                }
+                    is Resource.Success -> {
+                        val cases = result.data ?: emptyList()
+                        _state.value = state.value.copy(
+                            cases = cases,
+                            filteredCases = cases,
+                            isLoading = false
+                        )
+                    }
 
-                is Resource.Error -> {
-                    _state.value = state.value.copy(
-                        error = result.message ?: "Unexpected error",
-                        isLoading = false
-                    )
+                    is Resource.Error -> {
+                        _state.value = state.value.copy(
+                            error = result.message ?: "Unexpected error",
+                            isLoading = false
+                        )
+                    }
                 }
             }
         }

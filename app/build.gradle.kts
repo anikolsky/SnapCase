@@ -76,27 +76,29 @@ android {
 
 dependencies {
 
-    val composeBomVersion = "2023.06.01"
-    val firebaseBomVersion = "32.1.1"
+    val composeBomVersion = "2023.09.01"
+    val firebaseBomVersion = "32.3.1"
     val hiltComposeVersion = "1.0.0"
-    val hiltVersion = "2.47"
+    val hiltVersion = "2.48"
     val hiltWork = "1.0.0"
-    val lifecycleVersion = "2.6.1"
-    val navVersion = "2.6.0"
+    val lifecycleVersion = "2.6.2"
+    val navVersion = "2.7.3"
     val roomVersion = "2.5.2"
 
-    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
     implementation("androidx.compose.ui:ui")
+//    implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material:1.5.1")
 
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.0-alpha02")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.0-alpha06")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("org.jsoup:jsoup:1.16.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-    implementation("com.airbnb.android:lottie-compose:6.0.1")
+    implementation("com.airbnb.android:lottie-compose:6.1.0")
 
     // Lifecycle
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
@@ -124,7 +126,7 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.8.1")
 
     // AppUpdate
-    implementation("io.github.azhon:appupdate:4.2.9")
+    implementation("io.github.azhon:appupdate:4.3.1")
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:$firebaseBomVersion"))
@@ -132,7 +134,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation("com.google.android.gms:play-services-auth:20.6.0")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 
     // Unit tests
     testImplementation("junit:junit:4.13.2")
